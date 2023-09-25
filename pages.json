@@ -1,0 +1,647 @@
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/message/message",
+			"style": {
+				"navigationBarTitleText": "消息"
+			}
+		},
+		{
+			"path": "pages/server/server",
+			"style": {
+				"navigationBarTitleText": "监督"
+			}
+		}
+		
+	],
+	"subPackages": [
+		{
+			"root": "subPages/agreement",
+			"pages": [
+				{
+					"path": "user"
+				},
+				{
+					"path": "register"
+				},
+				{
+					"path": "privacy"
+				}
+			]
+		},
+		{
+			"root": "subPages/user",
+			"pages": [
+				{
+					"path": "login/login",
+					"style": {
+						"navigationBarTitleText": "账号登录"
+					}
+				},
+				{
+					"path": "login/phone-login",
+					"style": {
+						"navigationBarTitleText": "手机登录"
+					}
+				},
+				{
+					"path": "settings/settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "select-room/select-room",
+					"style": {
+						"navigationBarTitleText": "更新楼栋"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "settings/userInfo",
+					"style": {
+						"navigationBarTitleText": "资料设置"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/message",
+			"pages": [
+				{
+					"path": "chat",
+					"style": {
+						"navigationBarTitleText": "会话"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/owner-autonomy",
+			"pages": [
+				{
+					"path": "owner-autonomy",
+					"style": {
+						"navigationBarTitleText": "居民自治"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/pages/finance",
+					"style": {
+						"navigationBarTitleText": "财务公开"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/pages/statements",
+					"style": {
+						"navigationBarTitleText": "财务统计"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/all-bill",
+					"style": {
+						"navigationBarTitleText": "全部账单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/all-income",
+					"style": {
+						"navigationBarTitleText": "收入账单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/all-expenditure",
+					"style": {
+						"navigationBarTitleText": "支出账单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/pages/finance-user",
+					"style": {
+						"navigationBarTitleText": "我的财务",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/detail",
+					"style": {
+						"navigationBarTitleText": "账单详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/edit-add",
+					"style": {
+						"navigationBarTitleText": "账单添加",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "finance/detail/my-bill",
+					"style": {
+						"navigationBarTitleText": "我的账单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "decision/decision-list",
+					"style": {
+						"navigationBarTitleText": "决策列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "decision/decision-detail",
+					"style": {
+						"navigationBarTitleText": "决策详情",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/elevator-safety",
+					"style": {
+						"navigationBarTitleText": "电梯安全"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/safety-statistics",
+					"style": {
+						"navigationBarTitleText": "电梯统计",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/device-warning",
+					"style": {
+						"navigationBarTitleText": "维保预警"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/error-log",
+					"style": {
+						"navigationBarTitleText": "异常记录"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/device-list",
+					"style": {
+						"navigationBarTitleText": "设备列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/device-weekly",
+					"style": {
+						"navigationBarTitleText": "电梯周报"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/device-detail",
+					"style": {
+						"navigationBarTitleText": "设备详情",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "elevator-safety/device-analysis",
+					"style": {
+						"navigationBarTitleText": "电梯报表",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "fault/fault-statistics",
+					"style": {
+						"navigationBarTitleText": "故障统计"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "vote/vote",
+					"style": {
+						"navigationBarTitleText": "民意投票"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "vote/detail",
+					"style": {
+						"navigationBarTitleText": "投票详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "vote/vote-chat",
+					"style": {
+						"navigationBarTitleText": "民意投票客服"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "questionnaire/questionnaire",
+					"style": {
+						"navigationBarTitleText": "调查问卷",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "questionnaire/questionnaire-list",
+					"style": {
+						"navigationBarTitleText": "问卷列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/server",
+			"pages": []
+		},
+		{
+			"root": "subPages/garden",
+			"pages": []
+		},
+		{
+			"root": "subPages/legal-advice",
+			"pages": [
+				{
+					"path": "legal-advice",
+					"style": {
+						"navigationBarTitleText": "法律咨询"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "lawyer-detail/lawyer-detail",
+					"style": {
+						"navigationBarTitleText": "律师详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "lawyer-list/lawyer-list",
+					"style": {
+						"navigationBarTitleText": "律师列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/neighborhood",
+			"pages": [
+				{
+					"path": "pages/neighborhood",
+					"style": {
+						"navigationBarTitleText": "邻里活动"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "pages/neighborhood-release",
+					"style": {
+						"navigationBarTitleText": "活动发布",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "pages/neighborhood-my",
+					"style": {
+						"navigationBarTitleText": "我的活动",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-activity/collect-activity",
+					"style": {
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-activity/join-activity",
+					"style": {
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-activity/release-activity",
+					"style": {
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "活动详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/guide",
+			"pages": [
+				{
+					"path": "guide",
+					"style": {
+						"navigationBarTitleText": "办事指南"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "详情",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/main",
+			"pages": [
+				{
+					"path": "say-some/say-some",
+					"style": {
+						"navigationBarTitleText": "随手拍",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "garden/garden",
+					"style": {
+						"navigationBarTitleText": "导航"
+					}
+				},
+				{
+					"path": "more/more",
+					"style": {
+						"navigationBarTitleText": "更多"
+					}
+				},
+				{
+					"path": "notice/notice-detail",
+					"style": {
+						"navigationBarTitleText": "公告详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "notice/notice-list",
+					"style": {
+						"navigationBarTitleText": "公告列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "activity/activity-list",
+					"style": {
+						"navigationBarTitleText": "活动列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "activity/activity-detail",
+					"style": {
+						"navigationBarTitleText": "活动详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root":"subPages/market",
+			"pages":[
+				{
+					"path": "pages/index",
+					"style": {
+						"navigationBarTitleText": "友邻市场",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "pages/release",
+					"style": {
+						"navigationBarTitleText": "发布",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "release/detail",
+					"style": {
+						"navigationBarTitleText": "发布详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "pages/user",
+					"style": {
+						"navigationBarTitleText": "我的",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-release/detail",
+					"style": {
+						"navigationBarTitleText": "发布详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-release/my-release",
+					"style": {
+						"navigationBarTitleText": "我发布的"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/product",
+					"style": {
+						"navigationBarTitleText": "商品展示"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/product-pay",
+					"style": {
+						"navigationBarTitleText": "商品支付"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/product-order",
+					"style": {
+						"navigationBarTitleText": "商品订单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "基板",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
