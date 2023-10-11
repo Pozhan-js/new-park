@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:02:55
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-20 09:57:52
+ * @LastEditTime: 2023-10-09 13:19:09
  * @FilePath: /smart-park/store/module/user.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -80,7 +80,7 @@ export default {
       try {
         const info = await getUserInfo();
         if (info?.code !== 200) throw null;
-        console.log(info?.data);
+        // console.log(info?.data);
         commit("SET_USER_INFO", info?.data);
         return info;
       } catch {

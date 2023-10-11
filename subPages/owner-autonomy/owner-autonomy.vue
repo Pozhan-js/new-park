@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-20 11:31:53
+ * @LastEditTime: 2023-10-11 10:04:05
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -45,19 +45,24 @@
           <u-icon size="24rpx" name="arrow-right"></u-icon>
         </view>
       </view>
-      <view class="placard-content" @click="toNoticeDetail(newNotice[0])">
+      <view
+        class="placard-content"
+        v-for="item in topFilterDataList"
+        :key="item.id"
+        @click="toNoticeDetail(item)"
+      >
         <view class="placard-content-left">
           <view class="placard-content-left-top">
-            <view class="left-top-title text-2-hidden">{{
-              newNotice[0].title
-            }}</view>
+            <view class="left-top-title text-2-hidden">
+              {{ item.title }}
+            </view>
           </view>
           <view class="placard-content-left-bottom"
-            >公告 {{ $u.timeFrom(newNotice[0].time[0], "yyyy-mm-dd") }}</view
+            >公告 {{ noticeTime(item.time) }}</view
           >
         </view>
         <view class="placard-content-right">
-          <image :src="newNotice[0].image" />
+          <image :src="item.image" />
         </view>
       </view>
     </view>
@@ -65,6 +70,7 @@
 </template>
 
 <script>
+import helper from "@/common/helper";
 import { getModelList } from "@/api";
 import { mapGetters } from "vuex";
 export default {
@@ -114,6 +120,7 @@ export default {
         },
       ],
       decisionList: [],
+      dataList: [], //公告列表数据
     };
   },
   computed: {
@@ -125,6 +132,40 @@ export default {
         decision_image: this.$helper.filterCover(
           this.decisionList[0]?.decision_image[0].url
         ),
+      };
+    },
+
+    // 公告列表数据
+    filterDataList() {
+      let arrIsTop = [];
+      let arrNotTop = [];
+      this.dataList.map((item) => {
+        if (item.top === "是") {
+          arrIsTop.push(item);
+        } else {
+          arrNotTop.push(item);
+        }
+      });
+      arrIsTop.sort((a, b) => {
+        return b.lastModifyTime - a.lastModifyTime;
+      });
+      arrNotTop.sort((a, b) => {
+        return b.lastModifyTime - a.lastModifyTime;
+      });
+
+      return [...arrIsTop, ...arrNotTop];
+    },
+
+    topFilterDataList() {
+      return this.filterDataList.filter((item) => item.top === "是");
+    },
+
+    noticeTime() {
+      //  this.filterDataList[0]?.time[0]
+      return (time) => {
+        if (time) {
+          return uni.$u.timeFrom(time, "yyyy-mm-dd hh:MM:ss");
+        }
       };
     },
   },
@@ -177,9 +218,35 @@ export default {
         };
       });
     },
+
+    //获取列表数据集
+    async getNoticeList() {
+      const { data } = await getModelList("64d2f5525d3fa95536f04c02");
+      // console.log(data);
+      this.dataList = data?.list.map((item) => {
+        return {
+          title: item.title,
+          image: helper.filterCover(item.cover_picture),
+          imageCover: helper.filterCover(
+            item["cover_picture_2"] || item["cover_picture"]
+          ),
+          read_num: item.reade_num,
+          content: item.announcement_details,
+          id: item._id,
+          top: item.is_top,
+          name: item.publisher,
+          time: item?.activity_time || "",
+          createTime: item.creatorTime,
+        };
+      });
+
+      //  this.filterDataList = this.dataList
+    },
   },
-  onLoad() {
+  async onLoad() {
     this.getBannerDataList();
+
+    this.getNoticeList();
   },
 };
 </script>
@@ -187,7 +254,7 @@ export default {
 <style lang="scss" scoped>
 .owner-autonomy {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   padding: 32rpx;
   background-color: #f4f8ff;
   box-sizing: border-box;
@@ -233,9 +300,9 @@ export default {
   // 社区公告
   &-placard {
     width: 100%;
-    height: 254rpx;
+    // height: 254rpx;
     margin-top: 32rpx;
-    background-color: #fff;
+    // background-color: #fff;
     box-sizing: border-box;
     border-radius: 8rpx;
     padding: 16rpx;
@@ -278,6 +345,8 @@ export default {
       border-radius: 8rpx;
       // padding: 9rpx;
       display: flex;
+      margin-bottom: 20rpx;
+      padding: 20rpx;
       justify-content: space-between;
       flex: 1;
 

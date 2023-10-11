@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-24 15:36:47
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-08-25 11:01:05
+ * @LastEditTime: 2023-10-10 14:59:44
  * @FilePath: /smart-park/subPages/guide/detail/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -26,8 +26,9 @@
           {{ data.step_title }}</view
         >
         <view class="container-item-body">
-          <text>{{ data.step_content }}</text>
+          <text :user-select="true">{{ data.step_content }}</text>
         </view>
+        <image :src="imageUrlList[index]" mode="" />
       </view>
     </view>
   </view>
@@ -42,7 +43,14 @@ export default {
   },
   computed: {
     dataList() {
-      return this.detailData.tableField103;
+      return this.detailData.tableField103 || [];
+    },
+    imageUrlList() {
+      return (
+        this.detailData?.imageUrl?.map((item) => {
+          return this.$helper.filterCover(item.url);
+        }) || []
+      );
     },
   },
   onLoad() {

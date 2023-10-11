@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-22 17:42:56
+ * @LastEditTime: 2023-10-10 16:59:05
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -20,7 +20,7 @@
     <view class="some-container">
       <view class="header flex-a-center-j-space-around">
         <view class="header-left">
-          <view>小区的安全和谐 </view>
+          <view style="font-size: 40rpx">小区的安全和谐 </view>
           <text decode>{{ myText }}</text>
         </view>
         <view class="header-right">
@@ -42,7 +42,9 @@
             <u-icon name="arrow-right"></u-icon>
           </view>
           <view class="body-item-btn flex-a-center-j-space-between">
-            <view class="text">无法准备描述所在地？请点这</view>
+            <view class="text" style="font-size: 32rpx"
+              >无法准备描述所在地？请点这</view
+            >
             <image
               src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_9fe54eb335a646329cf7042abc1c6596.png"
               mode=""
@@ -54,9 +56,20 @@
                 :plain="true"
                 @click="getAddressBtn"
                 icon="map"
+                size="small"
                 shape="circle"
               ></u-button>
             </view>
+          </view>
+          <view
+            v-if="model1.userInfo.blurAddress"
+            class="input flex-a-center-j-space-between"
+            ><u--input
+              placeholder="请输入内容"
+              border="none"
+              v-model="model1.userInfo.blurAddress"
+            ></u--input>
+            <u-icon name="arrow-right"></u-icon>
           </view>
         </view>
         <view class="body-item">
@@ -115,6 +128,7 @@
         <view class="body-item flex-a-center-j-space-between">
           <view class="body-item-title">联系人</view>
           <u--input
+            v-if="!model1.userInfo.showName"
             placeholder="请输入内容"
             v-model="model1.userInfo.roomNum"
             border="none"
@@ -146,28 +160,29 @@ export default {
   data() {
     return {
       myText: "&nbsp;&nbsp;&nbsp;&nbsp;大家一起努力",
-      errorList: [
-        {
-          title: "故障上报",
-          isActive: false,
-        },
-        {
-          title: "环境卫生",
-          isActive: false,
-        },
-        {
-          title: "电梯故障",
-          isActive: false,
-        },
-        {
-          title: "安全隐患",
-          isActive: false,
-        },
-        {
-          title: "其他事项",
-          isActive: false,
-        },
-      ],
+      typeList: [],
+      // errorList: [
+      //   {
+      //     title: "故障上报",
+      //     isActive: false,
+      //   },
+      //   {
+      //     title: "环境卫生",
+      //     isActive: false,
+      //   },
+      //   {
+      //     title: "电梯故障",
+      //     isActive: false,
+      //   },
+      //   {
+      //     title: "安全隐患",
+      //     isActive: false,
+      //   },
+      //   {
+      //     title: "其他事项",
+      //     isActive: false,
+      //   },
+      // ],
       model1: {
         userInfo: {
           image: [], //图片
@@ -177,6 +192,7 @@ export default {
           description: "", //描述
           address: "", //地址
           blurAddress: "",
+          problemStatus: "待处理",
         },
       },
       fileList1: [],
@@ -283,71 +299,56 @@ export default {
     },
     // 获取地址按钮点击
     async getAddressBtn() {
-      const location = await this.getLocationInfo();
-      // this.position = location.address;
-      this.model1.userInfo.blurAddress = location.address;
-      uni.showToast({
-        title: `获取地址${location.address}`,
-        icon: "success",
-      });
-    },
-    //获取位置信息
-    async getLocationInfo() {
-      return new Promise((resolve) => {
-        //位置信息默认数据
-        let location = {
-          longitude: 0,
-          latitude: 0,
-          province: "",
-          city: "",
-          area: "",
-          street: "",
-          address: "",
-        };
-        uni.getLocation({
-          type: "gcj02",
-          success(res) {
-            location.longitude = res.longitude;
-            location.latitude = res.latitude;
-            // 腾讯地图Api
-            const qqmapsdk = new QQMapWX({
-              key: "7O2BZ-FHICB-V2CU6-NPPUT-DCXP3-6RFRS", //这里填写自己申请的key
-            });
-            qqmapsdk.reverseGeocoder({
-              location,
-              success(response) {
-                let info = response.result;
-                console.log(info);
-                location.province = info.address_component.province;
-                location.city = info.address_component.city;
-                location.area = info.address_component.district;
-                location.street = info.address_component.street;
-                location.address = info.address;
-                resolve(location);
-              },
-            });
-          },
-          fail(err) {
-            console.log(err);
-            resolve(location);
+      if (this.model1.userInfo.blurAddress) {
+        uni.showModal({
+          title: "提示",
+          content: "是否重新选择地址，重新选择地址将会覆盖之前的地址",
+          success: (res) => {
+            if (res.confirm) {
+              uni.chooseLocation({
+                success: (e) => {
+                  console.log("信息", e);
+                  this.model1.userInfo.blurAddress = e.address + e.name;
+                },
+              });
+            }
           },
         });
-      });
+      } else {
+        uni.chooseLocation({
+          success: (e) => {
+            console.log("信息", e);
+            this.model1.userInfo.blurAddress = e.address + e.name;
+          },
+        });
+      }
     },
+
     // 获取房号
     async getRoomNumber() {
       let filterData = getRequestFilter({
         phone: this.userInfo.account,
+      });
+
+      let filterTypeData = getRequestFilter({
+        key: "问题类型",
       });
       const { data } = await getModelList(
         "64f6d064d85a4b7b32ec641d",
         filterData
       );
 
+      const result = await getModelList(
+        "65250f6f388a8c7a0eb9b934",
+        filterTypeData
+      );
+
       // console.log(data);
       let { roomId } = data?.list[0];
 
-      console.log(roomId);
+      this.typeList = result.data?.list[0].value;
+
+      // console.log(roomId);
       this.roomData = await getModelInfo("64f6d11ed85a4b7b32ec641e", roomId);
     },
     // 提交按钮
@@ -433,6 +434,16 @@ export default {
       immediate: true, // 立即执行一次
     },
   },
+  computed: {
+    errorList() {
+      return this.typeList.map((item) => {
+        return {
+          title: item,
+          isActive: false,
+        };
+      });
+    },
+  },
   async onLoad() {
     this.getRoomNumber();
   },
@@ -457,7 +468,7 @@ export default {
       background-color: #6377f5;
 
       &-left {
-        font-size: 30rpx;
+        font-size: 40rpx;
         font-weight: 800;
         color: #fffefe;
       }
@@ -499,14 +510,12 @@ export default {
 
         &-btn {
           .text {
-            // width: 500rpx;
             font-size: 20rpx;
             color: #6377f5;
           }
 
           .btn {
-            width: 260rpx;
-            // height: 58rpx;
+            width: 200rpx;
           }
 
           > image {
@@ -531,7 +540,7 @@ export default {
 }
 
 .active-btn {
-  background: rgba(99, 119, 245, 0.1);
+  background: rgba(99, 119, 245, 0.3);
   color: #6377f5 !important;
   border: 1rpx solid #6377f5;
 }

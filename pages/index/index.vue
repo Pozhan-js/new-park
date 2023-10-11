@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-25 11:02:29
+ * @LastEditTime: 2023-10-11 10:11:33
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -95,7 +95,7 @@
         </u-grid>
       </view>
       <!-- 公告 -->
-      <view class="pages-content-placard padding-20">
+      <view class="pages-content-placard">
         <view class="placard-header">
           <view class="placard-header-left">社区公告</view>
           <view class="placard-header-right">
@@ -128,7 +128,7 @@
       </view>
 
       <!-- 社区活动 -->
-      <view class="pages-content-activity padding-20">
+      <view class="pages-content-activity">
         <view class="activity-header">
           <view class="activity-header-left">社区活动</view>
           <view class="activity-header-right">
@@ -375,9 +375,14 @@ export default {
     },
     //获取列表数据集
     async getNoticeList() {
+      //显示加载框
+      uni.showLoading({
+        title: "加载中",
+      });
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
+
       // console.log(data);
-      this.dataList = data?.list.map((item) => {
+      this.dataList = data.list?.map((item) => {
         return {
           title: item.title,
           image: helper.filterCover(item.cover_picture),
@@ -393,6 +398,9 @@ export default {
           createTime: item.creatorTime,
         };
       });
+
+      //隐藏加载框
+      uni.hideLoading();
 
       //  this.filterDataList = this.dataList
     },
@@ -519,9 +527,9 @@ export default {
 
     // 公告
     &-placard {
-      background-color: #fff;
       border-radius: 8rpx;
       margin: 20rpx;
+      padding-top: 20rpx;
       margin-top: 20rpx;
 
       .placard-header {
@@ -554,13 +562,17 @@ export default {
         }
       }
       .placard-content {
+        background-color: #fff;
+        padding: 20rpx;
         margin-top: 18rpx;
+        border-radius: 16rpx;
 
         > image {
           width: 210rpx;
           height: 184rpx;
           margin-right: 18rpx;
           flex-shrink: 0;
+          border-radius: 16rpx;
         }
 
         &-right {
@@ -577,10 +589,8 @@ export default {
               width: 60rpx;
               height: 35rpx;
               background: rgba(255, 0, 0, 0.06);
-              border-radius: 4rpx 4rpx 4rpx 4rpx;
+              border-radius: 4rpx;
               font-size: 22rpx;
-              font-family: PingFang SC-Regular, PingFang SC;
-              font-weight: 400;
               color: #ff0000;
             }
 
@@ -603,10 +613,9 @@ export default {
 
     // 活动
     &-activity {
-      background-color: #fff;
       border-radius: 8rpx;
+      padding-top: 20rpx;
       margin: 20rpx;
-      margin-top: 20rpx;
 
       .activity-header {
         display: flex;
@@ -640,8 +649,11 @@ export default {
       }
 
       .activity-content {
+        background-color: #fff;
         margin-top: 18rpx;
         position: relative;
+        border-radius: 16rpx;
+        padding: 20rpx;
         margin-bottom: 20rpx;
 
         &-left {
@@ -653,6 +665,7 @@ export default {
           > image {
             width: 100%;
             height: 100%;
+            border-radius: 16rpx;
           }
         }
 
@@ -682,7 +695,7 @@ export default {
         .activity-btn {
           position: absolute;
           right: 0;
-          top: 60rpx;
+          top: 80rpx;
           width: 138rpx;
           height: 46rpx;
           background: #6377f5;
