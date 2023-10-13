@@ -6,19 +6,20 @@
       </view>
       <view class="login-body">
         <view class="login-buttons margin-t-24">
-          <!-- <button class="login-phone circle-button" @click="goPhoneLogin">
-            账号验证登录
-          </button> -->
           <button
             v-if="isAgreement"
             class="login-wx circle-button"
             open-type="getPhoneNumber"
             @getphonenumber="wxLogin"
           >
-            手机号快捷登录
+            业主手机号快捷登录
           </button>
           <button v-else class="login-wx circle-button" @click="loginPrompt">
-            手机号快捷登录
+            业主手机号快捷登录
+          </button>
+          <!-- 短信验证信息 -->
+          <button class="login-phone circle-button" @click="goPhoneLogin">
+            访客短信验证登录
           </button>
         </view>
       </view>
@@ -30,11 +31,13 @@
 </template>
 
 <script>
+import { getObjectAssignProperty } from "@/common/function";
 import Agreement from "./components/Agreement";
 import userMixin from "@/common/mixins/user";
 import infoMixin from "@/common/mixins/info";
 import { getRequestFilter } from "@/common/function";
-import { getModelList } from "@/api";
+import { getModelList, updateRole } from "@/api";
+import { updateUserInfo } from "@/api/user";
 export default {
   mixins: [userMixin, infoMixin],
   components: { Agreement },
@@ -69,6 +72,28 @@ export default {
       if (code) {
         // this.phoneLogin(e).then(() => this.$helper.rollback(1200));
         this.phoneLogin(e).then(async () => {
+          // 登陆成功后将角色改为(过滤参数)
+          // let updateRoleData = {
+          //   ...this.userInfo,
+          //   roleId: ["688d94fae4204ef0ae2c17a0ec1aef3b"],
+          // };
+          // await updateRole(this.userInfo.id, updateRoleData);
+          // console.log("updateRole", updateRoleData);
+
+          let updateData = { roleId: ["688d94fae4204ef0ae2c17a0ec1aef3b"] };
+          const params = getObjectAssignProperty(updateData, ["roleId|roleId"]);
+
+          const updateInfo = updateUserInfo(this.userInfo.id, params).then(() =>
+            this.$store.commit("user/SET_USER_INFO", {
+              ...params,
+              $assign: true,
+            })
+          );
+
+          await Promise.all([updateInfo]).then(() => {
+            this.$helper.rollback(1000);
+          });
+
           // 获取过滤参数
           let filterData = getRequestFilter({
             formUser: this.userInfo.id,
@@ -111,6 +136,7 @@ export default {
       padding: 4rpx 0;
     }
     .login-phone {
+      margin-top: 48rpx;
       margin-bottom: 48rpx;
       background: #1959f6;
     }

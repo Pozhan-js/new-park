@@ -20,7 +20,7 @@ export default {
       return new Promise((resolve, reject) => {
         uni.getProvider({
           service: "payment",
-          success: res => {
+          success: (res) => {
             const payment = {
               ...payParams,
               package: payParams.packageStr,
@@ -37,7 +37,7 @@ export default {
               },
             });
           },
-          fail: err => reject(err),
+          fail: (err) => reject(err),
         });
       });
     },
@@ -46,14 +46,14 @@ export default {
      * @returns {Promise} 返回用户的OpenId
      */
     getUserOpenid() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         // 如果存在缓存
         const { OPENID_CACHE } = this.$constants;
         let userOpenId = uni.getStorageSync(OPENID_CACHE);
         if (userOpenId) return resolve(userOpenId);
         uni.login({
           provider: "weixin",
-          success: async e => {
+          success: async (e) => {
             // 获取用户微信信息
             let userWxInfo = await getUserOpenId(e.code);
             // 保存openId
@@ -86,8 +86,8 @@ export default {
      * @param {Object} code 验证码
      * @param {Object} mobilePhone 手机号
      */
-    codeLogin(code, mobilePhone) {
-      return this._userLogin({ type: 3, code, mobilePhone });
+    codeLogin(smsCode, mobilePhone) {
+      return this._userLogin({ type: 2, smsCode, mobilePhone });
     },
     /**
      * @description 手机号登录

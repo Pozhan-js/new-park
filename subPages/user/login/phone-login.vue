@@ -9,7 +9,8 @@
           labelSize="28rpx"
           labelColor="#333"
           space="12rpx"
-          :name="icon.phone" />
+          :name="icon.phone"
+        />
         <u--input
           placeholder="请输入手机号"
           type="number"
@@ -18,7 +19,8 @@
           :customStyle="{ background: '#f6f6f6' }"
           v-model="form.phone"
           :focus="focus === 'phone'"
-          shape="circle" />
+          shape="circle"
+        />
       </view>
       <view class="form-input-warp flex items-center">
         <view class="form-input flex-grow radius-20 flex items-center">
@@ -29,13 +31,15 @@
             border="none"
             maxlength="6"
             :customStyle="{ background: '#f6f6f6' }"
-            v-model="form.code"
+            v-model="form.smsCode"
             :focus="focus === 'code'"
-            shape="circle" />
+            shape="circle"
+          />
         </view>
         <view
           class="send-code bg-white radius-25 margin-l-24 flex-shrink-0 text-center"
-          @click="getCode">
+          @click="getCode"
+        >
           {{ tips }}
         </view>
       </view>
@@ -49,25 +53,31 @@
       @change="codeChange"
       @start="start"
       :seconds="seconds"
-      changeText="X秒" />
+      changeText="X秒"
+    />
     <image class="phone-login-bg" mode="widthFix" :src="background.bottom" />
   </view>
 </template>
 
 <script>
+import { getRequestFilter } from "@/common/function";
+import { createModel, getModelList, updateRole } from "@/api";
+import { getObjectAssignProperty } from "@/common/function";
+import { updateUserInfo } from "@/api/user";
+import userMixin from "@/common/mixins/user";
+import infoMixin from "@/common/mixins/info";
 import Agreement from "./components/Agreement";
 import { sleep } from "@/common/function";
 import { sendCode } from "@/api/user";
-import userMixin from "@/common/mixins/user";
 export default {
-  mixins: [userMixin],
+  mixins: [userMixin, infoMixin],
   components: { Agreement },
   data() {
     const image = this.$helper.getImage;
     return {
       tips: "",
       form: {
-        code: "",
+        smsCode: "",
         phone: "",
       },
       focus: "",
@@ -90,12 +100,74 @@ export default {
   },
   methods: {
     async login() {
+      if (this.isAnonymous) this.$jump("./phone-login");
       if (this.lock) return;
       if (this.validateForm()) {
         this.lock = true;
+
         try {
           await this.codeLogin.apply(this, Object.values(this.form));
-          this.$helper.rollback(1200, { delta: 2 });
+
+          // 获取过滤参数
+          let filterData = getRequestFilter({
+            formUser: this.userInfo.id,
+          });
+          // 发送请求获取
+          let { data } = await getModelList(
+            "64f6d064d85a4b7b32ec641d",
+            filterData
+          );
+          // 当在存储流程表中找不到该用户说明该用户没有选择楼栋 也就是🈚没有实名注册
+          if (!data?.list.length) {
+            // 登陆成功后将角色改为(过滤参数)
+            let updateData = { roleId: ["1cd9f3db655243099577ea1c01363ab4"] };
+            const params = getObjectAssignProperty(updateData, [
+              "roleId|roleId",
+            ]);
+
+            const updateInfo = updateUserInfo(this.userInfo.id, params).then(
+              () =>
+                this.$store.commit("user/SET_USER_INFO", {
+                  ...params,
+                  $assign: true,
+                })
+            );
+
+            await Promise.all([updateInfo]).then(async () => {
+              try {
+                //先查看匿名用户列表有当前账号没 没有就创建 有就不创建
+                let filterData = getRequestFilter({
+                  phone: this.form.phone,
+                });
+                let nickName = await getModelList(
+                  "6528b923388a8c7a0eb9bb1b",
+                  filterData
+                );
+                // 当在存储流程表中找不到该用户说明该用户没有选择楼栋
+                if (!nickName.data?.list.length) {
+                  // 6528b923388a8c7a0eb9bb1b
+                  // TODO 将匿名登录用户的信息存入表中
+                  let { data } = await createModel("6528b923388a8c7a0eb9bb1b", {
+                    phone: this.form.phone,
+                  });
+                  if (data.code === 200) {
+                    uni.showToast({
+                      title: "匿名登录",
+                      icon: "success",
+                    });
+                  }
+                }
+              } catch (error) {
+                console.log(error);
+              }
+
+              // this.$helper.rollback(1000);
+            });
+          }
+
+          setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
+
+          // this.$helper.rollback(1200, { delta: 1 });
         } catch {
           this.lock = false;
         }
@@ -120,7 +192,7 @@ export default {
     //校验表单
     validateForm(key = "all") {
       this.focus = "";
-      const { phone, code } = this.form;
+      const { phone, smsCode } = this.form;
       const validatePhone = () => {
         key = "phone";
         if (!phone) throw "手机号不能为空";
@@ -128,16 +200,16 @@ export default {
         return true;
       };
       const validateCode = () => {
-        key = "code";
-        if (!code) throw "验证码不能为空";
-        if (!uni.$u.test.code(code)) throw "验证码格式有误";
+        key = "smsCode";
+        if (!smsCode) throw "验证码不能为空";
+        if (!uni.$u.test.code(smsCode)) throw "验证码格式有误";
         return true;
       };
       try {
         switch (key) {
           case "phone":
             return validatePhone();
-          case "code":
+          case "smsCode":
             return validateCode();
           default:
             return validatePhone() && validateCode();

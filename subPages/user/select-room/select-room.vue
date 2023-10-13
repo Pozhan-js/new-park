@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { getModelList, createFlow, realName } from "@/api";
+import { getModelList, createFlow, realName, updateRole } from "@/api";
 import infoMixin from "@/common/mixins/info";
 import userMixin from "@/common/mixins/user";
 export default {
@@ -213,13 +213,8 @@ export default {
         this.mobilPhone,
         this.realNameVal
       );
-      console.log("实名认证信息", realInfoData);
-
+      // 认证成功
       if (realInfoData.data.result.verificationResult === "1") {
-        // console.log("认证成功");
-        console.log(
-          this.idCard.split("")[this.idCard.split("").length - 2] / 2
-        );
         // 创建流程;
         try {
           const flow = await createFlow({
@@ -238,6 +233,7 @@ export default {
             flowId: "64f6d064d85a4b7b32ec641d",
             status: 0,
           });
+
           if (flow.code === 200) {
             uni.showToast({
               title: "实名认证成功",
@@ -301,24 +297,5 @@ export default {
     border-radius: 8px;
     color: #fff;
   }
-
-  //   .fixed-right-bottom {
-  //     position: fixed;
-  //     right: 0;
-  //     bottom: 20%;
-  //     width: 100rpx;
-  //     height: 100rpx;
-  //     border-radius: 50%;
-  //     background-image: url("https://kindoucloud.com:8011/api/file/Image/systemicon/ycj/20221213_0cbce318dcb346868138283c57070878.png");
-  //     background-size: 100% 100%;
-  //     background-repeat: no-repeat;
-
-  //     .contact-btn {
-  //       width: 100%;
-  //       height: 100%;
-  //       border-radius: 50%;
-  //       opacity: 0;
-  //     }
-  //   }
 }
 </style>

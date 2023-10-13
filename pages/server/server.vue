@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-11 10:33:40
+ * @LastEditTime: 2023-10-13 16:14:32
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -15,7 +15,7 @@
     <view class="server-container" v-if="dataList.length">
       <view
         class="server-container-item"
-        v-for="item in dataList"
+        v-for="(item, index) in dataList"
         :key="item._id"
       >
         <!-- 业主信息 -->
@@ -51,14 +51,41 @@
           </view>
 
           <view class="item-tools-interactive flex-a-center">
-            <view class="interactive flex-a-center">
-              <u-icon name="thumb-up" size="24"></u-icon>
-              <view class="thumb-up-num">452</view>
+            <view class="interactive flex-a-center" @click="like(index)">
+              <u-icon
+                :name="item.islike === 0 ? 'thumb-up' : 'thumb-up-fill'"
+                size="24"
+              ></u-icon>
+              <view class="thumb-up-num">{{ item.like_count }}</view>
             </view>
-            <view class="interactive flex-a-center">
+            <view class="interactive flex-a-center" @tap="comment(index)">
               <u-icon name="more-circle" size="24"></u-icon>
-              <view class="more-circle-num">89</view>
+              <view class="more-circle-num">{{
+                item.comments ? item.comments.length : 0
+              }}</view>
             </view>
+          </view>
+        </view>
+
+        <!-- 赞／评论区 -->
+        <view class="post-footer">
+          <!-- <view class="footer_content">
+				<image class="liked" src="../../static/index/liked.png"></image>
+				<text class="nickname" v-for="(user,index_like) in post.like" :key="index_like">{{user.username}}</text>
+			</view> -->
+          <view
+            class="footer_content"
+            v-for="(comment, comment_index) in item.comments"
+            :key="comment_index"
+            @tap="reply(index, comment_index)"
+          >
+            <text class="comment-nickname"
+              >{{ comment.comment_person_name }}
+              <text v-if="comment.reply_person_name"
+                >回复{{ comment.reply_person_name }}</text
+              >：
+              <text class="comment-content">{{ comment.content }}</text>
+            </text>
           </view>
         </view>
 
@@ -70,16 +97,43 @@
       </u-empty>
     </view>
     <view-tabbar tabIndex="1"></view-tabbar>
+
+    <view class="foot" v-show="showInput">
+      <chat-input
+        @send-message="send_comment"
+        @blur="blur"
+        :focus="focus"
+        :placeholder="input_placeholder"
+      ></chat-input>
+      <!-- <chat-input @send-message="send_comment" @blur="blur" :placeholder="input_placeholder"></chat-input> -->
+    </view>
   </view>
 </template>
 
 <script>
 import { getRequestFilter } from "@/common/function";
 import helper from "@/common/helper";
-import { getModelList } from "@/api";
+import { getModelList, createModel, deleteModel } from "@/api";
+import chatInput from "@/components/im-chat/chatinput.vue"; //input框
+import { mapState, mapGetters } from "vuex";
+
 export default {
+  components: {
+    chatInput,
+  },
   data() {
     return {
+      user_id: 4,
+      username: "Liuxy",
+
+      index: "",
+      comment_index: "",
+
+      input_placeholder: "评论", //占位内容
+      focus: false, //是否自动聚焦输入框
+      is_reply: false, //回复还是评论
+      showInput: false, //评论输入框
+
       urls1: [
         {
           url: "https://cdn.uviewui.com/uview/album/1.jpg",
@@ -97,15 +151,19 @@ export default {
       typeList: [],
       // 接收数据
       shootCasuallyListData: [],
+      commentsListData: [],
       // 接收点赞数据
-      thumbUpData: {},
+      thumbUpData: "",
+      // 总点赞数
     };
   },
   computed: {
+    ...mapState("user", ["userInfo", "userData", "token"]),
     dataList() {
       return this.shootCasuallyListData.map((data) => {
         return {
           ...data,
+          // islike: 0,
           image: data.image.map((item) => {
             return {
               ...item,
@@ -124,6 +182,154 @@ export default {
     },
   },
   methods: {
+    reply(index, comment_index) {
+      let reply_id =
+        this.shootCasuallyListData[index].comments[comment_index].user_id;
+      if (this.userInfo.id == reply_id) {
+        return false;
+      }
+      this.is_reply = true; //回复中
+      this.showInput = true; //调起input框
+      let replyTo =
+        this.shootCasuallyListData[index].comments[comment_index]
+          .comment_person_name;
+      this.input_placeholder = "回复" + replyTo;
+      this.index = index; //post索引
+      this.comment_index = comment_index; //评论索引
+      this.focus = true;
+      console.log(this.is_reply);
+
+      // deleteModel('64e70412d85a4b7b32ec5d4a', this.shootCasuallyListData[index].comments[comment_index].reply_id)
+    },
+    async send_comment(message) {
+      var reply_person_name = "";
+      var reply_id = "";
+      var parent_comment_id = "";
+      var comment_content = message.content;
+      if (this.is_reply) {
+        var reply_person_name =
+          this.shootCasuallyListData[this.index].comments[this.comment_index]
+            .comment_person_name;
+        var reply_id =
+          this.shootCasuallyListData[this.index].comments[this.comment_index]
+            .user_id;
+        parent_comment_id =
+          this.shootCasuallyListData[this.index].comments[this.comment_index]
+            .post_id;
+      }
+
+      let data = {
+        post_id: this.shootCasuallyListData[this.index]._id,
+        // "parent_comment_id":
+        user_id: this.userInfo.id,
+        comment_person_name: this.userInfo.realName,
+        reply_id: reply_id,
+        reply_person_name: reply_person_name,
+        content: comment_content, //直接获取input中的值
+      };
+      const res = await createModel("64e70412d85a4b7b32ec5d4a", data);
+      console.log(this.is_reply, data, res);
+      // console.log(this.is_reply,reply_username,comment_content)
+
+      // this.shootCasuallyListData[this.index].comments.total += 1;
+      this.shootCasuallyListData[this.index].comments.push(data);
+      // this.getComList()
+      this.init_input();
+    },
+    init_input(type) {
+      this.showInput = false;
+      this.focus = false;
+      this.input_placeholder = "评论";
+      // this.is_reply = false;
+    },
+    blur: function () {
+      this.init_input();
+    },
+    async like(index) {
+      // 点赞
+      if (this.shootCasuallyListData[index].islike === 0) {
+        // 未点
+
+        let data = {
+          current_question_id: this.shootCasuallyListData[index]._id,
+        };
+        const res = await createModel("64e6d292d85a4b7b32ec5d10", data);
+
+        this.shootCasuallyListData[index].islike = res.data;
+        this.shootCasuallyListData[index].like_count += 1;
+        // console.log(res);
+        // this.dataList[index].like.push({
+        // 	"uid": this.user_id,
+        // 	"username": "," + this.username
+        // });
+      } else {
+        // 已点
+        deleteModel(
+          "64e6d292d85a4b7b32ec5d10",
+          this.shootCasuallyListData[index].islike
+        );
+
+        this.shootCasuallyListData[index].islike = 0;
+        this.shootCasuallyListData[index].like_count -= 1;
+      }
+    },
+    comment(index) {
+      this.showInput = true; //调起input框
+      this.focus = true;
+      this.index = index;
+      this.is_reply = false;
+    },
+    async getComList() {
+      const res = await getModelList("64e70412d85a4b7b32ec5d4a");
+
+      let list = res.data?.list;
+      let com_data = [];
+      list.forEach((item) => {
+        if (!com_data[item.post_id]) {
+          com_data[item.post_id] = [];
+        }
+        com_data[item.post_id].push(item);
+      });
+
+      this.shootCasuallyListData = this.shootCasuallyListData.map((data) => {
+        return {
+          ...data,
+          // islike: 0,
+          comments: com_data[data._id] ? com_data[data._id] : [],
+        };
+      });
+    },
+    async getLikeList() {
+      let self = this;
+      const res = await getModelList("64e6d292d85a4b7b32ec5d10");
+      //   console.log("like", res);
+      let list = res.data?.list;
+      let like_data = [];
+      let like_data2 = [];
+      list.forEach((item) => {
+        if (item.creatorUserId == self.userInfo.id) {
+          if (!like_data2[item.current_question_id]) {
+            like_data2[item.current_question_id] = [];
+          }
+          // item.islike = 1
+          like_data2[item.current_question_id].push(item);
+        }
+
+        if (!like_data[item.current_question_id]) {
+          like_data[item.current_question_id] = [];
+        }
+        like_data[item.current_question_id].push(item);
+      });
+
+      //   console.log(like_data);
+      this.shootCasuallyListData = this.shootCasuallyListData.map((data) => {
+        return {
+          ...data,
+          islike: like_data2[data._id] ? like_data2[data._id][0]._id : 0,
+          like_count: like_data[data._id] ? like_data[data._id].length : 0,
+        };
+      });
+    },
     // 获取随手拍列表
     async getShootCasuallyList(type = "全部") {
       //显示加载框
@@ -134,10 +340,14 @@ export default {
         const res = await getModelList("64d1dcab8b140b0b56b6ed90");
         this.shootCasuallyListData = res.data?.list;
       } else {
-        let reqData = getRequestFilter({ questionType: type });
+        let reqData = getRequestFilter({
+          questionType: type,
+        });
         const res = await getModelList("64d1dcab8b140b0b56b6ed90", reqData);
         this.shootCasuallyListData = res.data?.list;
       }
+      this.getComList();
+      this.getLikeList();
 
       // 获取分类
       let filterTypeData = getRequestFilter({
@@ -148,7 +358,7 @@ export default {
         filterTypeData
       );
 
-      this.typeList = result.data?.list[0].value;
+      this.typeList = ["全部", ...result.data?.list[0].value];
 
       //隐藏加载框
       uni.hideLoading();
@@ -169,6 +379,8 @@ export default {
     },
   },
   onLoad() {
+    // 现获取点赞结果
+    // console.log(this.userInfo)
     this.getShootCasuallyList();
   },
 };
@@ -263,10 +475,60 @@ export default {
 
       .item-info {
         margin-bottom: 20rpx;
+
         &-num {
           margin-left: 20rpx;
         }
       }
+    }
+  }
+
+  .foot {
+    position: fixed;
+    width: 100%;
+    height: 90upx;
+    min-height: 90upx;
+    left: 0upx;
+    bottom: 0upx;
+    overflow: hidden;
+    z-index: 99999;
+  }
+
+  .post-footer {
+    margin-top: 30upx;
+    background-color: #f3f3f5;
+    width: 100%;
+
+    .footer_content {
+      padding-left: 10upx;
+      position: relative;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      line-height: 2;
+    }
+
+    .footer_content .nickname {
+      color: #36648b;
+      font-size: 24upx;
+    }
+
+    .footer_content .comment-nickname {
+      color: #36648b;
+      font-size: 24upx;
+    }
+
+    .footer_content .comment-content {
+      color: #000000;
+      font-size: 24upx;
     }
   }
 }

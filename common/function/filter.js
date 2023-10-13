@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 10:19:15
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-06 11:20:35
+ * @LastEditTime: 2023-10-13 09:44:20
  * @FilePath: /smart-park/common/function/filter.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -23,7 +23,7 @@ export function getObjectAssignProperty(origin = {}, attrs = [], defaultValue) {
     //获取默认值(函数执行后会获取一个固定函数)
     let fn = () => defaultValue;
     if (isObject(defaultValue)) {
-      fn = key => {
+      fn = (key) => {
         const val = defaultValue[key];
         return isFunction(val) ? val(origin) : val;
       };
@@ -58,7 +58,7 @@ export function getObjectAssignProperty(origin = {}, attrs = [], defaultValue) {
  * getReferenceObjectProperty({a:1,b:2},{b:3,c:1}):==>{a:1,b:3}
  */
 export function getReferenceObjectProperty(raw = {}, target = {}) {
-  if ([raw, target].some(o => !isObject(o)))
+  if ([raw, target].some((o) => !isObject(o)))
     throw "The parameter is illegal! This is not a object";
   return Object.entries(raw).reduce((obj, [key, val]) => {
     const [keyName, alias] = key.split("|"); //(目标属性名|返回属性名)
@@ -85,26 +85,35 @@ export function optionalChain(target, keys, def) {
 }
 
 // 获取删选请求数据 获取并列删选条件
-export function getRequestFilter(attr = {}, method = 'eq', connect = 'and', currentPage = 1, pageSize = 100,) {
-  if (!Object.keys(attr).length) return
+export function getRequestFilter(
+  attr = {},
+  method = "eq",
+  connect = "and",
+  currentPage = 1,
+  pageSize = 100
+) {
+  if (!Object.keys(attr).length) return;
   let filterArr = Object.keys(attr).map((item) => {
     // console.log('参数', item, attr[item], Array.isArray(attritem));
     return {
       jdcloudKey: item,
       key: item,
-      method: Array.isArray(attr[item]) ? "range": method,
+      method: Array.isArray(attr[item]) ? "range" : method,
       type: "custom",
-      value: Array.isArray(attr[item]) ? attr[item] : [attr[item]]
-    }
-  })
+      value: Array.isArray(attr[item]) ? attr[item] : [attr[item]],
+    };
+  });
   return {
     currentPage,
     pageSize,
     connect,
-    filter: [
-      ...filterArr
-    ]
-  }
+    filter: [...filterArr],
+  };
 }
 
-
+// 得到权限
+// export function getRole(list = [], name = "", id = "") {
+//   // let role = list.find((item) => item.role.split(",").includes(id));
+//   let role = list.find((item) => (item.name = name));
+//   return role.role.split(",").includes(id);
+// }

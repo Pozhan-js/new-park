@@ -2,11 +2,12 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:10:10
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-04 16:20:37
+ * @LastEditTime: 2023-10-12 17:53:36
  * @FilePath: /smart-park/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script>
+// import storage from "@/common/function/storage";
 export default {
   globalData: {
     icon: {
@@ -17,6 +18,11 @@ export default {
       娱乐: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230621_617b48b0e07843238392e79c5be552df.png",
       其他: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230901_44dd4d96c6fb4b209929a1d9b15fbb89.png",
     },
+    // 判断是匿名登录还是正常登录
+    isAnonymous: false,
+    // roleId: storage
+    //   .get("SP_UserInfo")
+    //   .roleId.include("1cd9f3db655243099577ea1c01363ab4"),
   },
   onLaunch: function () {
     uni.$set = this.$set;

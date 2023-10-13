@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 10:19:27
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-19 10:11:47
+ * @LastEditTime: 2023-10-12 16:12:12
  * @FilePath: /smart-park/api/index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,7 +15,8 @@ export const API = {
   open: "/api/mongoVisualdev/OpenApi/", //登录凭证
   system: "/api/mongoSystem/Permission/", //登录认证
   workFlow: "api/mongoWorkflow/FlowTask", //创建流程
-  realName:'/api/mongoThird/huawei/certification/' //实名认证
+  realName: "/api/mongoThird/huawei/certification/", //实名认证
+  upDateUser: "/api/mongoSystem/Permission/Users", //修改角色
 };
 
 //获取公共token
@@ -49,7 +50,7 @@ export const getModelList = (modeId, data = {}) =>
 
 // 获取开放数据列表
 export const getPublicModelList = (modeId, data = {}) => {
-  return getOpenToken(isOpen =>
+  return getOpenToken((isOpen) =>
     http.post(API[isOpen ? "open" : "visual"] + modeId + "/list", {
       pageSize: -1,
       ...data,
@@ -59,10 +60,10 @@ export const getPublicModelList = (modeId, data = {}) => {
 
 // 修改数据列表
 export const updateModel = (modelId, data = {}, id) => {
-  return http.put(
-    API.visual + `update/${modelId}/${data.id || id || ""}`,
-    { data: JSON.stringify(data) });
-}
+  return http.put(API.visual + `update/${modelId}/${data.id || id || ""}`, {
+    data: JSON.stringify(data),
+  });
+};
 
 // 获取数据信息详情
 export const getModelInfo = (modelId, id) =>
@@ -70,7 +71,7 @@ export const getModelInfo = (modelId, id) =>
 
 // 获取公开数据信息详情
 export const getPublicModelInfo = (modelId, id) =>
-  getOpenToken(isOpen =>
+  getOpenToken((isOpen) =>
     http.get(API[isOpen ? "open" : "visual"] + `${modelId}/${id}`)
   );
 
@@ -83,7 +84,13 @@ export const batchOperation = (modelId, data) =>
   http.post(API.visual + `batch_insert_update/${modelId}`, data);
 
 // 创建流程
-export const createFlow = data => http.post(API.workFlow, data);
+export const createFlow = (data) => http.post(API.workFlow, data);
 
 // 实名认证
-export const realName = (idCard,phoneNumber,realName) => http.get(API.realName+`${idCard}/${phoneNumber}/${realName}`)
+export const realName = (idCard, phoneNumber, realName) =>
+  http.get(API.realName + `${idCard}/${phoneNumber}/${realName}`);
+
+// 修改角色
+export const updateRole = (modelId, data = {}) => {
+  http.put(API.upDateUser + `/${modelId}`, data);
+};

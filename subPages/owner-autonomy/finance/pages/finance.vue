@@ -10,14 +10,7 @@
           @cancel="handleDateCancel"
           :closeOnClickOverlay="true"
         ></u-datetime-picker>
-        <!-- <uni-datetime-picker
-          v-model="range"
-          type="datetimerange"
-          rangeSeparator="至"
-          @maskClick="dateValueChange"
-          @change="dateValueChange"
-          @clear="handleValueClear"
-        /> -->
+
         <view class="finance-date-time" @click="showDatePick">
           <view class="time-text">{{
             $u.timeFormat(dateValue, "yyyy-mm")

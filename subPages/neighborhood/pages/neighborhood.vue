@@ -19,7 +19,7 @@
         <u-tabs :list="tabList" @click="clickTab" :lineWidth="60"></u-tabs>
       </view>
 
-      <view class="tab-list">
+      <view class="tab-list" v-if="activityPagesList.length">
         <view
           class="tab-item"
           v-for="(data, index) in activityPagesList"
@@ -68,6 +68,11 @@
             </view>
           </view>
         </view>
+      </view>
+
+      <view class="empty" v-else>
+        <u-empty mode="list" icon="http://cdn.uviewui.com/uview/empty/data.png">
+        </u-empty>
       </view>
     </view>
     <!-- 底部导航栏 -->
@@ -332,4 +337,3 @@ export default {
   }
 }
 </style>
-

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-11 10:11:33
+ * @LastEditTime: 2023-10-13 15:45:02
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -29,27 +29,30 @@
       >
       </u-swiper>
     </view>
+
     <view class="pages-content">
       <!-- 功能分之 -->
       <view class="pages-content-business padding-20">
-        <view
-          class="pages-content-business-item box1 padding-30"
-          @click="toSayPage"
-        >
-          <view class="title">随手拍</view>
-          <view class="item-content flex-a-center">
-            <view class="item-content-left">
-              <view>拍隐患，提意见</view>
-              <view>家园因你而美丽</view>
-            </view>
-            <view class="item-content-right">
-              <image
-                src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_919e03b098064c52a066abd9fefb6723.png"
-                mode=""
-              />
+        <template v-if="isShowItem('随手拍')">
+          <view
+            class="pages-content-business-item box1 padding-30"
+            @click="toSayPage"
+          >
+            <view class="title">随手拍</view>
+            <view class="item-content flex-a-center">
+              <view class="item-content-left">
+                <view>拍隐患，提意见</view>
+                <view>家园因你而美丽</view>
+              </view>
+              <view class="item-content-right">
+                <image
+                  src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_919e03b098064c52a066abd9fefb6723.png"
+                  mode=""
+                />
+              </view>
             </view>
           </view>
-        </view>
+        </template>
         <view
           class="pages-content-business-item box2 padding-20 flex-center"
           @click="toOwnerAutonomy"
@@ -77,21 +80,19 @@
           </view>
         </view>
       </view>
-      <!-- 应用 -->
+      <!-- 应用   v-if="getRole(item.menueItem, userInfo.id)"-->
       <view class="pages-content-feature">
         <u-grid :border="false" col="4">
-          <u-grid-item
-            v-for="(baseListItem, baseListIndex) in baseList"
-            @click="clickGridItem(baseListItem)"
-            :key="baseListIndex"
-          >
-            <image
-              :src="baseListItem.imageUrl"
-              mode=""
-              :style="{ width: '74rpx', height: '74rpx', marginTop: '20rpx' }"
-            />
-            <text class="grid-text">{{ baseListItem.title }}</text>
-          </u-grid-item>
+          <template v-for="(item, index) in baseList">
+            <u-grid-item @click="clickGridItem(item)" :key="index">
+              <image
+                :src="item.menueIcon"
+                mode=""
+                :style="{ width: '74rpx', height: '74rpx', marginTop: '20rpx' }"
+              />
+              <text class="grid-text">{{ item.menueItem }}</text>
+            </u-grid-item>
+          </template>
         </u-grid>
       </view>
       <!-- 公告 -->
@@ -183,85 +184,92 @@
 <script>
 import { getModelList } from "@/api";
 import helper from "@/common/helper";
+import userMixin from "@/common/mixins/user";
+import infoMixin from "@/common/mixins/info";
 import { mapActions, mapState, mapGetters } from "vuex";
+import { getRequestFilter } from "@/common/function";
+// import { getRole } from "@/common/function/filter";
 export default {
+  mixins: [userMixin, infoMixin],
   data() {
     return {
-      baseList: [
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_015444438cf747d88d58855b2d7e7ff8.png",
-          title: "小区公告",
-          path: "/subPages/main/notice/notice-list",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_5451bb83bd8640bead6254247a8835da.png",
-          title: "邻里活动",
-          path: "/subPages/neighborhood/pages/neighborhood",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_e36a480215e34879a8187092703a292c.png",
-          title: "办事指南",
-          path: "/subPages/guide/guide",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_4f3e5dfa5f1342589c68c1334c69e8b8.png",
-          title: "友邻市场",
-          path: "/subPages/market/pages/index",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_4dfe8d5d6246482887157e52811b77ba.png",
-          title: "民意投票",
-          path: "/subPages/owner-autonomy/vote/vote",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_0c7c29911816404c865e55878d6d3b97.png",
-          title: "电梯安全",
-          path: "/subPages/owner-autonomy/elevator-safety/elevator-safety",
-        },
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_c6b38442ed5845b68d76b23a4396c18e.png",
-          title: "故障统计",
-          path: "/subPages/owner-autonomy/fault/fault-statistics",
-        },
-        // {
-        //   imageUrl:
-        //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_61237ba98b914a3d84433946db060337.png",
-        //   title: "助农特产",
-        //   path: "./",
-        // },
-        // {
-        //   imageUrl:
-        //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_90c53937f86a49ea9141ecc72b79c9a8.png",
-        //   title: "律师咨询",
-        //   path: "/subPages/legal-advice/legal-advice",
-        // },
+      // baseList: [
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_015444438cf747d88d58855b2d7e7ff8.png",
+      //     title: "小区公告",
+      //     path: "/subPages/main/notice/notice-list",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_5451bb83bd8640bead6254247a8835da.png",
+      //     title: "邻里活动",
+      //     path: "/subPages/neighborhood/pages/neighborhood",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_e36a480215e34879a8187092703a292c.png",
+      //     title: "办事指南",
+      //     path: "/subPages/guide/guide",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_4f3e5dfa5f1342589c68c1334c69e8b8.png",
+      //     title: "友邻市场",
+      //     path: "/subPages/market/pages/index",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_4dfe8d5d6246482887157e52811b77ba.png",
+      //     title: "民意投票",
+      //     path: "/subPages/owner-autonomy/vote/vote",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_0c7c29911816404c865e55878d6d3b97.png",
+      //     title: "电梯安全",
+      //     path: "/subPages/owner-autonomy/elevator-safety/elevator-safety",
+      //   },
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_c6b38442ed5845b68d76b23a4396c18e.png",
+      //     title: "故障统计",
+      //     path: "/subPages/owner-autonomy/fault/fault-statistics",
+      //   },
+      //   // {
+      //   //   imageUrl:
+      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_61237ba98b914a3d84433946db060337.png",
+      //   //   title: "助农特产",
+      //   //   path: "./",
+      //   // },
+      //   // {
+      //   //   imageUrl:
+      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_90c53937f86a49ea9141ecc72b79c9a8.png",
+      //   //   title: "律师咨询",
+      //   //   path: "/subPages/legal-advice/legal-advice",
+      //   // },
 
-        // {
-        //   imageUrl:
-        //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_49d47bdaf3d2401fb123ceda0db26e35.png",
-        //   title: "养老健康",
-        //   path: "./",
-        // },
+      //   // {
+      //   //   imageUrl:
+      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_49d47bdaf3d2401fb123ceda0db26e35.png",
+      //   //   title: "养老健康",
+      //   //   path: "./",
+      //   // },
 
-        {
-          imageUrl:
-            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_f80a0105622549db84c8eaaf08b860cb.png",
-          title: "更多",
-          path: "/subPages/main/more/more",
-        },
-      ],
+      //   {
+      //     imageUrl:
+      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_f80a0105622549db84c8eaaf08b860cb.png",
+      //     title: "更多",
+      //     path: "/subPages/main/more/more",
+      //   },
+      // ],
+      baseList: [],
       dataList: [], //公告列表数据
     };
   },
   computed: {
     ...mapState("main", ["banner"]),
+    ...mapState("role", ["roleList"]),
     ...mapGetters("main", ["newBanner", "newActivities"]),
     // 公告列表数据
     filterDataList() {
@@ -287,6 +295,7 @@ export default {
     topFilterDataList() {
       return this.filterDataList.filter((item) => item.top === "是");
     },
+
     noticeTime() {
       //  this.filterDataList[0]?.time[0]
       return (time) => {
@@ -295,10 +304,21 @@ export default {
         }
       };
     },
+
+    isShowItem() {
+      return (name) => {
+        if (this.roleList && this.userInfo) {
+          const data = this.roleList.find((item) => item.name === name);
+          return data && data.role.split(",").includes(this.userInfo.roleId[0]);
+        }
+        return false; // 如果 roleList 或 userInfo 未定义，返回默认值或适当的值
+      };
+    },
   },
   methods: {
     //获取轮播图数据
     ...mapActions("main", ["getBanner", "getActivity"]),
+    ...mapActions("role", ["getMenuRoleList"]),
     // 跳转随手拍
     toSayPage() {
       uni.navigateTo({
@@ -307,14 +327,14 @@ export default {
     },
     //应用跳转方法
     clickGridItem(item) {
-      if (item.path == "./") {
+      if (item.menuePath == "./") {
         uni.showToast({
           title: "暂未开放",
           icon: "none",
         });
       } else {
         uni.navigateTo({
-          url: item.path,
+          url: item.menuePath,
         });
       }
     },
@@ -404,6 +424,25 @@ export default {
 
       //  this.filterDataList = this.dataList
     },
+    // 获取首页菜单
+    async getMeuList() {
+      let filterTypeData = getRequestFilter({
+        key: "首页菜单",
+      });
+
+      const result = await getModelList(
+        "65250f6f388a8c7a0eb9b934",
+        filterTypeData
+      );
+
+      this.baseList = result.data?.list[0].tableField103.filter((item) => {
+        return this.getRole(item.menueItem);
+      });
+    },
+    getRole(name = "") {
+      let data = this.roleList?.find((item) => item.name == name);
+      return data.role.split(",").includes(this.userInfo.roleId[0]);
+    },
   },
   mounted() {
     // 当组件挂载时执行
@@ -412,7 +451,11 @@ export default {
     // 获取活动数据
     this.getActivity();
   },
-  async onLoad() {
+  async created() {},
+  async onShow() {
+    // 当组件创建时执行
+    this.getMenuRoleList();
+    this.getMeuList();
     this.getNoticeList();
   },
 };
@@ -421,7 +464,6 @@ export default {
 <style lang="scss" scoped>
 .pages {
   width: 100vw;
-  // height: 100vh;
   position: relative;
 
   &::after {
