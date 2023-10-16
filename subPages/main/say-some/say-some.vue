@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-10 16:59:05
+ * @LastEditTime: 2023-10-16 09:46:03
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -161,28 +161,7 @@ export default {
     return {
       myText: "&nbsp;&nbsp;&nbsp;&nbsp;大家一起努力",
       typeList: [],
-      // errorList: [
-      //   {
-      //     title: "故障上报",
-      //     isActive: false,
-      //   },
-      //   {
-      //     title: "环境卫生",
-      //     isActive: false,
-      //   },
-      //   {
-      //     title: "电梯故障",
-      //     isActive: false,
-      //   },
-      //   {
-      //     title: "安全隐患",
-      //     isActive: false,
-      //   },
-      //   {
-      //     title: "其他事项",
-      //     isActive: false,
-      //   },
-      // ],
+      errorList: [],
       model1: {
         userInfo: {
           image: [], //图片
@@ -291,12 +270,14 @@ export default {
       this.showModel = true;
       // console.log('open');
     },
+
     close() {
       this.showModel = false;
       uni.navigateBack({
         delta: 1,
       });
     },
+
     // 获取地址按钮点击
     async getAddressBtn() {
       if (this.model1.userInfo.blurAddress) {
@@ -358,6 +339,7 @@ export default {
       let that = this;
 
       this.loading = true;
+      that.model1.userInfo.userIcon = this.userInfo.headIcon;
       try {
         await createModel(
           "64d1dcab8b140b0b56b6ed90",
@@ -372,6 +354,7 @@ export default {
             description: "", //描述
             address: "",
             blurAddress: "",
+            // userIcon: this.userInfo.headIcon,
           };
           (this.errorList = [
             {
@@ -419,7 +402,6 @@ export default {
   watch: {
     fileList1: {
       handler(val) {
-        // console.log(val);
         this.model1.userInfo.image = val.map((item) => item.url);
       },
       deep: true,
@@ -433,17 +415,21 @@ export default {
       deep: true,
       immediate: true, // 立即执行一次
     },
-  },
-  computed: {
-    errorList() {
-      return this.typeList.map((item) => {
-        return {
-          title: item,
-          isActive: false,
-        };
-      });
+
+    typeList: {
+      handler(val) {
+        this.errorList = val.map((item) => {
+          return {
+            title: item,
+            isActive: false,
+          };
+        });
+      },
+      deep: true,
+      immediate: true, // 立即执行一次
     },
   },
+
   async onLoad() {
     this.getRoomNumber();
   },

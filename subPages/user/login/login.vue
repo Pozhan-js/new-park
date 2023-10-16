@@ -73,12 +73,6 @@ export default {
         // this.phoneLogin(e).then(() => this.$helper.rollback(1200));
         this.phoneLogin(e).then(async () => {
           // 登陆成功后将角色改为(过滤参数)
-          // let updateRoleData = {
-          //   ...this.userInfo,
-          //   roleId: ["688d94fae4204ef0ae2c17a0ec1aef3b"],
-          // };
-          // await updateRole(this.userInfo.id, updateRoleData);
-          // console.log("updateRole", updateRoleData);
 
           let updateData = { roleId: ["688d94fae4204ef0ae2c17a0ec1aef3b"] };
           const params = getObjectAssignProperty(updateData, ["roleId|roleId"]);
@@ -90,28 +84,26 @@ export default {
             })
           );
 
-          await Promise.all([updateInfo]).then(() => {
-            this.$helper.rollback(1000);
-          });
-
-          // 获取过滤参数
-          let filterData = getRequestFilter({
-            formUser: this.userInfo.id,
-          });
-          // 发送请求获取
-          let { data } = await getModelList(
-            "64f6d064d85a4b7b32ec641d",
-            filterData
-          );
-          // 当在存储流程表中找不到该用户说明该用户没有选择楼栋
-          if (!data?.list.length) {
-            // 跳转到选取楼栋号页面
-            uni.reLaunch({
-              url: "/subPages/user/select-room/select-room",
+          await Promise.all([updateInfo]).then(async () => {
+            // 获取过滤参数
+            let filterData = getRequestFilter({
+              formUser: this.userInfo.id,
             });
-          } else {
-            this.$helper.rollback(1200);
-          }
+            // 发送请求获取
+            let { data } = await getModelList(
+              "64f6d064d85a4b7b32ec641d",
+              filterData
+            );
+            // 当在存储流程表中找不到该用户说明该用户没有选择楼栋
+            if (!data?.list.length) {
+              // 跳转到选取楼栋号页面
+              uni.reLaunch({
+                url: "/subPages/user/select-room/select-room",
+              });
+            } else {
+              this.$helper.rollback(1200);
+            }
+          });
         });
       }
     },

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-13 16:14:32
+ * @LastEditTime: 2023-10-16 14:42:32
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -20,7 +20,7 @@
       >
         <!-- 业主信息 -->
         <view class="item-info flex-a-center">
-          <u-avatar :src="src"></u-avatar>
+          <u-avatar :src="getHeardImg(item.userIcon)" shape="circle"></u-avatar>
           <view class="item-info-num">{{
             item.showName ? "匿名用户" : item.roomNum
           }}</view>
@@ -37,14 +37,14 @@
           ></u-album>
         </view>
         <view class="item-address flex-a-center">
-          <u-icon name="map-fill" size="16" color="#6377f5"></u-icon>
+          <u-icon name="map-fill" size="20" color="#6377f5"></u-icon>
           <view class="address" style="margin-left: 10rpx">{{
             item.address
           }}</view>
         </view>
         <view class="item-tools flex-a-center-j-space-between">
           <view class="item-tools-date flex-a-center">
-            <u-icon size="16" name="clock" color="#6377f5"></u-icon>
+            <u-icon size="20" name="clock" color="#6377f5"></u-icon>
             <view class="time" style="font-size: 24rpx">{{
               isTimeOut(item.creatorTime)
             }}</view>
@@ -54,12 +54,12 @@
             <view class="interactive flex-a-center" @click="like(index)">
               <u-icon
                 :name="item.islike === 0 ? 'thumb-up' : 'thumb-up-fill'"
-                size="24"
+                size="26"
               ></u-icon>
               <view class="thumb-up-num">{{ item.like_count }}</view>
             </view>
             <view class="interactive flex-a-center" @tap="comment(index)">
-              <u-icon name="more-circle" size="24"></u-icon>
+              <u-icon name="more-circle" size="26"></u-icon>
               <view class="more-circle-num">{{
                 item.comments ? item.comments.length : 0
               }}</view>
@@ -160,18 +160,22 @@ export default {
   computed: {
     ...mapState("user", ["userInfo", "userData", "token"]),
     dataList() {
-      return this.shootCasuallyListData.map((data) => {
-        return {
-          ...data,
-          // islike: 0,
-          image: data.image.map((item) => {
-            return {
-              ...item,
-              url: helper.filterCover(item.url),
-            };
-          }),
-        };
-      });
+      return this.shootCasuallyListData
+        .map((data) => {
+          return {
+            ...data,
+            // islike: 0,
+            image: data.image.map((item) => {
+              return {
+                ...item,
+                url: helper.filterCover(item.url),
+              };
+            }),
+          };
+        })
+        .sort((a, b) => {
+          return b.creatorTime - a.creatorTime;
+        });
     },
     tabList() {
       return this.typeList.map((item) => {
@@ -193,7 +197,7 @@ export default {
       let replyTo =
         this.shootCasuallyListData[index].comments[comment_index]
           .comment_person_name;
-      this.input_placeholder = "回复" + replyTo;
+      this.input_placeholder = " 回复 " + replyTo;
       this.index = index; //post索引
       this.comment_index = comment_index; //评论索引
       this.focus = true;
@@ -294,7 +298,6 @@ export default {
       this.shootCasuallyListData = this.shootCasuallyListData.map((data) => {
         return {
           ...data,
-          // islike: 0,
           comments: com_data[data._id] ? com_data[data._id] : [],
         };
       });
@@ -302,7 +305,6 @@ export default {
     async getLikeList() {
       let self = this;
       const res = await getModelList("64e6d292d85a4b7b32ec5d10");
-      //   console.log("like", res);
       let list = res.data?.list;
       let like_data = [];
       let like_data2 = [];
@@ -311,7 +313,6 @@ export default {
           if (!like_data2[item.current_question_id]) {
             like_data2[item.current_question_id] = [];
           }
-          // item.islike = 1
           like_data2[item.current_question_id].push(item);
         }
 
@@ -377,10 +378,13 @@ export default {
         return uni.$u.timeFrom(time, "yyyy-mm-dd");
       }
     },
+    // 获取头像
+    getHeardImg(url) {
+      return this.$helper.filterCover(url) || "";
+    },
   },
   onLoad() {
     // 现获取点赞结果
-    // console.log(this.userInfo)
     this.getShootCasuallyList();
   },
 };

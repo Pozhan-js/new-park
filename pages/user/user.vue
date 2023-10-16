@@ -7,8 +7,9 @@
     >
       <u-avatar size="140rpx" :src="avatar" />
       <view v-if="isLogin" class="user-info flex-col flex-grow justify-evenly">
-        <text class="user-name text_ellipsis">{{ realName }}</text>
-        <text class="study-days">学习{{ studyDays }}天</text>
+        <!-- <text class="user-name text_ellipsis">{{ realName }}</text> -->
+        <text class="user-name text_ellipsis">{{ userMessage.roomName }}</text>
+        <text class="study-days">{{ userMessage.nickName }}</text>
       </view>
       <view
         v-else
@@ -44,6 +45,8 @@
 </template>
 
 <script>
+import { getModelList } from "@/api";
+import { getRequestFilter } from "@/common/function";
 import infoMixin from "@/common/mixins/info";
 export default {
   mixins: [infoMixin],
@@ -55,6 +58,8 @@ export default {
       cellList: [
         { title: "设置", path: getPath("settings"), icon: getIcon("settings") },
       ],
+
+      userMessage: {},
     };
   },
   computed: {
@@ -70,6 +75,20 @@ export default {
       if (!item.path) this.$message("功能开发中...", "none");
       else this.$jump(item.path);
     },
+    async getUserMessage() {
+      let filterData = getRequestFilter({
+        formUser: this.userInfo.id,
+      });
+      const { data: res } = await getModelList(
+        "64f6d064d85a4b7b32ec641d",
+        filterData
+      );
+
+      this.userMessage = res?.list[0] || {};
+    },
+  },
+  async onShow() {
+    this.getUserMessage();
   },
 };
 </script>

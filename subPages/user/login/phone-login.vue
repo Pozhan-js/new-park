@@ -160,14 +160,10 @@ export default {
               } catch (error) {
                 console.log(error);
               }
-
-              // this.$helper.rollback(1000);
             });
           }
 
           setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
-
-          // this.$helper.rollback(1200, { delta: 1 });
         } catch {
           this.lock = false;
         }

@@ -54,6 +54,7 @@
             <u-icon name="arrow-right"></u-icon>
           </view>
         </u-form-item>
+
         <u-form-item label="电话号码" border-bottom>
           <view class="flex-a-center-j-space-between">
             <u--input
@@ -154,12 +155,14 @@ export default {
       requestLoading: false,
       realNameVal: "", //真实姓名
       mobilPhone: "", //  电话号码
-      idCard: "",
+      idCard: "", //省份证号
+      // age: "",
     };
   },
   onLoad() {
     this.getBuildAndHouse();
   },
+
   methods: {
     hoursePick() {
       if (this.pickHourseObj.columns[0].length == 0) {
@@ -178,88 +181,100 @@ export default {
     },
 
     async submit() {
-      // 如果是在请求中则，不处理
-      if (this.requestLoading) {
-        return;
-      }
-      if (!this.pickObj.pickValue) {
-        uni.showToast({
-          title: "请选择楼栋",
-          icon: "error",
-        });
-        return;
-      }
-      if (!this.pickHourseObj.pickValue) {
-        uni.showToast({
-          title: "请选择您所在的房号",
-          icon: "error",
-        });
-        return;
-      }
-      this.requestLoading = true;
-      // 获取roomId
-      this.allDataList?.forEach((item) => {
-        if (
-          item.buildingNumber === this.pickObj.pickValue &&
-          item.roomNumber === this.pickHourseObj.pickValue
-        ) {
-          this.roomId = item._id;
+      try {
+        // 如果是在请求中则，不处理
+        if (this.requestLoading) {
+          return;
         }
-      });
-
-      // 实名认证
-      const realInfoData = await realName(
-        this.idCard,
-        this.mobilPhone,
-        this.realNameVal
-      );
-      // 认证成功
-      if (realInfoData.data.result.verificationResult === "1") {
-        // 创建流程;
-        try {
-          const flow = await createFlow({
-            data: JSON.stringify({
-              phone: this.userInfo.mobilePhone,
-              formUser: this.userInfo.id,
-              roomId: this.roomId,
-              realName: this.realNameVal,
-              phone: this.mobilPhone,
-              idCardNum: this.idCard,
-              sex:
-                this.idCard.split("")[this.idCard.split("").length - 2] % 2
-                  ? "男"
-                  : "女",
-            }),
-            flowId: "64f6d064d85a4b7b32ec641d",
-            status: 0,
+        if (!this.pickObj.pickValue) {
+          uni.showToast({
+            title: "请选择楼栋",
+            icon: "error",
           });
-
-          if (flow.code === 200) {
-            uni.showToast({
-              title: "实名认证成功",
-              icon: "success",
-            });
-            setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
-          }
-        } catch (error) {
-          console.log(error);
+          return;
         }
-      } else {
+        if (!this.pickHourseObj.pickValue) {
+          uni.showToast({
+            title: "请选择您所在的房号",
+            icon: "error",
+          });
+          return;
+        }
+        this.requestLoading = true;
+        // 获取roomId
+        this.allDataList?.forEach((item) => {
+          if (
+            item.buildingNumber === this.pickObj.pickValue &&
+            item.roomNumber === this.pickHourseObj.pickValue
+          ) {
+            this.roomId = item._id;
+          }
+        });
+
+        // 实名认证
+        const realInfoData = await realName(
+          this.idCard,
+          this.mobilPhone,
+          this.realNameVal
+        );
+        // 认证成功
+        if (realInfoData.data.result.verificationResult === "1") {
+          try {
+            const flow = await createFlow({
+              data: JSON.stringify({
+                phone: this.userInfo.mobilePhone,
+                formUser: this.userInfo.id,
+                roomId: this.roomId,
+                realName: this.realNameVal,
+                phone: this.mobilPhone,
+                idCardNum: this.idCard,
+                // age:
+                //   new Date().getFullYear() -
+                //     this.idCard.split("")?.slice(6, 10).join("") || "",
+                nickName: `${
+                  this.realNameVal.split("").length <= 3
+                    ? this.realNameVal.split("")[0]
+                    : `${this.realNameVal.split("").slice(1)}`
+                }先生`,
+                roomName: `${this.pickObj.pickValue}栋${this.pickHourseObj.pickValue}号`,
+                sex:
+                  this.idCard.split("")[this.idCard.split("").length - 2] % 2
+                    ? "男"
+                    : "女",
+              }),
+              flowId: "64f6d064d85a4b7b32ec641d",
+              status: 0,
+            });
+
+            if (flow.code === 200) {
+              uni.showToast({
+                title: "实名认证成功",
+                icon: "success",
+              });
+              setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
         uni.showToast({
           title: "实名认证失败",
           icon: "error",
         });
-
-        this.idCard = "";
-        this.mobilPhone = "";
-        this.realNameVal = "";
+        this.$store.dispatch("user/logout");
+        this.$helper.rollback(1200);
       }
+
+      // this.idCard = "";
+      // this.mobilPhone = "";
+      // this.realNameVal = "";
     },
 
     //TODO 发送请求获取楼栋号
     async getBuildAndHouse() {
       const { data } = await getModelList("64f6d11ed85a4b7b32ec641e");
-      console.log(data);
+      // console.log(data);
       this.allDataList = data?.list;
 
       this.pickHourseObj.columns[0] = [

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-10 09:58:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-08-28 09:54:37
+ * @LastEditTime: 2023-10-16 14:47:57
  * @FilePath: /smart-park/subPages/main/activity/activity-list.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -22,14 +22,15 @@
           {{ item.activity_title }}
         </view>
         <view class="activity-item-bottom-date flex-a-center">
-          <u-icon name="clock" size="12"></u-icon>
+          <u-icon name="clock" size="16"></u-icon>
           <view class="time"
-            >{{ item.activity_hold_date }} {{ item.activity_hold_time }}</view
+            >{{ item.activity_hold_date || "" }}
+            {{ item.activity_hold_time || "" }}</view
           >
         </view>
         <view class="activity-item-bottom-address flex-a-center">
-          <u-icon name="map" size="12"></u-icon>
-          <view class="address">{{ item.address }}</view>
+          <u-icon name="map" size="16"></u-icon>
+          <view class="address">{{ item.address || "未知" }}</view>
         </view>
       </view>
     </view>
@@ -71,18 +72,20 @@ export default {
 <style lang="scss" scoped>
 .activity-list {
   width: 100vw;
+  min-height: 100vh;
+  background-color: #f3f6fd;
 
   .activity-item {
     width: 100%;
-    // height: 410rpx;
     background: #ffffff;
     box-shadow: 0rpx 3rpx 10rpx 1rpx rgba(174, 174, 174, 0.16);
-    border-radius: 10rpx;
+    border-radius: 20rpx;
+    margin-bottom: 40rpx;
+    overflow: hidden;
 
     &-image {
       width: 100%;
       height: 238rpx;
-      //   overflow: hidden;
 
       > image {
         width: 100%;
@@ -104,6 +107,14 @@ export default {
 
       > view {
         margin-bottom: 6rpx;
+
+        .time {
+          margin-left: 10rpx;
+        }
+
+        .address {
+          margin-left: 10rpx;
+        }
       }
     }
   }

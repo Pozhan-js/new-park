@@ -2,20 +2,35 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-13 15:45:02
+ * @LastEditTime: 2023-10-16 11:48:26
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <view class="pages">
     <!-- 导航栏 -->
-    <u-sticky>
+    <u-status-bar bgColor="#FFF"></u-status-bar>
+
+    <view class="top-app flex-a-center-j-space-between">
+      <view class="park-name">长江友邻社区</view>
+      <view class="time flex-a-center">
+        <image
+          style="height: 46rpx; width: 46rpx"
+          src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231016_b5c91c3bd7a04b39a3ba483c07882da8.png"
+          mode=""
+        />
+        <view class="time-date">{{ nowDate }}</view>
+      </view>
+    </view>
+    <!-- <u-sticky>
       <u-navbar bgColor="transparent" placeholder="true">
-        <view slot="left">
-          <view class="nav-left flex-a-center"></view>
+        <view slot="left" class="flex-a-center">
+          <view class="nav-left flex-a-center"
+            >长江友邻社区.{{ $u.timeFormat(timestamp, "yyyy年mm月dd日") }}</view
+          >
         </view>
       </u-navbar>
-    </u-sticky>
+    </u-sticky> -->
     <!-- 轮播图 -->
     <view class="pages-swiper padding-20">
       <u-swiper
@@ -58,9 +73,9 @@
           @click="toOwnerAutonomy"
         >
           <view class="item-content flex-a-center">
-            <view>业主自治</view>
+            <view class="title">业主自治</view>
             <image
-              style="width: 70rpx; height: 70rpx; margin-left: 16rpx"
+              style="width: 110rpx; height: 110rpx; margin-left: 16rpx"
               src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_95288166242f4fe5b7a0036890ec4a57.png"
               mode=""
             />
@@ -71,9 +86,9 @@
           @click="toMarket"
         >
           <view class="item-content flex-a-center">
-            <view>便民广场</view>
+            <view class="title">便民广场</view>
             <image
-              style="width: 70rpx; height: 70rpx; margin-left: 16rpx"
+              style="width: 110rpx; height: 110rpx; margin-left: 16rpx"
               src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_0056c216bfcc4da99266c9cfd96db2e2.png"
               mode=""
             />
@@ -88,7 +103,11 @@
               <image
                 :src="item.menueIcon"
                 mode=""
-                :style="{ width: '74rpx', height: '74rpx', marginTop: '20rpx' }"
+                :style="{
+                  width: '110rpx',
+                  height: '110rpx',
+                  marginTop: '20rpx',
+                }"
               />
               <text class="grid-text">{{ item.menueItem }}</text>
             </u-grid-item>
@@ -105,26 +124,26 @@
           </view>
         </view>
         <view
-          class="placard-content flex-a-center"
+          class="placard-content flex-a-center-j-space-between"
           v-for="item in topFilterDataList"
           :key="item.id"
           @click="toNoticeDetail(item)"
         >
-          <image :src="item.image" mode="" />
           <view class="placard-content-right">
-            <view class="right-header">
+            <view class="right-header flex-a-center">
               <view class="right-icon" v-show="item.top">置顶</view>
               <view class="right-title text-2-hidden">
                 {{ item.title }}
               </view>
             </view>
             <view class="right-footer flex-a-center">
-              <u-icon name="clock" size="12" color="#999"></u-icon>
+              <u-icon name="clock" size="16" color="#999"></u-icon>
               <!--TODO 时间转换 $u.timeFrom(`${newNotice[0]?.time[0]}`, "yyyy-mm-dd") -->
 
               <view class="time">{{ noticeTime(item.time) }}</view>
             </view>
           </view>
+          <image :src="item.image" mode="" />
         </view>
       </view>
 
@@ -155,11 +174,11 @@
             </view>
             <view class="right-container">
               <view class="right-container-item flex-a-center">
-                <u-icon name="clock" size="12" color="#999"></u-icon>
+                <u-icon name="clock" size="16" color="#999"></u-icon>
                 <view class="item-text">{{ item.activity_apply_start }}</view>
               </view>
               <view class="right-container-item flex-a-center">
-                <u-icon name="map" size="12" color="#999"></u-icon>
+                <u-icon name="map" size="16" color="#999"></u-icon>
                 <view class="item-text">{{ item.address }}</view>
               </view>
               <view class="right-container-item flex-a-center">
@@ -172,7 +191,7 @@
             </view>
           </view>
           <!-- 按钮 -->
-          <view class="activity-btn">立即报名</view>
+          <!-- <view class="activity-btn">立即报名</view> -->
         </view>
       </view>
 
@@ -265,6 +284,7 @@ export default {
       // ],
       baseList: [],
       dataList: [], //公告列表数据
+      nowDate: "",
     };
   },
   computed: {
@@ -402,7 +422,7 @@ export default {
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
 
       // console.log(data);
-      this.dataList = data.list?.map((item) => {
+      this.dataList = data?.list?.map((item) => {
         return {
           title: item.title,
           image: helper.filterCover(item.cover_picture),
@@ -443,6 +463,16 @@ export default {
       let data = this.roleList?.find((item) => item.name == name);
       return data.role.split(",").includes(this.userInfo.roleId[0]);
     },
+    getNowDate() {
+      this.nowDate = `星期${"日一二三四五六".charAt(
+        new Date().getDay()
+      )}  ${this.$u.timeFormat(new Date(), "hh:MM分")}`;
+      setInterval(() => {
+        this.nowDate = `星期${"日一二三四五六".charAt(
+          new Date().getDay()
+        )}  ${this.$u.timeFormat(new Date(), "hh:MM分")}`;
+      }, 6000);
+    },
   },
   mounted() {
     // 当组件挂载时执行
@@ -453,6 +483,7 @@ export default {
   },
   async created() {},
   async onShow() {
+    this.getNowDate();
     // 当组件创建时执行
     this.getMenuRoleList();
     this.getMeuList();
@@ -462,6 +493,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$borderSize: 25rpx;
 .pages {
   width: 100vw;
   position: relative;
@@ -476,12 +508,25 @@ export default {
     z-index: -1;
   }
 
-  .nav-left {
-    color: #fff;
-    font-size: 32rpx;
+  .top-app {
+    z-index: 1;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 90rpx $borderSize 40rpx $borderSize;
 
-    .page-title {
-      margin-right: 18rpx;
+    .park-name {
+      margin-right: 15rpx;
+      font-weight: bold;
+      font-size: 36rpx;
+      color: #1f2329;
+    }
+
+    .time {
+      margin-right: 15rpx;
+      font-size: 28rpx;
+      font-weight: 400;
+      color: #636676;
     }
   }
 
@@ -499,7 +544,7 @@ export default {
     &-business {
       display: grid;
       grid-template-columns: 1fr 0.8fr;
-      grid-auto-rows: 104rpx;
+      grid-auto-rows: 140rpx;
       gap: 16rpx;
 
       .box1 {
@@ -513,19 +558,21 @@ export default {
           font-size: 46rpx;
           font-weight: bold;
           color: #6377f5;
-          // margin-top: 20rpx;
+          margin-top: 30rpx;
         }
 
         .item-content {
           &-left {
-            font-size: 24rpx;
+            font-size: 34rpx;
             color: #6377f5;
+            > view {
+              margin-bottom: 10rpx;
+            }
           }
 
           &-right {
-            width: 104rpx;
-            height: 104rpx;
-
+            width: 110rpx;
+            height: 110rpx;
             > image {
               width: 100%;
               height: 100%;
@@ -539,9 +586,14 @@ export default {
         background-size: 100% 100%;
 
         .item-content {
-          font-size: 28rpx;
+          // font-size: 50rpx;
           font-weight: bold;
           color: #ff8903;
+          .title {
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #ff8903;
+          }
         }
       }
       .box3 {
@@ -549,9 +601,15 @@ export default {
         background-size: 100% 100%;
 
         .item-content {
-          font-size: 28rpx;
+          // font-size: 50rpx;
           font-weight: bold;
           color: #4ce9c7;
+
+          .title {
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #4ce9c7;
+          }
         }
       }
 
@@ -579,12 +637,10 @@ export default {
         justify-content: space-between;
 
         &-left {
-          width: 133rpx;
           height: 50rpx;
-          font-size: 33rpx;
+          font-size: 34rpx;
           font-weight: 500;
           color: #252b50;
-          line-height: 50rpx;
         }
 
         &-right {
@@ -618,6 +674,9 @@ export default {
         }
 
         &-right {
+          height: 184rpx;
+          position: relative;
+
           .right-header {
             font-size: 28rpx;
             font-weight: bold;
@@ -629,21 +688,29 @@ export default {
             .right-icon {
               flex-shrink: 0;
               width: 60rpx;
-              height: 35rpx;
-              background: rgba(255, 0, 0, 0.06);
-              border-radius: 4rpx;
-              font-size: 22rpx;
+              height: 36rpx;
+              background: rgba(255, 0, 0, 0.1);
+              border-radius: 8rpx;
+              font-size: 24rpx;
               color: #ff0000;
+              text-align: center;
+              line-height: 36rpx;
+              padding: 4rpx 6rpx;
             }
 
             .right-title {
+              font-size: 32rpx;
+              margin-left: 10rpx;
             }
           }
 
           .right-footer {
-            font-size: 22rpx;
+            position: absolute;
+            bottom: 0;
+            font-size: 26rpx;
             color: #999999;
             margin-top: 18rpx;
+            margin-left: 70rpx;
 
             .time {
               margin-left: 10rpx;
@@ -664,12 +731,10 @@ export default {
         justify-content: space-between;
 
         &-left {
-          width: 133rpx;
-          height: 50rpx;
-          font-size: 33rpx;
+          // width: 133rpx;
+          font-size: 34rpx;
           font-weight: 500;
           color: #252b50;
-          line-height: 50rpx;
           flex-shrink: 0;
         }
 
@@ -716,8 +781,8 @@ export default {
           color: #999999;
 
           .right-title {
-            height: 40rpx;
-            font-size: 28rpx;
+            // height: 40rpx;
+            font-size: 32rpx;
             font-weight: bold;
             color: #333333;
             line-height: 40rpx;
@@ -753,7 +818,7 @@ export default {
 }
 
 .grid-text {
-  font-size: 14px;
+  font-size: 18px;
   color: #909399;
   padding: 10rpx 0 20rpx 0rpx;
   /* #ifndef APP-PLUS */

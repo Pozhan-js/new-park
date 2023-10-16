@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-11 16:17:37
+ * @LastEditTime: 2023-10-13 18:02:15
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -72,7 +72,6 @@
 <script>
 import helper from "@/common/helper";
 import { getModelList } from "@/api";
-import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -124,7 +123,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("main", ["newNotice"]),
     // 展示到首页的决策信息
     toDecisionData() {
       return {
@@ -217,7 +215,6 @@ export default {
         };
       });
     },
-
     //获取列表数据集
     async getNoticeList() {
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
