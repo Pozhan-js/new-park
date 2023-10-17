@@ -75,7 +75,7 @@ export default {
         "64f93b4e4b635d6996a92a97",
         filterData
       );
-      this.result = data?.list[0].result;
+      this.result = data?.list[0]?.result;
     },
 
     // 添加或者是修改答案

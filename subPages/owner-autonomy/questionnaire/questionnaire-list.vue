@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-09-20 11:05:35
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-20 15:19:56
+ * @LastEditTime: 2023-10-16 17:03:36
  * @FilePath: /smart-park/subPages/owner-autonomy/questionnaire/questionnaire-list.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -56,7 +56,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 %padding-box {
   padding: 20rpx;
   box-sizing: border-box;

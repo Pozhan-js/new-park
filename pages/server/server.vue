@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-16 14:42:32
+ * @LastEditTime: 2023-10-17 10:13:38
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -29,12 +29,12 @@
           {{ item.description }}
         </view>
         <view class="item-image">
-          <u-album
+          <!--          <u-album
             :urls="item.image"
             :singleSize="100"
             :maxCount="3"
             keyName="url"
-          ></u-album>
+          ></u-album> -->
         </view>
         <view class="item-address flex-a-center">
           <u-icon name="map-fill" size="20" color="#6377f5"></u-icon>
@@ -160,22 +160,21 @@ export default {
   computed: {
     ...mapState("user", ["userInfo", "userData", "token"]),
     dataList() {
-      return this.shootCasuallyListData
-        .map((data) => {
-          return {
-            ...data,
-            // islike: 0,
-            image: data.image.map((item) => {
-              return {
-                ...item,
-                url: helper.filterCover(item.url),
-              };
-            }),
-          };
-        })
-        .sort((a, b) => {
-          return b.creatorTime - a.creatorTime;
-        });
+      return this.shootCasuallyListData.map((data) => {
+        return {
+          ...data,
+          // islike: 0,
+          // image: data.image.map((item) => {
+          //   return {
+          //     ...item,
+          //     url: helper.filterCover(item.url),
+          //   };
+          // }),
+        };
+      });
+      // .sort((a, b) => {
+      //   return b.creatorTime - a.creatorTime;
+      // });
     },
     tabList() {
       return this.typeList.map((item) => {
@@ -222,11 +221,17 @@ export default {
             .post_id;
       }
 
+      const userinfo = await getModelList(
+        "64f6d064d85a4b7b32ec641d",
+        this.userInfo.id
+      );
+      console.log(userinfo);
+
       let data = {
         post_id: this.shootCasuallyListData[this.index]._id,
         // "parent_comment_id":
         user_id: this.userInfo.id,
-        comment_person_name: this.userInfo.realName,
+        comment_person_name: userinfo.data.list[0].roomName, //this.userInfo.realName,
         reply_id: reply_id,
         reply_person_name: reply_person_name,
         content: comment_content, //直接获取input中的值
@@ -239,6 +244,8 @@ export default {
       this.shootCasuallyListData[this.index].comments.push(data);
       // this.getComList()
       this.init_input();
+
+      this.$forceUpdate();
     },
     init_input(type) {
       this.showInput = false;
@@ -250,6 +257,8 @@ export default {
       this.init_input();
     },
     async like(index) {
+      console.log(this.shootCasuallyListData[index]);
+      //
       // 点赞
       if (this.shootCasuallyListData[index].islike === 0) {
         // 未点
@@ -258,7 +267,7 @@ export default {
           current_question_id: this.shootCasuallyListData[index]._id,
         };
         const res = await createModel("64e6d292d85a4b7b32ec5d10", data);
-
+        console.log(res);
         this.shootCasuallyListData[index].islike = res.data;
         this.shootCasuallyListData[index].like_count += 1;
         // console.log(res);
@@ -276,12 +285,16 @@ export default {
         this.shootCasuallyListData[index].islike = 0;
         this.shootCasuallyListData[index].like_count -= 1;
       }
+
+      this.$forceUpdate();
     },
     comment(index) {
       this.showInput = true; //调起input框
       this.focus = true;
       this.index = index;
       this.is_reply = false;
+
+      console.log(this.userInfo);
     },
     async getComList() {
       const res = await getModelList("64e70412d85a4b7b32ec5d4a");
@@ -301,6 +314,8 @@ export default {
           comments: com_data[data._id] ? com_data[data._id] : [],
         };
       });
+
+      this.$forceUpdate();
     },
     async getLikeList() {
       let self = this;
@@ -330,6 +345,8 @@ export default {
           like_count: like_data[data._id] ? like_data[data._id].length : 0,
         };
       });
+
+      this.$forceUpdate();
     },
     // 获取随手拍列表
     async getShootCasuallyList(type = "全部") {
@@ -339,13 +356,17 @@ export default {
       });
       if (type === "全部") {
         const res = await getModelList("64d1dcab8b140b0b56b6ed90");
-        this.shootCasuallyListData = res.data?.list;
+        this.shootCasuallyListData = res.data?.list.sort((a, b) => {
+          return b.creatorTime - a.creatorTime;
+        });
       } else {
         let reqData = getRequestFilter({
           questionType: type,
         });
         const res = await getModelList("64d1dcab8b140b0b56b6ed90", reqData);
-        this.shootCasuallyListData = res.data?.list;
+        this.shootCasuallyListData = res.data?.list.sort((a, b) => {
+          return b.creatorTime - a.creatorTime;
+        });
       }
       this.getComList();
       this.getLikeList();
