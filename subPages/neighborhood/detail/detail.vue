@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-10 09:58:30
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-08-23 14:42:45
+ * @LastEditTime: 2023-10-18 10:43:45
  * @FilePath: /smart-park/subPages/main/activity/activity-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -31,42 +31,144 @@
         <view class="title-text">{{ detailData.activity_title }}</view>
       </view>
       <view class="detail-content-list">
-        <view class="item">
-          <view class="item-title">活动截止时间</view>
-          <view class="item-content"
-            >{{
-              $u.timeFormat(detailData.creatorTime, "yyyy-mm-dd hh:MM:ss")
-            }}/{{
-              $u.timeFormat(detailData.lastModifyTime, "yyyy-mm-dd hh:MM:ss")
-            }}</view
-          >
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231017_5a536a2927204fe7b6cba1bf0443a9e8.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <!-- <view class="item-title"></view> -->
+            <view class="item-content">
+              发起人: {{ detailData.launching_person }}</view
+            >
+          </view>
         </view>
-        <view class="item">
-          <view class="item-title">建议人数</view>
-          <view class="item-content">{{ detailData.people_num }}</view>
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231018_1b460efa7414422986067c7c69a06ec4.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <view class="item-content">
+              活动类型: {{ detailData.active_type }}</view
+            >
+          </view>
         </view>
-        <view class="item">
-          <view class="item-title">活动地点</view>
-          <view class="item-content">{{
-            detailData.activity_location.address
-          }}</view>
+        <!-- 召开时间 -->
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231018_5674ada7aadc43d2881a63c07e0d7042.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <!-- <view class="item-title"></view> -->
+            <view class="item-content">
+              召开时间:
+              {{
+                $u.timeFormat(detailData.hold_date, "yyyy-mm-dd") ||
+                "" + " " + detailData.hold_time ||
+                ""
+              }}</view
+            >
+          </view>
         </view>
-        <view class="item">
-          <view class="item-title">活动内容</view>
-          <view class="item-content">
-            <u-parse :content="detailData.activity_content"></u-parse>
+        <!-- 地址 -->
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231018_5aed1281b5ca482bb132e2cb331cdc66.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <!-- <view class="item-title"></view> -->
+            <view class="item-content">
+              地点:
+              {{ detailData.activity_location.address || "未知" }}</view
+            >
+          </view>
+        </view>
+        <!-- 未知导航按钮 -->
+        <view class="navigation" @click="openLocation(detailData)">
+          位置导航
+        </view>
+
+        <!-- 活动类型 -->
+        <view class="item flex-a-center">
+          <view class="nomal-fonts">
+            <!-- <view class="item-title"></view> -->
+            <view class="item-content">
+              活动类型:
+              <text style="font-size: 32rpx; color: #fb8753">
+                {{ detailData.active_type }}
+              </text>
+            </view>
+          </view>
+        </view>
+        <!-- 是否免费 -->
+        <view class="item flex-a-center">
+          <view class="nomal-fonts">
+            <!-- <view class="item-title"></view> -->
+            <view class="item-content">
+              是否免费:
+              <text style="font-size: 32rpx; color: #fb8753">
+                {{ detailData.is_free ? "免费活动" : "付费活动" }}
+              </text>
+            </view>
           </view>
         </view>
 
-        <view class="item">
-          <view class="item-title">报名成员</view>
-          <view class="item-content flex-a-center">
-            <image
-              v-for="item in detailData.activity_avatar"
-              :key="item"
-              :src="item"
-              mode=""
-            />
+        <!-- 建议人数 -->
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231018_d378ca6139844247979bf78bdd75f61e.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <view class="item-content">
+              活动总人数:
+              <text style="font-size: 32rpx; color: #ea2839">
+                {{ detailData.people_num }} 人
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 目前已报名 -->
+        <view class="item flex-a-center">
+          <image
+            style="width: 32rpx; height: 32rpx; margin: auto 0"
+            src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231018_2174201883a145898f829b96eb9d7238.png"
+            mode=""
+          />
+          <view class="nomal-fonts">
+            <view class="item-content">
+              目前已报名人数:
+              <text style="font-size: 32rpx; color: #fb8753">
+                {{ personMessage.length || 0 }} 人
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <view class="person-message" style="flex-wrap: wrap">
+          <view
+            style="margin: 0 10rpx 10rpx 0rpx"
+            v-for="item in personMessage"
+            :key="item"
+          >
+            <u-tag :text="item.roomName"></u-tag>
+          </view>
+        </view>
+
+        <view class="item flex-a-center">
+          <view class="nomal-fonts">
+            <view class="item-content" style="color: #636676">
+              <u-parse :content="detailData.activity_content"></u-parse>
+            </view>
           </view>
         </view>
       </view>
@@ -94,7 +196,8 @@
 </template>
 
 <script>
-import { createModel, deleteModel } from "@/api/index";
+import { createModel, deleteModel, getModelList } from "@/api/index";
+import { getRequestFilter } from "@/common/function";
 import { message } from "@/common/function/index";
 import { mapActions, mapState } from "vuex";
 export default {
@@ -116,6 +219,9 @@ export default {
       // 类型
       activityType: "",
       activityTitle: "",
+      // 人员信息ID
+      personMessageID: [],
+      personMessage: [],
     };
   },
   computed: {
@@ -190,6 +296,45 @@ export default {
         });
       }, 1000);
     },
+    // 获取地址
+    openLocation(data) {
+      const {
+        addressComponents: addressCpn,
+        address,
+        addrPoint: point,
+      } = data.activity_location;
+      uni.openLocation({
+        latitude: point.lat,
+        longitude: point.lng,
+        name: address,
+        address:
+          addressCpn.province + addressCpn.city + addressCpn.district + address,
+      });
+    },
+    // 获取所有报名该活动的人信息
+    async getJoinActivity() {
+      let filter = getRequestFilter({
+        activity_id: this.singleDataID,
+      });
+
+      const { data } = await getModelList("64e2cb13d85a4b7b32ec579c", filter);
+      this.personMessageID = data?.list.map((item) => item.creatorUserId);
+      console.log("所有报名人员", data);
+
+      // 获取所有报名该活动的人信息
+
+      for (let person of this.personMessageID) {
+        let filterPerson = getRequestFilter({
+          formUser: person,
+        });
+        const { data } = await getModelList(
+          "64f6d064d85a4b7b32ec641d",
+          filterPerson
+        );
+        // console.log("所有报名人员信息", data);
+        this.personMessage.push(data?.list[0]);
+      }
+    },
   },
 
   watch: {
@@ -211,7 +356,6 @@ export default {
   },
 
   onLoad(options) {
-    // console.log("options", options);
     this.join = options.joinID;
     this.collect = options.collectID;
     this.singleDataID = options.id;
@@ -226,6 +370,8 @@ export default {
     this.getActivityDetail({
       id: options.id,
     });
+
+    this.getJoinActivity();
   },
 };
 </script>
@@ -233,6 +379,25 @@ export default {
 <style lang="scss">
 .detail {
   width: 100vw;
+
+  //导航过去的按钮
+  .navigation {
+    width: 120rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    margin-left: 20rpx;
+    background: #6377f5;
+    color: #ffffff;
+    border-radius: 25rpx;
+    font-size: 22rpx;
+    margin-bottom: 20rpx;
+  }
+
+  // 人员信息展示
+  .person-message {
+    display: flex;
+  }
 
   &-content {
     padding: 14rpx 32rpx;
@@ -242,16 +407,6 @@ export default {
     &-title {
       display: flex;
       align-items: center;
-      margin-bottom: 20rpx;
-      // overflow: hidden;
-
-      .title-icon {
-        width: 8rpx;
-        height: 33rpx;
-        // padding: 5rpx;
-        margin-right: 20rpx;
-        background-color: #6377f5;
-      }
 
       .title-text {
         width: 90%;
@@ -259,6 +414,9 @@ export default {
         overflow: hidden; //超出的文本隐藏
         text-overflow: ellipsis; //溢出用省略号显示
         white-space: nowrap; //溢出不换行
+        font-size: 32rpx;
+        font-weight: bold;
+        margin: 10rpx 0;
       }
     }
 
@@ -266,21 +424,17 @@ export default {
       .item {
         margin-bottom: 20rpx;
         padding-bottom: 20rpx;
-        border-bottom: 1px solid #d8d8d8;
+        // border-bottom: 1px solid #d8d8d8;
 
-        .item-title {
-          height: 50rpx;
-          font-size: 29rpx;
-          color: #333333;
-          line-height: 50rpx;
+        .nomal-fonts {
+          font-size: 26rpx;
+          flex: 1;
+          margin-left: 10rpx;
+          font-weight: 400;
+          color: #636676;
         }
 
         .item-content {
-          // height: 50rpx;
-          font-size: 29rpx;
-          color: #999999;
-          line-height: 50rpx;
-
           > image {
             width: 50rpx;
             height: 50rpx;
@@ -337,4 +491,3 @@ export default {
   }
 }
 </style>
-

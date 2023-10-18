@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-16 18:00:09
+ * @LastEditTime: 2023-10-17 11:50:24
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -69,6 +69,25 @@
       </view>
     </view>
 
+    <!-- 调查问卷 -->
+    <view class="owner-autonomy-questionnaire">
+      <view class="questionnaire-title">调查问卷</view>
+      <view class="questionnaire-list" v-if="newQuestion">
+        <view
+          class="questionnaire-item flex-a-center"
+          @click="toDetailPage(newQuestion._id)"
+        >
+          <view class="image">
+            <image :src="getImageUrl(newQuestion.url)" mode="" />
+          </view>
+          <view class="item-right">
+            <view class="right-up">{{ newQuestion.outline }}</view>
+            <view class="right-down">{{ newQuestion.toast }}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 投票决策 -->
     <view class="owner-autonomy-decision">
       <view class="decision-title">小区决策</view>
@@ -132,25 +151,6 @@
             <view class="vote-footer-item box">{{
               newDecision.isJoin ? "已参加" : "未参加"
             }}</view>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 调查问卷 -->
-    <view class="owner-autonomy-questionnaire">
-      <view class="questionnaire-title">调查问卷</view>
-      <view class="questionnaire-list" v-if="newQuestion">
-        <view
-          class="questionnaire-item flex-a-center"
-          @click="toDetailPage(newQuestion._id)"
-        >
-          <view class="image">
-            <image :src="getImageUrl(newQuestion.url)" mode="" />
-          </view>
-          <view class="item-right">
-            <view class="right-up">{{ newQuestion.outline }}</view>
-            <view class="right-down">{{ newQuestion.toast }}</view>
           </view>
         </view>
       </view>
@@ -496,10 +496,9 @@ export default {
         height: 110rpx;
       }
       .docs {
-        font-size: 18px;
+        font-size: 16px;
         color: #909399;
         padding: 10rpx 0 20rpx 0rpx;
-        /* #ifndef APP-PLUS */
         box-sizing: border-box;
       }
     }

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-17 09:57:53
+ * @LastEditTime: 2023-10-18 14:10:46
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -96,7 +96,10 @@
         </view>
       </view>
       <!-- 应用   v-if="getRole(item.menueItem, userInfo.id)"-->
-      <view class="pages-content-feature" v-if="baseList">
+      <view
+        class="pages-content-feature"
+        v-if="baseList.length && roleList.length"
+      >
         <u-grid :border="false" col="4">
           <template v-for="(item, index) in baseList">
             <u-grid-item @click="clickGridItem(item)" :key="index">
@@ -152,7 +155,9 @@
         <view class="activity-header">
           <view class="activity-header-left">社区活动</view>
           <view class="activity-header-right">
-            <view class="right-text" @click="toActivityListPage(newActivities)"
+            <view
+              class="right-text"
+              @click="toActivityListPage(currentPageActivityList)"
               >更多
             </view>
             <u-icon size="24rpx" name="arrow-right"></u-icon>
@@ -161,12 +166,12 @@
         <!-- 活动内容 -->
         <view
           class="activity-content flex-a-center"
-          v-for="item in newActivities"
-          :key="item.id"
+          v-for="item in currentPageActivityList"
+          :key="item._id"
           @click="toActivityDetailPage(item)"
         >
           <view class="activity-content-left">
-            <image :src="item.image" mode="" />
+            <image :src="item.activity_log[0]" mode="" />
           </view>
           <view class="activity-content-right">
             <view class="right-title text-1-hidden">
@@ -175,18 +180,20 @@
             <view class="right-container">
               <view class="right-container-item flex-a-center">
                 <u-icon name="clock" size="16" color="#999"></u-icon>
-                <view class="item-text">{{ item.activity_apply_start }}</view>
+                <view class="item-text">{{
+                  $u.timeFormat(item.hold_date, "yyyy-mm-dd") +
+                  " " +
+                  item.hold_time
+                }}</view>
               </view>
               <view class="right-container-item flex-a-center">
                 <u-icon name="map" size="16" color="#999"></u-icon>
-                <view class="item-text">{{ item.address }}</view>
+                <view class="item-text">{{
+                  item.activity_locations || "未知"
+                }}</view>
               </view>
               <view class="right-container-item flex-a-center">
-                <!-- <u-avatar-group :urls="item.avatar" size="18" gap="0.4">
-              </u-avatar-group> -->
-                <view class="item-text"
-                  >{{ item.number_applicants }}人已报名</view
-                >
+                <view class="item-text">{{ item.people_num }}人已报名</view>
               </view>
             </view>
           </view>
@@ -288,9 +295,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("main", ["banner"]),
+    // ...mapState("main", ["banner"]),
     ...mapState("role", ["roleList"]),
-    ...mapGetters("main", ["newBanner", "newActivities"]),
+    ...mapGetters("main", ["newBanner"]),
+    ...mapGetters("neighborhood", ["newActivityList"]),
     // 公告列表数据
     filterDataList() {
       let arrIsTop = [];
@@ -334,9 +342,16 @@ export default {
         return false; // 如果 roleList 或 userInfo 未定义，返回默认值或适当的值
       };
     },
+
+    currentPageActivityList() {
+      return this.newActivityList.filter((item) => {
+        return item.hold_date > new Date().getTime();
+      });
+    },
   },
   methods: {
     //获取轮播图数据
+    ...mapActions("neighborhood", ["getBannerList", "getActivityList"]),
     ...mapActions("main", ["getBanner", "getActivity"]),
     ...mapActions("role", ["getMenuRoleList"]),
     // 跳转随手拍
@@ -371,15 +386,12 @@ export default {
       });
     },
     // 跳转到活动详情页
-    toActivityDetailPage(item) {
+    toActivityDetailPage(data) {
+      // 活动详情
       uni.navigateTo({
-        url: "/subPages/main/activity/activity-detail",
-        success: function (res) {
-          // 通过eventChannel向被打开页面传送数据
-          res.eventChannel.emit("mainPageActivityDetail", {
-            data: item,
-          });
-        },
+        url: `/subPages/neighborhood/detail/detail?id=${data._id}&collectID=${
+          data.collectId || ""
+        }&joinID=${data.joinId || ""}`,
       });
     },
     //点击公告跳转到公告详情
@@ -455,13 +467,14 @@ export default {
         filterTypeData
       );
 
-      this.baseList = result.data?.list[0].tableField103.filter((item) => {
-        return this.getRole(item.menueItem);
-      });
+      this.baseList =
+        result.data?.list[0].tableField103.filter((item) => {
+          return this.getRole(item.menueItem);
+        }) || [];
     },
     getRole(name = "") {
       let data = this.roleList?.find((item) => item.name == name);
-      return data.role.split(",").includes(this.userInfo.roleId[0]);
+      return data?.role.split(",").includes(this.userInfo.roleId[0]);
     },
     getNowDate() {
       this.nowDate = `星期${"日一二三四五六".charAt(
@@ -476,10 +489,7 @@ export default {
   },
   mounted() {
     // 当组件挂载时执行
-    this.getBanner({ pageSize: 10 });
-
-    // 获取活动数据
-    this.getActivity();
+    this.getBanner({ pageSize: -1 });
   },
   async created() {},
   async onShow() {
@@ -488,6 +498,8 @@ export default {
     this.getMenuRoleList();
     this.getMeuList();
     this.getNoticeList();
+    // 获取活动
+    this.getActivityList();
   },
 };
 </script>
@@ -662,7 +674,8 @@ $borderSize: 25rpx;
       .placard-content {
         background-color: #fff;
         padding: 20rpx;
-        margin-top: 18rpx;
+        margin-top: 30rpx;
+        box-shadow: 0rpx 3rpx 10rpx 1rpx rgba(174, 174, 174, 0.16);
         border-radius: 16rpx;
 
         > image {
@@ -760,8 +773,9 @@ $borderSize: 25rpx;
         margin-top: 18rpx;
         position: relative;
         border-radius: 16rpx;
+        box-shadow: 0rpx 3rpx 10rpx 1rpx rgba(174, 174, 174, 0.16);
         padding: 20rpx;
-        margin-bottom: 20rpx;
+        margin-bottom: 30rpx;
 
         &-left {
           width: 210rpx;
@@ -818,7 +832,7 @@ $borderSize: 25rpx;
 }
 
 .grid-text {
-  font-size: 18px;
+  font-size: 16px;
   color: #909399;
   padding: 10rpx 0 20rpx 0rpx;
   /* #ifndef APP-PLUS */

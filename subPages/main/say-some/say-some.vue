@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-16 09:46:03
+ * @LastEditTime: 2023-10-18 15:20:11
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -112,8 +112,8 @@
           <view class="body-item-title">是否匿名</view>
           <u-grid :border="false" col="2">
             <u-grid-item
-              v-for="(data, index) in showName"
-              @click="clickIsShowName(data, showName)"
+              v-for="(data, index) in showNameList"
+              @click="clickIsShowName(data, showNameList)"
               :key="index"
             >
               <view
@@ -175,7 +175,7 @@ export default {
         },
       },
       fileList1: [],
-      showName: [
+      showNameList: [
         {
           title: "是",
           isActive: true,
@@ -263,7 +263,8 @@ export default {
         return item;
       });
       data.isActive = true;
-      this.model1.userInfo.showName = !this.model1.userInfo.showName;
+
+      this.model1.userInfo.showName = data.title === "是" ? true : false;
     },
     // 弹窗
     open() {
@@ -307,30 +308,27 @@ export default {
 
     // 获取房号
     async getRoomNumber() {
+      // 获取审批用户信息
       let filterData = getRequestFilter({
-        phone: this.userInfo.account,
+        formUser: this.userInfo.id,
       });
 
-      let filterTypeData = getRequestFilter({
-        key: "问题类型",
-      });
       const { data } = await getModelList(
         "64f6d064d85a4b7b32ec641d",
         filterData
       );
+      // 获取问题类型数据
+      let filterTypeData = getRequestFilter({
+        key: "问题类型",
+      });
 
       const result = await getModelList(
         "65250f6f388a8c7a0eb9b934",
         filterTypeData
       );
 
-      // console.log(data);
-      let { roomId } = data?.list[0];
-
       this.typeList = result.data?.list[0].value;
-
-      // console.log(roomId);
-      this.roomData = await getModelInfo("64f6d11ed85a4b7b32ec641e", roomId);
+      this.roomData = data?.list[0];
     },
     // 提交按钮
     async submit() {
@@ -350,7 +348,7 @@ export default {
             image: [], //图片
             questionType: "", //问题类型
             showName: true, //匿名
-            roomNum: this.model1.userInfo.roomNum, //房号
+            roomNum: this.model1.userInfo.roomNum || "", //房号
             description: "", //描述
             address: "",
             blurAddress: "",
@@ -408,9 +406,8 @@ export default {
     },
 
     roomData: {
-      handler({ data }) {
-        this.model1.userInfo.roomNum =
-          data?.buildingNumber + "-" + data?.roomNumber;
+      handler(data) {
+        this.model1.userInfo.roomNum = data?.roomName || "";
       },
       deep: true,
       immediate: true, // 立即执行一次
@@ -511,7 +508,7 @@ export default {
         }
 
         .error-item {
-          width: 148rpx;
+          min-width: 148rpx;
           height: 64rpx;
           margin-bottom: 16rpx;
           border-radius: 32rpx;
