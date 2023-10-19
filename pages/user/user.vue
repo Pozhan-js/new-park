@@ -9,7 +9,7 @@
       <view v-if="isLogin" class="user-info flex-col flex-grow justify-evenly">
         <!-- <text class="user-name text_ellipsis">{{ realName }}</text> -->
         <text class="user-name text_ellipsis">{{ userMessage.roomName }}</text>
-        <text class="study-days">{{ userMessage.nickName }}</text>
+        <text class="study-days">{{ userInfo.realName }}</text>
       </view>
       <view
         v-else

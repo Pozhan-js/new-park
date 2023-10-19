@@ -20,7 +20,7 @@
             </button>
           </view>
         </u-form-item>
-        <u-form-item borderBottom label="姓名" prop="name" required>
+        <u-form-item borderBottom label="昵称" prop="name" required>
           <u--input
             v-model="formData.name"
             border="none"

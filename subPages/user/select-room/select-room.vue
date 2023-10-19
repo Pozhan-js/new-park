@@ -43,12 +43,13 @@
         </u-form-item>
 
         <!-- 我的名字 -->
-        <u-form-item label="真实姓名" border-bottom>
+        <u-form-item label="姓名" border-bottom>
           <view class="flex-a-center-j-space-between">
             <u--input
+              :disabled="true"
               fontSize="36rpx"
               placeholder="请输入真实姓名"
-              v-model="realNameVal"
+              v-model="userInfo.realName"
               border="none"
             ></u--input>
             <u-icon name="arrow-right"></u-icon>
@@ -58,15 +59,44 @@
         <u-form-item label="电话号码" border-bottom>
           <view class="flex-a-center-j-space-between">
             <u--input
+              :disabled="true"
               fontSize="36rpx"
               placeholder="请输入电话号码"
-              v-model="mobilPhone"
+              v-model="userInfo.mobilePhone"
               border="none"
             ></u--input>
             <u-icon name="arrow-right"></u-icon>
           </view>
         </u-form-item>
-        <u-form-item label="身份证号" border-bottom>
+
+        <u-form-item label="年龄" border-bottom>
+          <view class="flex-a-center-j-space-between">
+            <u--input
+              fontSize="36rpx"
+              placeholder="请输入年龄"
+              v-model="age"
+              border="none"
+            ></u--input>
+            <u-icon name="arrow-right"></u-icon>
+          </view>
+        </u-form-item>
+
+        <!-- 性别 -->
+        <u-form-item label="性别" border-bottom>
+          <view class="flex-a-center-j-space-between">
+            <u-radio-group v-model="sex" placement="row" @change="groupChange">
+              <view class="radio" style="margin-right: 60rpx">
+                <u-radio activeColor="#6377f5" name="男" label="男"></u-radio>
+              </view>
+              <view class="radio" style="margin-right: 30rpx">
+                <u-radio activeColor="#6377f5" name="女" label="女"></u-radio>
+              </view>
+            </u-radio-group>
+            <!-- <u-icon name="arrow-right"></u-icon> -->
+          </view>
+        </u-form-item>
+
+        <!-- <u-form-item label="身份证号" border-bottom>
           <view class="flex-a-center-j-space-between">
             <u--input
               fontSize="36rpx"
@@ -77,6 +107,7 @@
             <u-icon name="arrow-right"></u-icon>
           </view>
         </u-form-item>
+         -->
       </u--form>
     </view>
 
@@ -153,10 +184,11 @@ export default {
       roomId: "",
       allDataList: [],
       requestLoading: false,
-      realNameVal: "", //真实姓名
-      mobilPhone: "", //  电话号码
-      idCard: "", //省份证号
-      // age: "",
+      sex: "男",
+      age: "",
+      // realNameVal: "", //真实姓名
+      // mobilPhone: "", //  电话号码
+      // idCard: "", //省份证号
     };
   },
   onLoad() {
@@ -178,6 +210,12 @@ export default {
     pickConfirm(e) {
       this.pickObj.pickValue = e.value[0];
       this.pickObj.show = false;
+    },
+
+    // 获取性别
+    groupChange(n) {
+      // console.log("groupChange", n);\
+      this.sex = n;
     },
 
     async submit() {
@@ -212,54 +250,58 @@ export default {
         });
 
         // 实名认证
-        const realInfoData = await realName(
-          this.idCard,
-          this.mobilPhone,
-          this.realNameVal
-        );
+        // const realInfoData = await realName(
+        //   this.idCard,
+        //   this.mobilPhone,
+        //   this.realNameVal
+        // );
         // 认证成功
-        if (realInfoData.data.result.verificationResult === "1") {
-          try {
-            const flow = await createFlow({
-              data: JSON.stringify({
-                phone: this.userInfo.mobilePhone,
-                formUser: this.userInfo.id,
-                roomId: this.roomId,
-                realName: this.realNameVal,
-                phone: this.mobilPhone,
-                idCardNum: this.idCard,
-                // age:
-                //   new Date().getFullYear() -
-                //     this.idCard.split("")?.slice(6, 10).join("") || "",
-                nickName: `${
-                  this.realNameVal.split("").length <= 3
-                    ? this.realNameVal.split("")[0]
-                    : `${this.realNameVal.split("").slice(1)}`
-                }先生`,
-                roomName: `${this.pickObj.pickValue}栋${this.pickHourseObj.pickValue}号`,
-                sex:
-                  this.idCard.split("")[this.idCard.split("").length - 2] % 2
-                    ? "男"
-                    : "女",
-              }),
-              flowId: "64f6d064d85a4b7b32ec641d",
-              status: 0,
-            });
+        // if (realInfoData.data.result.verificationResult === "1") {
+        try {
+          const flow = await createFlow({
+            data: JSON.stringify({
+              phone: this.userInfo.mobilePhone,
+              formUser: this.userInfo.id,
+              nickName: this.userInfo.realName,
+              roomId: this.roomId,
+              roomName: `${this.pickObj.pickValue}栋${this.pickHourseObj.pickValue}号`,
+              sex: this.sex,
+              age: this.age,
+              // realName: this.realNameVal,
+              // phone: this.mobilPhone,
+              // idCardNum: this.idCard,
+              // age:
+              //   new Date().getFullYear() -
+              //     this.idCard.split("")?.slice(6, 10).join("") || "",
+              // nickName: `${
+              //   this.realNameVal.split("").length <= 3
+              //     ? this.realNameVal.split("")[0]
+              //     : `${this.realNameVal.split("").slice(1)}`
+              // }先生`,
 
-            if (flow.code === 200) {
-              uni.showToast({
-                title: "实名认证成功",
-                icon: "success",
-              });
-              setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
-            }
-          } catch (error) {
-            console.log(error);
+              // sex:
+              //   this.idCard.split("")[this.idCard.split("").length - 2] % 2
+              //     ? "男"
+              //     : "女",
+            }),
+            flowId: "64f6d064d85a4b7b32ec641d",
+            status: 0,
+          });
+
+          if (flow.code === 200) {
+            uni.showToast({
+              title: "认证成功",
+              icon: "success",
+            });
+            setTimeout(() => uni.reLaunch({ url: "/pages/index/index" }), 2000);
           }
+        } catch (error) {
+          console.log(error);
         }
+        // }
       } catch (error) {
         uni.showToast({
-          title: "实名认证失败",
+          title: "认证失败",
           icon: "error",
         });
         this.$store.dispatch("user/logout");

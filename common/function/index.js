@@ -210,4 +210,9 @@ export function getNextDayTimestamp(num = 1, isDiff = false) {
   };
 }
 
+//转换为Promise
+export function toPromise(fn, config = {}) {
+  return new Promise((success, fail) => fn({ success, fail, ...config }));
+}
+
 

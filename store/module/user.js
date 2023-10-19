@@ -2,11 +2,12 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:02:55
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-09 13:19:09
+ * @LastEditTime: 2023-10-19 10:27:12
  * @FilePath: /smart-park/store/module/user.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import storage from "@/common/function/storage";
+// import store from "@/store/index.js";
 import {
   verifyEmpty,
   getNextDayTimestamp,
@@ -48,6 +49,8 @@ function getStateDefaultValue(state) {
   );
 }
 function setStateData(stateKey, storageKey) {
+  // 设置websocket
+  // store.dispatch("score/startWebSocket");
   // commit只能接收两个参数
   return function (state, { $assign = false, ...data }) {
     if ($assign) Object.assign(state[stateKey], data); //合并

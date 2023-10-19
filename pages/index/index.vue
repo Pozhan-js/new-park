@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-18 14:10:46
+ * @LastEditTime: 2023-10-19 13:05:59
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -209,6 +209,7 @@
 
 <script>
 import { getModelList } from "@/api";
+import storage from "@/common/function/storage";
 import helper from "@/common/helper";
 import userMixin from "@/common/mixins/user";
 import infoMixin from "@/common/mixins/info";
@@ -219,91 +220,21 @@ export default {
   mixins: [userMixin, infoMixin],
   data() {
     return {
-      // baseList: [
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_015444438cf747d88d58855b2d7e7ff8.png",
-      //     title: "小区公告",
-      //     path: "/subPages/main/notice/notice-list",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_5451bb83bd8640bead6254247a8835da.png",
-      //     title: "邻里活动",
-      //     path: "/subPages/neighborhood/pages/neighborhood",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_e36a480215e34879a8187092703a292c.png",
-      //     title: "办事指南",
-      //     path: "/subPages/guide/guide",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_4f3e5dfa5f1342589c68c1334c69e8b8.png",
-      //     title: "友邻市场",
-      //     path: "/subPages/market/pages/index",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_4dfe8d5d6246482887157e52811b77ba.png",
-      //     title: "民意投票",
-      //     path: "/subPages/owner-autonomy/vote/vote",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_0c7c29911816404c865e55878d6d3b97.png",
-      //     title: "电梯安全",
-      //     path: "/subPages/owner-autonomy/elevator-safety/elevator-safety",
-      //   },
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230919_c6b38442ed5845b68d76b23a4396c18e.png",
-      //     title: "故障统计",
-      //     path: "/subPages/owner-autonomy/fault/fault-statistics",
-      //   },
-      //   // {
-      //   //   imageUrl:
-      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_61237ba98b914a3d84433946db060337.png",
-      //   //   title: "助农特产",
-      //   //   path: "./",
-      //   // },
-      //   // {
-      //   //   imageUrl:
-      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_90c53937f86a49ea9141ecc72b79c9a8.png",
-      //   //   title: "律师咨询",
-      //   //   path: "/subPages/legal-advice/legal-advice",
-      //   // },
-
-      //   // {
-      //   //   imageUrl:
-      //   //     "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_49d47bdaf3d2401fb123ceda0db26e35.png",
-      //   //   title: "养老健康",
-      //   //   path: "./",
-      //   // },
-
-      //   {
-      //     imageUrl:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_f80a0105622549db84c8eaaf08b860cb.png",
-      //     title: "更多",
-      //     path: "/subPages/main/more/more",
-      //   },
-      // ],
       baseList: [],
       dataList: [], //公告列表数据
       nowDate: "",
     };
   },
   computed: {
-    // ...mapState("main", ["banner"]),
     ...mapState("role", ["roleList"]),
+    ...mapState("websocket", ["socketTask"]),
     ...mapGetters("main", ["newBanner"]),
     ...mapGetters("neighborhood", ["newActivityList"]),
     // 公告列表数据
     filterDataList() {
       let arrIsTop = [];
       let arrNotTop = [];
-      this.dataList.map((item) => {
+      this.dataList?.map((item) => {
         if (item.top === "是") {
           arrIsTop.push(item);
         } else {
@@ -336,7 +267,7 @@ export default {
     isShowItem() {
       return (name) => {
         if (this.roleList && this.userInfo) {
-          const data = this.roleList.find((item) => item.name === name);
+          const data = this.roleList?.find((item) => item.name === name);
           return data && data.role.split(",").includes(this.userInfo.roleId[0]);
         }
         return false; // 如果 roleList 或 userInfo 未定义，返回默认值或适当的值
@@ -344,7 +275,7 @@ export default {
     },
 
     currentPageActivityList() {
-      return this.newActivityList.filter((item) => {
+      return this.newActivityList?.filter((item) => {
         return item.hold_date > new Date().getTime();
       });
     },
@@ -352,10 +283,18 @@ export default {
   methods: {
     //获取轮播图数据
     ...mapActions("neighborhood", ["getBannerList", "getActivityList"]),
+    // ...mapActions("websocket", ["startWebSocket"]),
     ...mapActions("main", ["getBanner", "getActivity"]),
     ...mapActions("role", ["getMenuRoleList"]),
     // 跳转随手拍
     toSayPage() {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       uni.navigateTo({
         url: "/subPages/main/say-some/say-some",
       });
@@ -368,6 +307,13 @@ export default {
           icon: "none",
         });
       } else {
+        if (storage.get("parse") === "未通过") {
+          uni.showToast({
+            title: "您的账号审批未通过",
+            icon: "none",
+          });
+          return;
+        }
         uni.navigateTo({
           url: item.menuePath,
         });
@@ -375,6 +321,13 @@ export default {
     },
     // 跳转去活动列表页
     toActivityListPage(data) {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       uni.navigateTo({
         url: "/subPages/main/activity/activity-list",
         success: function (res) {
@@ -387,6 +340,13 @@ export default {
     },
     // 跳转到活动详情页
     toActivityDetailPage(data) {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       // 活动详情
       uni.navigateTo({
         url: `/subPages/neighborhood/detail/detail?id=${data._id}&collectID=${
@@ -396,6 +356,13 @@ export default {
     },
     //点击公告跳转到公告详情
     toNoticeDetail(item) {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       uni.navigateTo({
         url: `/subPages/main/notice/notice-detail`,
         success: function (res) {
@@ -408,12 +375,26 @@ export default {
     },
     //点击公告跳转到公告列表
     toNoticeList() {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       uni.navigateTo({
         url: `/subPages/main/notice/notice-list`,
       });
     },
     // 跳转到业主自治
     toOwnerAutonomy() {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
       uni.navigateTo({
         url: "/subPages/owner-autonomy/owner-autonomy",
       });
@@ -486,6 +467,35 @@ export default {
         )}  ${this.$u.timeFormat(new Date(), "hh:MM分")}`;
       }, 6000);
     },
+    // 监听流程
+    // onMessage(res) {
+    //   const result = JSON.parse(res?.data || "{}");
+    //   console.log("onMessage", result);
+    // },
+    async getApprove() {
+      let filterTypeData = getRequestFilter({
+        formUser: this.userInfo.id,
+      });
+
+      const { data } = await getModelList(
+        "64f6d064d85a4b7b32ec641d",
+        filterTypeData
+      );
+      // console.log("审批", data);
+      if (data?.list.length) {
+        // uni.showToast({
+        //   title: "您的账号已被审批",
+        //   icon: "none",
+        // });
+        storage.set("parse", "通过");
+      } else {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        storage.set("parse", "未通过");
+      }
+    },
   },
   mounted() {
     // 当组件挂载时执行
@@ -500,6 +510,14 @@ export default {
     this.getNoticeList();
     // 获取活动
     this.getActivityList();
+    // 查找用户是否被审批
+    this.getApprove();
+  },
+  async onLoad() {
+    // let token = uni.getStorageSync("SP_Token");
+    // token && (await this.startWebSocket());
+    // // console.log("onLoad", this.socketTask);
+    // this.socketTask.getMessage(this.onMessage);
   },
 };
 </script>

@@ -163,7 +163,7 @@ export default {
             });
           }
 
-          setTimeout(() => uni.reLaunch({ url: "/pages/user/user" }), 2000);
+          setTimeout(() => uni.reLaunch({ url: "/pages/index/index" }), 2000);
         } catch {
           this.lock = false;
         }
