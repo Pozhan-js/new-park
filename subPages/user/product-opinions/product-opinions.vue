@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-25 10:29:24
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-25 14:17:40
+ * @LastEditTime: 2023-10-25 15:41:47
  * @FilePath: /smart-park/subPages/user/product-opinions/product-opinions.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -119,8 +119,12 @@
 <script>
 import config from "@/common/config";
 import { UpdateFilePath } from "@/api/file";
+import { createModel, getModelList } from "@/api";
 import Storage from "@/common/function/storage";
+import { getRequestFilter, sleep } from "@/common/function";
+import infoMixin from "@/common/mixins/info";
 export default {
+  mixins: [infoMixin],
   data() {
     return {
       fileList1: [],
@@ -134,17 +138,64 @@ export default {
       titleStyle: {
         color: "#636676",
       },
-
+      // 用户审批信息
+      approvalInfo: "",
+      // 提交参数
       params: {
         f_title: "",
         f_description: "",
         f_images: [],
         // 匿名
         f_anonymity: "2",
+        // 栋号
+
+        build_number: "",
       },
     };
   },
   methods: {
+    submit() {
+      // 校验标题和描述是否为空,为空则弹出提示框
+      if (!this.params.f_title || !this.params.f_description) {
+        uni.showToast({
+          title: "标题和描述不能为空",
+          icon: "none",
+        });
+        return;
+      }
+
+      if (this.approvalInfo) {
+        this.params.build_number = this.approvalInfo.roomName;
+        createModel("6538b911388a8c7a0eb9c5dc", this.params).then((res) => {
+          // 提示反馈成功 提交成功后返回上一页
+          uni.showToast({
+            title: "反馈成功",
+            icon: "none",
+          });
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1,
+            });
+          }, 1000);
+        });
+      } else {
+        uni.showToast({
+          title: "认证为业主才能上报哦~",
+          icon: "none",
+        });
+      }
+    },
+
+    // 获取审批信息
+    async getApprovalInfo() {
+      const { data: res } = await getModelList(
+        "64f6d064d85a4b7b32ec641d",
+        getRequestFilter({
+          formUser: this.userInfo.id,
+        })
+      );
+      this.approvalInfo = res?.list[0] || {};
+    },
     // 删除图片
     deletePic(event) {
       this[`fileList${event.name}`].splice(event.index, 1);
@@ -212,6 +263,9 @@ export default {
     this.$u.getRect(".label-img").then((res) => {
       this.labelImgWidth = res.width;
     });
+  },
+  onLoad() {
+    this.getApprovalInfo();
   },
 };
 </script>
