@@ -355,4 +355,9 @@ export default {
     color: #fff;
   }
 }
+
+::v-deep .u-picker__view__column__item.data-v-d45639b2 {
+  font-size: 40rpx;
+  // color: red;
+}
 </style>

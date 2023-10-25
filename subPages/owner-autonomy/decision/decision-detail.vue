@@ -173,8 +173,8 @@ export default {
     //获取楼栋号
     async getRoomMessage(id) {
       const { data } = await getModelInfo("64f6d11ed85a4b7b32ec641e", id);
-      this.buildMessage = `${data.buildingNumber}-${data.roomNumber}`;
-      return `${data.buildingNumber}-${data.roomNumber}`;
+      this.buildMessage = `${data.buildingNumber || 0}-${data.roomNumber || 0}`;
+      return `${data.buildingNumber || 0}-${data.roomNumber || 0}`;
     },
     // 获取楼号信息
     async getApproverMessage(id) {
@@ -183,7 +183,7 @@ export default {
         "64f6d064d85a4b7b32ec641d",
         filterData
       );
-      let { roomId } = data?.list[0];
+      let { roomId } = data?.list[0] || { roomId: "" };
       return this.getRoomMessage(roomId);
     },
     // 获取详情信息
@@ -200,7 +200,7 @@ export default {
         "64f93b4e4b635d6996a92a97",
         filterData
       );
-      for (let i = 0; i <= data.list.length - 1; i++) {
+      for (let i = 0; i <= data?.list.length - 1; i++) {
         if (data.list[i].result === "同意") {
           this.resolveList.push(data.list[i]);
         } else {
@@ -211,6 +211,7 @@ export default {
       // 获取所有投票的楼栋号
       data.list.map((item) => {
         this.getApproverMessage(item.decisionPeopleId).then((res) => {
+          // console.log("请求回来人员的数据", res);
           this.buildDataList.push(res);
         });
       });

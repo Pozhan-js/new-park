@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-19 13:05:59
+ * @LastEditTime: 2023-10-25 09:42:31
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -282,9 +282,9 @@ export default {
   },
   methods: {
     //获取轮播图数据
-    ...mapActions("neighborhood", ["getBannerList", "getActivityList"]),
+    ...mapActions("neighborhood", ["getActivityList"]),
     // ...mapActions("websocket", ["startWebSocket"]),
-    ...mapActions("main", ["getBanner", "getActivity"]),
+    ...mapActions("main", ["getBanner"]),
     ...mapActions("role", ["getMenuRoleList"]),
     // 跳转随手拍
     toSayPage() {

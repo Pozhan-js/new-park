@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-17 11:50:24
+ * @LastEditTime: 2023-10-23 11:35:46
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -99,8 +99,8 @@
           "
         >
           <view class="new-icon">最新</view>
-          <view class="flex-a-center">
-            <view class="vote-content-item-left">
+          <view class="vote-normal flex-a-center-j-center">
+            <!-- <view class="vote-content-item-left">
               <image
                 :src="imageUrl(newDecision.decisionLog[0].url)"
                 mode="aspectFill"
@@ -112,22 +112,35 @@
               <view class="icon">
                 <view class="number">请根据自主意见投票</view>
               </view>
-              <view class="avatar">
-                <!-- <u-avatar-group :urls="urls" size="18" gap="0.4"></u-avatar-group> -->
-              </view>
+            </view> -->
+            <view class="vote-normal-header flex-a-center-j-center">
+              <image
+                src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230906_791ed1e59fd14501a6555bf7f39dbbbf.png"
+                mode=""
+              />
+              <view class="title"> {{ newDecision.decisionIssue }} </view>
             </view>
           </view>
 
+          <u-line dashed></u-line>
+
+          <view class="vote-box">
+            <view class="vote-box-title">
+              {{ newDecision.decisionIssue }}
+            </view>
+            <view class="vote-box-text">{{ newDecision.description }}</view>
+          </view>
+
           <view class="vote-chat flex-a-center-j-space-between">
-            <view class="chat-item">
+            <view class="vote-chat-item">
               <view>投票率</view>
               <view class="num">{{ newDecision.no }}%</view>
             </view>
-            <view class="chat-item">
+            <view class="vote-chat-item">
               <view>投票人数</view>
               <view class="num">{{ newDecision.joinNum }}</view>
             </view>
-            <view class="chat-item">
+            <view class="vote-chat-item">
               <view>状态</view>
               <view class="num">{{
                 Date.now() < newDecision.decisionRange[1] ? "投票中" : "已结束"
@@ -170,42 +183,42 @@ export default {
       bannerList: [],
       featuresList: [
         {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_189b1d916a1d49f6822e514cc6253ff3.png",
-          text: "业主决策",
-          path: "./decision/decision-list",
-        },
-        {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_91f65613df404e70a33653e6d2428be8.png",
-          text: "财务公开",
-          path: "./finance/pages/finance",
-        },
-        {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_07a5b407cb7643b493a53cd93ba6bce8.png",
-          text: "电梯安全",
-          path: "./elevator-safety/elevator-safety",
-        },
-        {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_b3096cad18b24371934c48bf9ac61dad.png",
-          text: "故障统计",
-          path: "./fault/fault-statistics",
-        },
-        {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_335144715b454953a2eebe3e14b9e08a.png",
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_8f8844bd9e924b12bc29363b980fdd24.png",
           text: "小区公告",
           path: "../main/notice/notice-list",
         },
         {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_ff36c3cb031e489cbda258ccd9911f69.png",
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_a6cd28f4fb9c4d139400330f85a8d420.png",
+          text: "业主决策",
+          path: "./decision/decision-list",
+        },
+        {
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_61a43384272049bd8b59f6f3de548bd1.png",
           text: "调查问卷",
           path: "./questionnaire/questionnaire-list",
         },
         {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_665225c1ff7c46babff07f01b39068a1.png",
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_e3904c9a1e3e40209aaffbdc58e4ece6.png",
           text: "民意投票",
           path: "./vote/vote",
         },
         {
-          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230825_d09277a1e4164d45869b55ec6810d15f.png",
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_e5f683908d9d447fb7c044768cb48001.png",
+          text: "财务公开",
+          path: "./finance/pages/finance",
+        },
+        {
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_f71f7fd22f6849e7a5f0c7c1d1bb872b.png",
+          text: "电梯安全",
+          path: "./elevator-safety/elevator-safety",
+        },
+        {
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_bf0adbfa42a44e2dacf2831e4643b269.png",
+          text: "业委会",
+          path: "./owners-committee/owners-committee",
+        },
+        {
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_3e2d1173b3704093ba2836d22a56b808.png",
           text: "更多",
           path: "./",
         },
@@ -520,12 +533,9 @@ export default {
       margin-bottom: 10rpx;
 
       &-left {
-        width: 133rpx;
-        height: 50rpx;
-        font-size: 33rpx;
+        font-size: 36rpx;
         font-weight: 500;
         color: #252b50;
-        line-height: 50rpx;
       }
 
       &-right {
@@ -609,7 +619,7 @@ export default {
   // 投票决策
   &-decision {
     .decision-title {
-      font-size: 32rpx;
+      font-size: 36rpx;
       font-weight: bold;
       color: #333333;
       margin-bottom: 20rpx;
@@ -641,40 +651,76 @@ export default {
           line-height: 50rpx;
           text-align: center;
         }
+        .vote-normal {
+          padding-top: 30rpx;
 
-        &-left {
-          width: 156rpx;
-          height: 144rpx;
-          flex-shrink: 0;
-          margin-right: 20rpx;
+          &-header {
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #6377f5;
+            padding: 20rpx 0;
 
-          > image {
-            width: 100%;
-            height: 100%;
+            > image {
+              width: 45rpx;
+              height: 36rpx;
+              margin-right: 14rpx;
+            }
           }
         }
 
-        &-right {
-          width: 100%;
-          // margin-right: 100rpx;
+        // &-left {
+        //   width: 156rpx;
+        //   height: 144rpx;
+        //   flex-shrink: 0;
+        //   margin-right: 20rpx;
 
-          .icon {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 18rpx;
-          }
+        //   > image {
+        //     width: 100%;
+        //     height: 100%;
+        //   }
+        // }
 
-          .title {
-            font-size: 32rpx;
-            margin-top: 24rpx;
-            font-weight: bold;
-            color: #333333;
-          }
+        // &-right {
+        //   width: 100%;
+        //   // margin-right: 100rpx;
 
-          .number {
+        //   .icon {
+        //     display: flex;
+        //     justify-content: space-between;
+        //     margin-bottom: 18rpx;
+        //   }
+
+        //   .title {
+        //     font-size: 32rpx;
+        //     margin-top: 24rpx;
+        //     font-weight: bold;
+        //     color: #333333;
+        //   }
+
+        //   .number {
+        //     font-size: 26rpx;
+        //     font-weight: 400;
+        //     color: #666666;
+        //   }
+        // }
+
+        .vote-box {
+          background: #f9f9f9;
+          border-radius: 10rpx;
+          padding: 18rpx;
+          box-sizing: border-box;
+          margin-bottom: 16rpx;
+
+          &-title {
             font-size: 26rpx;
-            font-weight: 400;
-            color: #666666;
+            font-weight: bold;
+            color: #1f2329;
+            padding-bottom: 10rpx;
+          }
+
+          &-text {
+            font-size: 22rpx;
+            color: #999999;
           }
         }
 
@@ -682,8 +728,11 @@ export default {
           margin-top: 20rpx;
 
           &-item {
+            text-align: center;
             .num {
-              text-align: center;
+              width: 100%;
+
+              color: #999999;
             }
           }
         }
@@ -710,7 +759,7 @@ export default {
   // 问卷
   &-questionnaire {
     .questionnaire-title {
-      font-size: 32rpx;
+      font-size: 36rpx;
       font-weight: bold;
       color: #333333;
       margin-bottom: 20rpx;
@@ -741,12 +790,12 @@ export default {
 
         .item-right {
           .right-up {
-            font-size: 30rpx;
+            font-size: 32rpx;
             font-weight: bold;
           }
 
           .right-down {
-            font-size: 22rpx;
+            font-size: 28rpx;
             color: #666;
             // font-weight: bold;
           }

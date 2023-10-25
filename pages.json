@@ -86,6 +86,42 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "about-us/about-us",
+					"style": {
+						"navigationBarTitleText": "关于友邻"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "about-us/us-detail",
+					"style": {
+						"navigationBarTitleText": "友邻详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product-opinions/product-opinions",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product-opinions/product-list",
+					"style": {
+						"navigationBarTitleText": "意见列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
 			]
 		},
@@ -342,6 +378,43 @@
 					"path": "questionnaire/questionnaire-list",
 					"style": {
 						"navigationBarTitleText": "问卷列表"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "owners-committee/owners-committee",
+					"style": {
+						"navigationBarTitleText": "业委会"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "owners-committee/work-report",
+					"style": {
+						"navigationBarTitleText": "工作汇报"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "owners-committee/user-organization",
+					"style": {
+						"navigationBarTitleText": "组织架构"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "owners-committee/user-detail",
+					"style": {
+						"navigationBarTitleText": "个人名片",
+						"navigationStyle": "custom"
 					},
 					"meta": {
 						"verifyLogin": true
