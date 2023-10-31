@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 15:47:04
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-23 10:18:48
+ * @LastEditTime: 2023-10-30 21:41:49
  * @FilePath: /smart-park/subPages/owner-autonomy/decision/decision-list.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -34,13 +34,13 @@
           </view>
 
           <view class="decision-button flex-a-center-j-space-between">
-            <view class="button-allow flex-a-center-j-space-around">
-              <view>同意</view>
-              <view>（{{ userResolveList(data) }}户）</view>
-            </view>
-            <view class="button-reject flex-a-center-j-space-around">
-              <view>反对</view>
-              <view>（{{ userRejectList(data) }}户）</view>
+            <view
+              class="button-reject flex-a-center-j-space-around"
+              v-for="value in data.selectValue"
+              :key="value"
+            >
+              <view>{{ value }}</view>
+              <view>（{{ getDataLength(data, value) }}户）</view>
             </view>
           </view>
           <view class="join-text"
@@ -86,6 +86,15 @@ export default {
       }
       this.allVoterList = target;
     },
+
+    // 获取每个选项的数据长度
+    getDataLength(data, type) {
+      return (
+        this.allVoterList[data._id]?.filter((item) => {
+          return item.result === type;
+        }).length || 0
+      );
+    },
   },
   watch: {
     allVoterList: {
@@ -107,33 +116,6 @@ export default {
         }
       };
     },
-    // 获取反对用户
-    userRejectList() {
-      return (data) => {
-        const userList = this.$data.userList;
-        if (userList && userList[data._id]) {
-          return userList[data._id].filter((item) => {
-            return item.result === "反对";
-          }).length;
-        } else {
-          return 0;
-        }
-      };
-    },
-    // 获取同意用户
-    userResolveList() {
-      return (data) => {
-        const userList = this.$data.userList;
-        if (userList && userList[data._id]) {
-          return userList[data._id].filter((item) => {
-            return item.result === "同意";
-          }).length;
-        } else {
-          // 当 userList[data._id] 不存在时返回一个默认值
-          return 0;
-        }
-      };
-    },
   },
   onShow() {
     this.getDecisionDataList();
@@ -144,10 +126,12 @@ export default {
 <style lang="scss" scoped>
 .decision-list {
   width: 100vw;
-  height: 100vh;
-  min-height: #f8f9fd;
+  min-height: 100vh;
+  background-color: #f8f9fd;
   padding: 20rpx 30rpx;
   box-sizing: border-box;
+  margin-bottom: constant(safe-area-inset-bottom) !important;
+  margin-bottom: env(safe-area-inset-bottom) !important;
 
   &-item {
     width: 100%;
@@ -163,15 +147,18 @@ export default {
       width: 100%;
 
       &-title {
-        font-size: 32rpx;
-        font-weight: bold;
-        color: #6377f5;
         padding: 20rpx 0;
 
         > image {
           width: 45rpx;
           height: 36rpx;
           margin-right: 14rpx;
+        }
+
+        .title {
+          font-size: 42rpx;
+          font-weight: bold;
+          color: #6377f5;
         }
       }
 
@@ -187,18 +174,21 @@ export default {
           margin-bottom: 16rpx;
 
           .article-title {
-            font-size: 26rpx;
+            font-size: 32rpx;
             font-weight: bold;
             color: #1f2329;
             padding-bottom: 10rpx;
           }
           .article-content {
-            font-size: 22rpx;
+            font-size: 28rpx;
             color: #999999;
           }
         }
 
         .decision-button {
+          padding: 20rpx 0;
+          flex-wrap: wrap;
+
           .button-allow {
             background: rgba(252, 63, 21, 0.1);
             @extend %btn;
@@ -213,13 +203,13 @@ export default {
         }
 
         .text {
-          font-size: 22rpx;
+          font-size: 28rpx;
           color: #999999;
           margin-top: 16rpx;
         }
 
         .join-text {
-          font-size: 22rpx;
+          font-size: 28rpx;
           font-weight: bold;
           color: #6377f5;
           margin-top: 16rpx;
@@ -237,5 +227,6 @@ export default {
   line-height: 60rpx;
   font-size: 28rpx;
   font-weight: bold;
+  margin-bottom: 20rpx;
 }
 </style>

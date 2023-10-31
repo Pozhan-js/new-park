@@ -2,14 +2,19 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-24 15:25:46
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-24 16:57:08
+ * @LastEditTime: 2023-10-26 15:19:56
  * @FilePath: /smart-park/subPages/user/about-us/about-us.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <view class="about-us">
     <view class="about-us-list">
-      <view class="item" v-for="item in aboutList" :key="item._id">
+      <view
+        class="item"
+        v-for="item in aboutList"
+        :key="item._id"
+        @click="goToDetail(item)"
+      >
         <view class="item-title">{{ item.title }}</view>
         <view class="item-time">{{
           $u.timeFormat(item.creatorTime, "yyyy-mm-dd")
@@ -19,10 +24,7 @@
           :src="getImage(item.image[0].url)"
           mode=""
         />
-        <view
-          class="item-descrption flex-a-center-j-space-between"
-          @click="goToDetail(item)"
-        >
+        <view class="item-descrption flex-a-center-j-space-between">
           <view>{{ item.descrption }}</view>
           <u-icon name="arrow-right" size="16"></u-icon>
         </view>

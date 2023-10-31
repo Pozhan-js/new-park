@@ -122,6 +122,24 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "product-opinions/product-detail",
+					"style": {
+						"navigationBarTitleText": "意见详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "user-activity/user-activity",
+					"style": {
+						"navigationBarTitleText": "我参与的"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
 			]
 		},

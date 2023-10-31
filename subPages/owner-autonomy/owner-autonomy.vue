@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-23 11:35:46
+ * @LastEditTime: 2023-10-30 16:40:48
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -23,17 +23,24 @@
 
     <!-- 社区功能分类 -->
     <view class="owner-autonomy-features-type">
-      <view
-        class="features-type-item"
-        v-for="(item, index) in featuresList"
-        :key="index"
-        @click="handleClickFeat(item)"
-      >
-        <view class="image">
-          <image :src="item.url" style="width: 100%; height: 100%" />
-        </view>
-        <view class="docs">{{ item.text }}</view>
-      </view>
+      <u-grid :border="false" col="4">
+        <u-grid-item
+          v-for="(item, index) in featuresList"
+          :key="index"
+          @click="handleClickFeat(item)"
+        >
+          <image
+            :src="item.url"
+            mode=""
+            :style="{
+              width: '110rpx',
+              height: '110rpx',
+              marginTop: '20rpx',
+            }"
+          />
+          <text class="grid-text">{{ item.name }}</text>
+        </u-grid-item>
+      </u-grid>
     </view>
 
     <!-- 社区公告 -->
@@ -90,7 +97,7 @@
 
     <!-- 投票决策 -->
     <view class="owner-autonomy-decision">
-      <view class="decision-title">小区决策</view>
+      <view class="decision-title">民意投票</view>
       <view class="vote-content" v-if="newDecision">
         <view
           class="vote-content-item"
@@ -100,19 +107,6 @@
         >
           <view class="new-icon">最新</view>
           <view class="vote-normal flex-a-center-j-center">
-            <!-- <view class="vote-content-item-left">
-              <image
-                :src="imageUrl(newDecision.decisionLog[0].url)"
-                mode="aspectFill"
-              />
-            </view>
-            <view class="vote-content-item-right">
-              <view class="title">{{ newDecision.decisionIssue }}</view>
-
-              <view class="icon">
-                <view class="number">请根据自主意见投票</view>
-              </view>
-            </view> -->
             <view class="vote-normal-header flex-a-center-j-center">
               <image
                 src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230906_791ed1e59fd14501a6555bf7f39dbbbf.png"
@@ -133,15 +127,15 @@
 
           <view class="vote-chat flex-a-center-j-space-between">
             <view class="vote-chat-item">
-              <view>投票率</view>
+              <view style="font-size: 30rpx">投票率</view>
               <view class="num">{{ newDecision.no }}%</view>
             </view>
             <view class="vote-chat-item">
-              <view>投票人数</view>
+              <view style="font-size: 30rpx">投票人数</view>
               <view class="num">{{ newDecision.joinNum }}</view>
             </view>
             <view class="vote-chat-item">
-              <view>状态</view>
+              <view style="font-size: 30rpx">状态</view>
               <view class="num">{{
                 Date.now() < newDecision.decisionRange[1] ? "投票中" : "已结束"
               }}</view>
@@ -157,11 +151,12 @@
           <view class="vote-footer flex-a-center-j-space-between">
             <view
               class="vote-footer-item box"
+              style="font-size: 30rpx"
               @click.stop="handleToChat(newDecision._id)"
             >
               查看统计
             </view>
-            <view class="vote-footer-item box">{{
+            <view class="vote-footer-item box" style="font-size: 30rpx">{{
               newDecision.isJoin ? "已参加" : "未参加"
             }}</view>
           </view>
@@ -184,42 +179,42 @@ export default {
       featuresList: [
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_8f8844bd9e924b12bc29363b980fdd24.png",
-          text: "小区公告",
+          name: "小区公告",
           path: "../main/notice/notice-list",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_a6cd28f4fb9c4d139400330f85a8d420.png",
-          text: "业主决策",
+          name: "业主决策",
           path: "./decision/decision-list",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_61a43384272049bd8b59f6f3de548bd1.png",
-          text: "调查问卷",
+          name: "调查问卷",
           path: "./questionnaire/questionnaire-list",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_e3904c9a1e3e40209aaffbdc58e4ece6.png",
-          text: "民意投票",
+          name: "民意投票",
           path: "./vote/vote",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_e5f683908d9d447fb7c044768cb48001.png",
-          text: "财务公开",
+          name: "财务公开",
           path: "./finance/pages/finance",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_f71f7fd22f6849e7a5f0c7c1d1bb872b.png",
-          text: "电梯安全",
+          name: "电梯安全",
           path: "./elevator-safety/elevator-safety",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_bf0adbfa42a44e2dacf2831e4643b269.png",
-          text: "业委会",
+          name: "业委会",
           path: "./owners-committee/owners-committee",
         },
         {
           url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20231023_3e2d1173b3704093ba2836d22a56b808.png",
-          text: "更多",
+          name: "更多",
           path: "./",
         },
       ],
@@ -647,7 +642,7 @@ export default {
           border-radius: 10rpx;
           background-color: #6377f5;
           color: #fff;
-          font-size: 24rpx;
+          font-size: 28rpx;
           line-height: 50rpx;
           text-align: center;
         }
@@ -655,7 +650,7 @@ export default {
           padding-top: 30rpx;
 
           &-header {
-            font-size: 32rpx;
+            font-size: 40rpx;
             font-weight: bold;
             color: #6377f5;
             padding: 20rpx 0;
@@ -664,6 +659,10 @@ export default {
               width: 45rpx;
               height: 36rpx;
               margin-right: 14rpx;
+            }
+
+            .title {
+              font-size: 36rpx;
             }
           }
         }
@@ -712,14 +711,14 @@ export default {
           margin-bottom: 16rpx;
 
           &-title {
-            font-size: 26rpx;
+            font-size: 30rpx;
             font-weight: bold;
             color: #1f2329;
             padding-bottom: 10rpx;
           }
 
           &-text {
-            font-size: 22rpx;
+            font-size: 28rpx;
             color: #999999;
           }
         }
@@ -790,12 +789,12 @@ export default {
 
         .item-right {
           .right-up {
-            font-size: 32rpx;
+            font-size: 36rpx;
             font-weight: bold;
           }
 
           .right-down {
-            font-size: 28rpx;
+            font-size: 30rpx;
             color: #666;
             // font-weight: bold;
           }
@@ -803,5 +802,14 @@ export default {
       }
     }
   }
+}
+
+.grid-text {
+  font-size: 16px;
+  color: #909399;
+  padding: 10rpx 0 20rpx 0rpx;
+  /* #ifndef APP-PLUS */
+  box-sizing: border-box;
+  /* #endif */
 }
 </style>

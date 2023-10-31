@@ -280,6 +280,11 @@ $nums: (
   justify-content: space-between;
 }
 
+.flex-j-center{
+  display: flex;
+  justify-content: center;
+}
+
 .flex-a-center-j-space-around {
   display: flex;
   align-items: center;

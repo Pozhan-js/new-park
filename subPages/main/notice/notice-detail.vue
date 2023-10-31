@@ -5,7 +5,8 @@
       <view class="detail-author-message">
         <view class="name">发布人：{{ allData.name }}</view>
         <view class="time"
-          >时间： {{ $u.timeFrom(allData.time[0], "yyyy-mm-dd hh:MM:ss") }}</view
+          >时间：
+          {{ $u.timeFrom(allData.time[0], "yyyy-mm-dd hh:MM:ss") }}</view
         >
       </view>
       <view class="detail-content-text">
@@ -16,7 +17,7 @@
         <view class="reader-num flex-a-center">
           <view>已阅读</view>
           <u-avatar-group :urls="urls" size="18" gap="0.4"> </u-avatar-group>
-          <view>{{ allData.read_num||0 }}次</view></view
+          <view>{{ allData.read_num || 0 }}次</view></view
         >
       </view>
     </view>
@@ -67,10 +68,8 @@ export default {
 
     .detail-title {
       width: 100%;
-      height: 116rpx;
       font-size: 38rpx;
       color: #000000;
-      line-height: 58rpx;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box; //作为弹性伸缩盒子模型显示。
@@ -79,15 +78,14 @@ export default {
     }
 
     .detail-author-message {
-      display: flex;
-      justify-content: flex-start;
+      // display: flex;
+      // justify-content: flex-start;
       margin-top: 20rpx;
 
       .name {
         font-size: 28rpx;
         font-weight: 400;
         color: #000000;
-        line-height: 40rpx;
         margin-right: 30rpx;
       }
 
@@ -95,7 +93,6 @@ export default {
         font-size: 28rpx;
         font-weight: 400;
         color: #999999;
-        line-height: 40rpx;
       }
     }
     // TODO: 详情内容

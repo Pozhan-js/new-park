@@ -23,7 +23,7 @@
       <view
         class="vote-content-item"
         v-for="data in decisionDataList"
-        @click="handleClickItem(data._id, data.decisionRange[1])"
+        @click="handleClickItem(data, data.decisionRange[1])"
         :key="data._id"
       >
         <view class="flex-a-center">
@@ -42,15 +42,15 @@
         </view>
 
         <view class="vote-chat flex-a-center-j-space-between">
-          <view class="chat-item">
+          <view class="vote-chat-item">
             <view>投票率</view>
             <view class="num">{{ data.no }}%</view>
           </view>
-          <view class="chat-item">
+          <view class="vote-chat-item">
             <view>投票人数</view>
             <view class="num">{{ data.joinNum }}</view>
           </view>
-          <view class="chat-item">
+          <view class="vote-chat-item">
             <view>状态</view>
             <view class="num">{{
               Date.now() < data.decisionRange[1] ? "投票中" : "已结束"
@@ -59,7 +59,7 @@
         </view>
 
         <view class="vote-progress">
-          <u-line-progress :percentage="data.no">
+          <u-line-progress :percentage="data.no" activeColor="#6377f5">
             <text class="u-percentage-slot">{{ data.no }}%</text>
           </u-line-progress>
         </view>
@@ -67,13 +67,16 @@
         <view class="vote-footer flex-a-center-j-space-between">
           <view
             class="vote-footer-item box"
-            @click.stop="handleToChat(data._id)"
+            @click.stop="handleToChat(data)"
+            style="background-color: #f08e35; color: #fff"
           >
             查看统计
           </view>
-          <view class="vote-footer-item box">{{
-            data.isJoin ? "已参加" : "未参加"
-          }}</view>
+          <view
+            class="vote-footer-item box"
+            style="background-color: #6377f5; color: #fff"
+            >{{ data.isJoin ? "已参加" : "未参加" }}</view
+          >
         </view>
       </view>
     </view>
@@ -123,7 +126,7 @@ export default {
     },
 
     // 点击决策跳转到详请
-    handleClickItem(id, time) {
+    handleClickItem(data, time) {
       if (Date.now() > time) {
         uni.showToast({
           title: `该活动已经结束!`,
@@ -132,15 +135,17 @@ export default {
         return;
       } else {
         uni.navigateTo({
-          url: `./detail?id=${id}`,
+          url: `./detail?id=${data._id}`,
         });
       }
     },
 
     // 跳转到统计页面
-    handleToChat(id) {
+    handleToChat(data) {
       uni.navigateTo({
-        url: `./vote-chat?id=${id}`,
+        url: `./vote-chat?id=${data._id}&type=${JSON.stringify(
+            data.selectValue
+          )}`,
       });
     },
 
@@ -279,8 +284,10 @@ export default {
         margin-top: 20rpx;
 
         &-item {
+          text-align: center;
           .num {
-            text-align: center;
+            width: 100%;
+            color: #999999;
           }
         }
       }

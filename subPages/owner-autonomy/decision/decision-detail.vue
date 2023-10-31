@@ -16,28 +16,30 @@
             src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230906_791ed1e59fd14501a6555bf7f39dbbbf.png"
             mode=""
           />
-          <view class="title">{{ detailData.decisionTitle }}</view>
+          <view class="title">{{ detailData.decisionTitle || "" }}</view>
         </view>
         <u-line dashed></u-line>
         <view class="container-article-body">
           <view class="body-message">
             <view class="body-message-item">
-              {{ detailData.decisionIssue }}
+              {{ detailData.decisionIssue || "" }}
             </view>
-            <view class="body-message-item">起始时间: {{ startTime }}</view>
+            <view class="body-message-item"
+              >起始时间: {{ startTime || "" }}</view
+            >
             <view class="body-message-item flex-a-center">
               发起人:
               <view class="room-user">{{
-                detailData.creatorUser.realName
+                detailData.creatorUser.realName || ""
               }}</view>
             </view>
             <view class="body-message-item"
               >结束时间:
-              {{ endTime }}
+              {{ endTime || "" }}
             </view>
           </view>
           <view class="body-content">
-            {{ detailData.description }}
+            {{ detailData.description || "" }}
           </view>
           <view class="body-result">结论: 未过半数同意，未能通过</view>
         </view>
@@ -48,40 +50,33 @@
         <u-line dashed></u-line>
         <view class="data-container-body">
           <view class="body-content">
-            <view>
-              同意户数{{ resolveList.length }}户参与投票占有效业主比例{{
-                (
-                  resolveList.length /
-                  (resolveList.length + rejectList.length)
-                ).toFixed(1) * 100 || 0
-              }}%
-            </view>
-            <view>
-              反对户数{{ rejectList.length }}户参与投票占有效业主比例{{
-                (
-                  rejectList.length /
-                  (resolveList.length + rejectList.length)
-                ).toFixed(1) * 100 || 0
+            <!-- filterData -->
+            <view
+              style="margin-bottom: 16rpx"
+              v-for="select in detailData.selectValue"
+              :key="select"
+            >
+              投 <text style="color: #6377f5"> {{ select }} </text> 户数
+              <text style="color: #6377f5">
+                {{ filterData[select].length }}
+              </text>
+              户参与投票占有效业主比例{{
+                (filterData[select].length / currentDecisionNum.length).toFixed(
+                  1
+                ) * 100 || 0
               }}%
             </view>
           </view>
 
           <view class="decision-button flex-a-center-j-space-between">
             <view
-              class="button-allow flex-a-center-j-space-around"
-              data-index="同意"
-            >
-              <!-- @click="addDecisionList(decisionID, $event)" -->
-              <view>同意</view>
-              <view>（{{ resolveList.length }}户）</view>
-            </view>
-            <view
               class="button-reject flex-a-center-j-space-around"
-              data-index="反对"
+              v-for="value in detailData.selectValue"
+              :key="value"
+              :data-index="value"
             >
-              <!--  @click="addDecisionList(decisionID, $event)" -->
-              <view>反对</view>
-              <view>（{{ rejectList.length }}户）</view>
+              <view>{{ value }}</view>
+              <view>（{{ filterData[value].length || 0 }}户）</view>
             </view>
           </view>
         </view>
@@ -100,11 +95,10 @@
 </template>
 
 <script>
-import { getModelInfo, getModelList, createModel, updateModel } from "@/api";
+import { getModelInfo, getModelList } from "@/api";
 import { getRequestFilter } from "@/common/function";
 import infoMixin from "@/common/mixins/info";
 import userMixin from "@/common/mixins/user";
-import { sleep } from "@/common/function";
 export default {
   mixins: [infoMixin, userMixin],
   data() {
@@ -114,67 +108,70 @@ export default {
       buildMessage: "",
       // 获取所有投票者楼栋信息
       buildDataList: [],
-      // 统计所有反对
-      rejectList: [],
-      resolveList: [],
+      // 获取当前决策的所有投票
+      currentDecisionNum: [],
+      // 当前选项
+      dataType: [],
     };
   },
   methods: {
-    // 点击添加记录邮票结果
-    async addDecisionList(decisionId, e) {
-      let reqData = e.currentTarget.dataset.index;
-      // TODO现在判断是添加还是修改
-      let filterData = getRequestFilter({
-        decisionId,
-        decisionPeopleId: this.userInfo.id,
-      });
-      const { data } = await getModelList(
-        "64f93b4e4b635d6996a92a97",
-        filterData
-      );
+    // // 点击添加记录邮票结果
+    // async addDecisionList(decisionId, e) {
+    //   let reqData = e.currentTarget.dataset.index;
+    //   // TODO现在判断是添加还是修改
+    //   let filterData = getRequestFilter({
+    //     decisionId,
+    //     decisionPeopleId: this.userInfo.id,
+    //   });
+    //   const { data } = await getModelList(
+    //     "64f93b4e4b635d6996a92a97",
+    //     filterData
+    //   );
 
-      if (data?.list.length) {
-        let itemId = data.list[0]._id;
-        await updateModel(
-          "64f93b4e4b635d6996a92a97",
-          {
-            result: reqData,
-            decisionId: this.decisionID, //决策id
-            decisionPeopleId: this.userInfo.id, //投票者id
-          },
-          itemId
-        );
-        sleep(() => {
-          uni.showToast({
-            title: `投票${reqData}成功`,
-            icon: "success",
-          });
-          sleep(async () => {
-            // 刷新了;列表数据
-            uni.navigateBack({
-              delta: 1,
-            });
-          }, 600);
-        }, 600).then(async () => {
-          await getModelList("64f93b4e4b635d6996a92a97");
-        });
-      } else {
-        await createModel("64f93b4e4b635d6996a92a97", {
-          result: reqData,
-          decisionId: this.decisionID, //决策id
-          decisionPeopleId: this.userInfo.id, //投票者id
-        });
-        uni.showToast({
-          title: `投票${reqData}成功`,
-          icon: "success",
-        });
-      }
-    },
+    //   if (data?.list.length) {
+    //     let itemId = data.list[0]._id;
+    //     await updateModel(
+    //       "64f93b4e4b635d6996a92a97",
+    //       {
+    //         result: reqData,
+    //         decisionId: this.decisionID, //决策id
+    //         decisionPeopleId: this.userInfo.id, //投票者id
+    //       },
+    //       itemId
+    //     );
+    //     sleep(() => {
+    //       uni.showToast({
+    //         title: `投票${reqData}成功`,
+    //         icon: "success",
+    //       });
+    //       sleep(async () => {
+    //         // 刷新了;列表数据
+    //         uni.navigateBack({
+    //           delta: 1,
+    //         });
+    //       }, 600);
+    //     }, 600).then(async () => {
+    //       await getModelList("64f93b4e4b635d6996a92a97");
+    //     });
+    //   } else {
+    //     await createModel("64f93b4e4b635d6996a92a97", {
+    //       result: reqData,
+    //       decisionId: this.decisionID, //决策id
+    //       decisionPeopleId: this.userInfo.id, //投票者id
+    //     });
+    //     uni.showToast({
+    //       title: `投票${reqData}成功`,
+    //       icon: "success",
+    //     });
+    //   }
+    // },
     //获取楼栋号
     async getRoomMessage(id) {
       const { data } = await getModelInfo("64f6d11ed85a4b7b32ec641e", id);
-      this.buildMessage = `${data.buildingNumber || 0}-${data.roomNumber || 0}`;
-      return `${data.buildingNumber || 0}-${data.roomNumber || 0}`;
+      this.buildMessage = `${data?.buildingNumber || 0}-${
+        data?.roomNumber || 0
+      }`;
+      return `${data?.buildingNumber || 0}-${data?.roomNumber || 0}`;
     },
     // 获取楼号信息
     async getApproverMessage(id) {
@@ -200,14 +197,7 @@ export default {
         "64f93b4e4b635d6996a92a97",
         filterData
       );
-      for (let i = 0; i <= data?.list.length - 1; i++) {
-        if (data.list[i].result === "同意") {
-          this.resolveList.push(data.list[i]);
-        } else {
-          this.rejectList.push(data.list[i]);
-        }
-      }
-      // console.log("决策投票结果总数", data);
+
       // 获取所有投票的楼栋号
       data.list.map((item) => {
         this.getApproverMessage(item.decisionPeopleId).then((res) => {
@@ -215,6 +205,19 @@ export default {
           this.buildDataList.push(res);
         });
       });
+    },
+
+    // 获取给这个决策投票的人数
+    async getClickCurrentDecisionNum(decisionId) {
+      let filterData = getRequestFilter({
+        decisionId,
+      });
+      // 获取给这个决策投票的人数
+      const { data } = await getModelList(
+        "64f93b4e4b635d6996a92a97",
+        filterData
+      );
+      this.currentDecisionNum = data?.list;
     },
   },
   computed: {
@@ -230,10 +233,26 @@ export default {
         "yyyy-mm-dd"
       );
     },
+    // 将数据进行筛选
+    filterData() {
+      let result = {};
+      this.detailData?.selectValue?.forEach((item) => {
+        result[item] = [];
+      });
+      for (let data in result) {
+        this.currentDecisionNum.forEach((item) => {
+          if (item.result === data) {
+            result[data].push(item);
+          }
+        });
+      }
+      return result;
+    },
   },
   onLoad(option) {
     let { id } = option;
     this.decisionID = id;
+    this.getClickCurrentDecisionNum(id);
     this.getDecisionDetail(id);
     this.selectApproverList(id);
   },
@@ -345,15 +364,19 @@ export default {
         margin-bottom: 20rpx;
 
         .body-content {
-          // height: 128rpx;
+          display: flex;
+          justify-content: flex-start;
+          flex-wrap: wrap;
           background: #f9f9f9;
           border-radius: 10rpx;
-          text-align: center;
+          // text-align: center;
           padding: 30rpx 0;
           margin-bottom: 20rpx;
         }
 
         .decision-button {
+          flex-wrap: wrap;
+
           %btn {
             width: 295rpx;
             height: 60rpx;
@@ -362,6 +385,7 @@ export default {
             line-height: 60rpx;
             font-size: 28rpx;
             font-weight: bold;
+            margin-bottom: 20rpx;
           }
           .button-allow {
             background: rgba(252, 63, 21, 0.1);

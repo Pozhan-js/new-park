@@ -2,10 +2,21 @@
   <view class="vote-chat">
     <view class="charts-box">
       <view class="charts-box-title">业主投票率情况</view>
-      <qiun-data-charts type="ring" :opts="opts" :chartData="chartData" />
+      <qiun-data-charts
+        v-if="currentDecisionNum.length"
+        type="ring"
+        :opts="opts"
+        :chartData="chartData"
+      />
+      <u-empty
+        v-else
+        mode="data"
+        icon="http://cdn.uviewui.com/uview/empty/data.png"
+      >
+      </u-empty>
     </view>
 
-    <view class="vote-chat-content">
+    <view class="vote-chat-content" style="margin-top: 40rpx">
       <!-- <view class="vote-chat-content-title">选项一投票情况</view> -->
       <!-- <view class="vote-chat-content-text">
         尊敬的社区居民们，大家好！
@@ -19,8 +30,19 @@
       </view> -->
 
       <view class="charts-box1">
-        <view class="charts-box-title">业主投票同意率情况</view>
-        <qiun-data-charts type="ring" :opts="opts1" :chartData="chartData1" />
+        <view class="charts-box-title">业主投票各个选项情况</view>
+        <qiun-data-charts
+          v-if="currentDecisionNum.length"
+          type="ring"
+          :opts="opts1"
+          :chartData="chartData1"
+        />
+        <u-empty
+          v-else
+          mode="data"
+          icon="http://cdn.uviewui.com/uview/empty/data.png"
+        >
+        </u-empty>
       </view>
     </view>
   </view>
@@ -34,8 +56,6 @@ export default {
   mixins: [infoMixin],
   data() {
     return {
-      // chartData: {},
-      // chartData1: {},
       //您可以通过修改 config-ucharts.js 文件中下标为 ['ring'] 的节点来配置全局默认参数，如都是默认参数，此处可以不传 opts 。实际应用过程中 opts 只需传入与全局默认参数中不一致的【某一个属性】即可实现同类型的图表显示不同的样式，达到页面简洁的需求。
       opts: {
         rotate: false,
@@ -108,7 +128,7 @@ export default {
           lineHeight: 25,
         },
         title: {
-          name: "同意率",
+          name: "选项比例",
           fontSize: 15,
           color: "#666666",
         },
@@ -135,6 +155,8 @@ export default {
       currentDecisionNum: [], //单个决策投票人
       agreeList: [], //同意
       fightList: [], //反对
+      dataType: [], //   选项数组,
+      // dataFilterList: [], //处理数据
     };
   },
 
@@ -189,25 +211,37 @@ export default {
       return {
         series: [
           {
-            data: [
-              {
-                name: "同意",
-                value:
-                  (
-                    this.agreeList.length / this.currentDecisionNum.length
-                  ).toFixed(4) * 100,
-              },
-              {
-                name: "反对",
-                value:
-                  (
-                    this.fightList.length / this.currentDecisionNum.length
-                  ).toFixed(4) * 100,
-              },
-            ],
+            data: this.dataFilterList,
           },
         ],
       };
+    },
+
+    // 处理数据
+    dataFilterList() {
+      // 获取对象分类属性
+      let obj = {};
+      this.dataType.forEach((item) => {
+        obj[item] = [];
+      });
+
+      for (let data in obj) {
+        this.currentDecisionNum.forEach((item) => {
+          if (item.result === data) {
+            obj[data].push(item);
+          }
+        });
+      }
+
+      // 获取得到每个属性数组的长度
+      return this.dataType.map((item) => {
+        return {
+          name: item,
+          value:
+            (obj[item].length / this.currentDecisionNum.length).toFixed(4) *
+            100,
+        };
+      });
     },
   },
   watch: {
@@ -228,8 +262,9 @@ export default {
   },
   onLoad(option) {
     // 传递
-    let { id } = option;
-    // console.log(id);
+    let { id, type } = option.query;
+    console.log(option.query);
+    this.dataType = JSON.parse(type);
     this.getClickCurrentDecisionNum(id);
     this.getAllPeopleNum();
   },
@@ -239,8 +274,10 @@ export default {
 <style lang="scss" scoped>
 .vote-chat {
   width: 100vw;
+  min-height: 100vh;
   padding-top: 1rpx;
   box-sizing: border-box;
+  padding: 32rpx;
   background-color: #f8f9fd;
 }
 </style>

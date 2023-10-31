@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-25 09:42:31
+ * @LastEditTime: 2023-10-26 10:56:43
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -242,10 +242,10 @@ export default {
         }
       });
       arrIsTop.sort((a, b) => {
-        return b.lastModifyTime - a.lastModifyTime;
+        return b.time[0] - a.time[0];
       });
       arrNotTop.sort((a, b) => {
-        return b.lastModifyTime - a.lastModifyTime;
+        return b.time[0] - a.time[0];
       });
 
       return [...arrIsTop, ...arrNotTop];
@@ -414,7 +414,6 @@ export default {
       });
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
 
-      // console.log(data);
       this.dataList = data?.list?.map((item) => {
         return {
           title: item.title,
@@ -434,8 +433,6 @@ export default {
 
       //隐藏加载框
       uni.hideLoading();
-
-      //  this.filterDataList = this.dataList
     },
     // 获取首页菜单
     async getMeuList() {
@@ -481,12 +478,7 @@ export default {
         "64f6d064d85a4b7b32ec641d",
         filterTypeData
       );
-      // console.log("审批", data);
       if (data?.list.length) {
-        // uni.showToast({
-        //   title: "您的账号已被审批",
-        //   icon: "none",
-        // });
         storage.set("parse", "通过");
       } else {
         uni.showToast({
@@ -513,12 +505,7 @@ export default {
     // 查找用户是否被审批
     this.getApprove();
   },
-  async onLoad() {
-    // let token = uni.getStorageSync("SP_Token");
-    // token && (await this.startWebSocket());
-    // // console.log("onLoad", this.socketTask);
-    // this.socketTask.getMessage(this.onMessage);
-  },
+  async onLoad() {},
 };
 </script>
 

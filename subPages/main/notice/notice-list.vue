@@ -53,10 +53,11 @@ export default {
         }
       });
       arrIsTop.sort((a, b) => {
-        return b.lastModifyTime - a.lastModifyTime;
+        // return b.lastModifyTime - a.lastModifyTime;
+        return b.time[0] - a.time[0];
       });
       arrNotTop.sort((a, b) => {
-        return b.lastModifyTime - a.lastModifyTime;
+        return b.time[0] - a.time[0];
       });
 
       return [...arrIsTop, ...arrNotTop];

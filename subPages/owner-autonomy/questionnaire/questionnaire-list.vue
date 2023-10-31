@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-09-20 11:05:35
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-16 17:03:36
+ * @LastEditTime: 2023-10-26 10:33:02
  * @FilePath: /smart-park/subPages/owner-autonomy/questionnaire/questionnaire-list.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -18,8 +18,12 @@
         <image :src="getImageUrl(data.url)" mode="" />
       </view>
       <view class="item-right">
-        <view class="right-up">{{ data.outline }}</view>
-        <view class="right-down">{{ data.toast }}</view>
+        <view class="right-up" style="font-size: 36rpx">{{
+          data.outline
+        }}</view>
+        <view class="right-down" style="font-size: 28rpx">{{
+          data.toast
+        }}</view>
       </view>
     </view>
   </view>

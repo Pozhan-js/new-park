@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-18 15:20:11
+ * @LastEditTime: 2023-10-26 14:37:22
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -32,7 +32,9 @@
       </view>
       <view class="body">
         <view class="body-item">
-          <view class="body-item-title">隐患位置</view>
+          <view class="body-item-title"
+            ><text style="color: red">*</text> 隐患位置
+          </view>
           <view class="input flex-a-center-j-space-between"
             ><u--input
               placeholder="请输入内容"
@@ -73,7 +75,9 @@
           </view>
         </view>
         <view class="body-item">
-          <view class="body-item-title">隐患类型</view>
+          <view class="body-item-title"
+            ><text style="color: red">*</text> 隐患类型
+          </view>
           <u-grid :border="false" col="4">
             <u-grid-item
               v-for="(error, index) in errorList"
@@ -89,7 +93,9 @@
           </u-grid>
         </view>
         <view class="body-item">
-          <view class="body-item-title">详情描述</view>
+          <view class="body-item-title"
+            ><text style="color: red">*</text> 详情描述
+          </view>
           <u--textarea
             placeholder="请输入内容"
             v-model="model1.userInfo.description"
@@ -97,7 +103,9 @@
           ></u--textarea>
         </view>
         <view class="body-item">
-          <view class="body-item-title">现场照片</view>
+          <view class="body-item-title"
+            ><text style="color: red">*</text> 现场照片</view
+          >
           <u-upload
             :fileList="fileList1"
             @afterRead="afterRead"
@@ -332,9 +340,18 @@ export default {
     },
     // 提交按钮
     async submit() {
-      if (!this.model1.userInfo.address && !this.model1.userInfo.questionType)
-        return;
       let that = this;
+      if (
+        !this.model1.userInfo.questionType ||
+        !this.model1.userInfo.description ||
+        !this.model1.userInfo.address
+      ) {
+        uni.showToast({
+          title: "必填项不能为空不能为空",
+          icon: "none",
+        });
+        return;
+      }
 
       this.loading = true;
       that.model1.userInfo.userIcon = this.userInfo.headIcon;
@@ -492,6 +509,7 @@ export default {
         }
 
         &-btn {
+          margin-top: 20rpx;
           .text {
             font-size: 20rpx;
             color: #6377f5;

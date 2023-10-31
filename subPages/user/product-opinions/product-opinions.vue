@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-25 10:29:24
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-25 15:41:47
+ * @LastEditTime: 2023-10-30 10:17:23
  * @FilePath: /smart-park/subPages/user/product-opinions/product-opinions.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -84,8 +84,8 @@
             <view class="cell-value">
               <u-switch
                 v-model="params.f_anonymity"
-                :inactiveValue="'2'"
-                :activeValue="'1'"
+                :inactiveValue="1"
+                :activeValue="0"
               ></u-switch>
             </view>
           </template>
@@ -144,10 +144,14 @@ export default {
       params: {
         f_title: "",
         f_description: "",
+        // 描述图片
         f_images: [],
+        // 头像
+        f_headerIcon: [],
         // 匿名
-        f_anonymity: "2",
+        f_anonymity: 1,
         // 栋号
+        reply: 0,
 
         build_number: "",
       },
@@ -166,7 +170,13 @@ export default {
 
       if (this.approvalInfo) {
         this.params.build_number = this.approvalInfo.roomName;
+        this.params.f_headerIcon.push({
+          fileId: this.userInfo.headIcon.split("/").at(-1),
+          name: this.userInfo.headIcon,
+          url: config.baseURL + this.userInfo.headIcon,
+        });
         createModel("6538b911388a8c7a0eb9c5dc", this.params).then((res) => {
+          console.log("创建完成", res);
           // 提示反馈成功 提交成功后返回上一页
           uni.showToast({
             title: "反馈成功",
@@ -248,7 +258,7 @@ export default {
           },
           success: (res) => {
             setTimeout(() => {
-              console.log("上传成功", res, that.fileList1);
+              // console.log("上传成功", res, that.fileList1);
               let { data } = JSON.parse(res.data);
               resolve(data);
             }, 1000);

@@ -8,8 +8,10 @@
       <u-avatar size="140rpx" :src="avatar" />
       <view v-if="isLogin" class="user-info flex-col flex-grow justify-evenly">
         <!-- <text class="user-name text_ellipsis">{{ realName }}</text> -->
-        <text class="user-name text_ellipsis">{{ userMessage.roomName }}</text>
-        <text class="study-days">{{ userInfo.realName }}</text>
+        <text class="user-name text_ellipsis"
+          >{{ userMessage.roomName || "" }}业主</text
+        >
+        <text class="study-days">{{ userInfo.realName || "" }}</text>
       </view>
       <view
         v-else
@@ -31,7 +33,11 @@
         <u-grid :border="false" @click="clickFunction" col="4">
           <u-grid-item v-for="(item, index) in baseList" :key="index">
             <image
-              style="padding-top: 20rpx; width: 72rpx; height: 72rpx"
+              :style="{
+                width: '110rpx',
+                height: '110rpx',
+                marginTop: '20rpx',
+              }"
               :src="item.name"
               mode=""
             />
@@ -148,11 +154,16 @@ export default {
 
     clickFunction(name) {
       switch (name) {
+        case 1:
+          this.$jump("/subPages/user/user-activity/user-activity");
+          break;
         case 2:
-          this.$jump("/subPages/user/product-opinions/product-opinions");
+          this.$jump("/subPages/user/product-opinions/product-list");
           break;
         case 3:
           this.$jump("/subPages/user/about-us/about-us");
+          break;
+        case 4:
           break;
         case 5:
           this.$jump("/subPages/main/say-some/say-some");
@@ -250,7 +261,7 @@ export default {
 }
 
 .grid-text {
-  font-size: 14px;
+  font-size: 16px;
   color: #909399;
   padding: 10rpx 0 20rpx 0rpx;
   /* #ifndef APP-PLUS */

@@ -163,7 +163,7 @@ export default {
             });
           }
 
-          setTimeout(() => uni.reLaunch({ url: "/pages/index/index" }), 2000);
+          setTimeout(() => wx.reLaunch({ url: "/pages/index/index" }), 2000);
         } catch {
           this.lock = false;
         }
