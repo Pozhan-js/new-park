@@ -144,8 +144,8 @@ export default {
     handleToChat(data) {
       uni.navigateTo({
         url: `./vote-chat?id=${data._id}&type=${JSON.stringify(
-            data.selectValue
-          )}`,
+          data.selectValue
+        )}`,
       });
     },
 
@@ -269,7 +269,7 @@ export default {
         .title {
           font-size: 32rpx;
           margin-bottom: 18rpx;
-          // font-weight: bold;
+          font-weight: bold;
           color: #333333;
         }
 

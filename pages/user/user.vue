@@ -34,8 +34,8 @@
           <u-grid-item v-for="(item, index) in baseList" :key="index">
             <image
               :style="{
-                width: '110rpx',
-                height: '110rpx',
+                width: '72rpx',
+                height: '72rpx',
                 marginTop: '20rpx',
               }"
               :src="item.name"
@@ -43,7 +43,12 @@
             />
             <view
               v-if="item.title === '在线客服'"
-              style="position: absolute; width: 100%; height: 100%; opacity: 0"
+              style="
+                position: absolute;
+                width: 72rpx;
+                height: 72rpx;
+                opacity: 0;
+              "
             >
               <u-button type="primary" open-type="contact">联系客服</u-button>
             </view>
@@ -93,7 +98,7 @@ export default {
       userMessage: {},
       baseList: [
         {
-          name: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230710_1d5126ffd7cb4de19214a559b0b9611b.png",
+          name: "https://kindoucloud.com:8011/api/file/Image/systemicon/ycj/20221227_c6fe168a6c144764bffeb88abfb2c0e6.jpg",
           title: "家庭成员",
         },
         {

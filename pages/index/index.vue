@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-26 10:56:43
+ * @LastEditTime: 2023-10-31 12:38:45
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -103,14 +103,20 @@
         <u-grid :border="false" col="4">
           <template v-for="(item, index) in baseList">
             <u-grid-item @click="clickGridItem(item)" :key="index">
-              <image
-                :src="item.menueIcon"
-                mode=""
-                :style="{
+              <!-- :style="{
                   width: '110rpx',
                   height: '110rpx',
                   marginTop: '20rpx',
+                }" -->
+              <image
+                class="grid-image"
+                :style="{
+                  width: '72rpx',
+                  height: '72rpx',
+                  marginTop: '20rpx',
                 }"
+                :src="item.menueIcon"
+                mode=""
               />
               <text class="grid-text">{{ item.menueItem }}</text>
             </u-grid-item>
@@ -731,6 +737,7 @@ $borderSize: 25rpx;
             margin-left: 70rpx;
 
             .time {
+              white-space: nowrap;
               margin-left: 10rpx;
             }
           }

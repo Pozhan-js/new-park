@@ -634,6 +634,15 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "owner-review/owner-review",
+					"style": {
+						"navigationBarTitleText": "业主认证"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
 			]
 		},

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-17 10:13:38
+ * @LastEditTime: 2023-10-31 10:53:15
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -19,34 +19,65 @@
         :key="item._id"
       >
         <!-- 业主信息 -->
-        <view class="item-info flex-a-center">
-          <u-avatar :src="getHeardImg(item.userIcon)" shape="circle"></u-avatar>
-          <view class="item-info-num">{{
+        <view class="item-info user-header flex-a-center">
+          <u-avatar
+            size="94rpx"
+            :src="getHeardImg(item.userIcon)"
+            shape="circle"
+          ></u-avatar>
+          <!-- <view class="item-info-num">{{
             item.showName ? "匿名用户" : item.roomNum
-          }}</view>
+          }}</view> -->
+          <view class="item-info-num">
+            <u--text
+              color="#252B50"
+              size="32rpx"
+              :text="item.showName ? '匿名用户' : item.roomNum + '业主'"
+            >
+            </u--text>
+            <u--text
+              type="info"
+              size="24rpx"
+              :text="$u.timeFrom(item.creatorTime)"
+            >
+            </u--text>
+          </view>
         </view>
-        <view class="item-description text-2-hidden">
+
+        <u--text color="color: #636676;" block :text="item.description">
+        </u--text>
+        <!-- <view class="item-description text-2-hidden">
           {{ item.description }}
-        </view>
+        </view> -->
         <view class="item-image">
-          <!--          <u-album
-            :urls="item.image"
-            :singleSize="100"
-            :maxCount="3"
-            keyName="url"
-          ></u-album> -->
+          <view class="reply-img">
+            <image
+              v-for="(data, index) in item.image"
+              :key="index"
+              :src="baseUrl + data.url"
+              mode="aspectFill"
+              @tap="previewImage(index, data.image)"
+              :style="{
+                width: imgWidth / 3 - 8 + 'px',
+                height: imgWidth / 3 - 8 + 'px',
+              }"
+              style="margin: 0 8rpx 8rpx 0"
+            ></image>
+          </view>
         </view>
-        <view class="item-address flex-a-center">
-          <u-icon name="map-fill" size="20" color="#6377f5"></u-icon>
-          <view class="address" style="margin-left: 10rpx">{{
-            item.address
-          }}</view>
-        </view>
+
         <view class="item-tools flex-a-center-j-space-between">
-          <view class="item-tools-date flex-a-center">
+          <!-- <view class="item-tools-date flex-a-center">
             <u-icon size="20" name="clock" color="#6377f5"></u-icon>
             <view class="time" style="font-size: 24rpx">{{
               isTimeOut(item.creatorTime)
+            }}</view>
+          </view> -->
+
+          <view class="item-address flex-a-center">
+            <u-icon name="map-fill" size="20" color="#6377f5"></u-icon>
+            <view class="address" style="margin-left: 10rpx">{{
+              item.address || "暂无地址"
             }}</view>
           </view>
 
@@ -112,10 +143,10 @@
 
 <script>
 import { getRequestFilter } from "@/common/function";
-import helper from "@/common/helper";
+import config from "@/common/config";
 import { getModelList, createModel, deleteModel } from "@/api";
 import chatInput from "@/components/im-chat/chatinput.vue"; //input框
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -125,7 +156,7 @@ export default {
     return {
       user_id: 4,
       username: "Liuxy",
-
+      imgWidth: 0,
       index: "",
       comment_index: "",
 
@@ -133,21 +164,6 @@ export default {
       focus: false, //是否自动聚焦输入框
       is_reply: false, //回复还是评论
       showInput: false, //评论输入框
-
-      urls1: [
-        {
-          url: "https://cdn.uviewui.com/uview/album/1.jpg",
-        },
-        {
-          url: "https://cdn.uviewui.com/uview/album/1.jpg",
-        },
-        {
-          url: "https://cdn.uviewui.com/uview/album/1.jpg",
-        },
-        {
-          url: "https://cdn.uviewui.com/uview/album/1.jpg",
-        },
-      ],
       typeList: [],
       // 接收数据
       shootCasuallyListData: [],
@@ -175,6 +191,9 @@ export default {
       // .sort((a, b) => {
       //   return b.creatorTime - a.creatorTime;
       // });
+    },
+    baseUrl() {
+      return config.baseURL;
     },
     tabList() {
       return this.typeList.map((item) => {
@@ -382,6 +401,11 @@ export default {
 
       this.typeList = ["全部", ...result.data?.list[0].value];
 
+      this.$nextTick(async () => {
+        let rectInfo = await this.$u.getRect(".user-header");
+        this.imgWidth = rectInfo.width;
+      });
+
       //隐藏加载框
       uni.hideLoading();
     },
@@ -402,6 +426,26 @@ export default {
     // 获取头像
     getHeardImg(url) {
       return this.$helper.filterCover(url) || "";
+    },
+
+    // 获取评论图片数组
+    getImageList(list = []) {
+      return list.map((item) => {
+        return {
+          url: this.$helper.filterCover(item.url),
+        };
+      });
+    },
+
+    previewImage(index, imgList) {
+      let imgListUrl = [];
+      imgList.forEach((item) => {
+        imgListUrl.push(config.baseURL + item.url);
+      });
+      uni.previewImage({
+        current: index,
+        urls: imgListUrl,
+      });
     },
   },
   onLoad() {
@@ -445,6 +489,7 @@ export default {
       }
 
       .item-image {
+        width: 100%;
         margin: 20rpx 0;
       }
 
@@ -520,7 +565,7 @@ export default {
   }
 
   .post-footer {
-    margin-top: 30upx;
+    margin-top: 20upx;
     background-color: #f3f3f5;
     width: 100%;
 

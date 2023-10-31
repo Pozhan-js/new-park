@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-30 16:40:48
+ * @LastEditTime: 2023-10-31 12:39:18
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -33,8 +33,8 @@
             :src="item.url"
             mode=""
             :style="{
-              width: '110rpx',
-              height: '110rpx',
+              width: '72rpx',
+              height: '72rpx',
               marginTop: '20rpx',
             }"
           />
@@ -69,7 +69,7 @@
             <u-icon name="clock" size="16" color="#999"></u-icon>
             <!--TODO 时间转换 $u.timeFrom(`${newNotice[0]?.time[0]}`, "yyyy-mm-dd") -->
 
-            <view class="time">{{ noticeTime(item.time) }}</view>
+            <text class="time">{{ noticeTime(item.time) }}</text>
           </view>
         </view>
         <image :src="item.image" mode="" />
@@ -559,7 +559,7 @@ export default {
       > image {
         width: 210rpx;
         height: 184rpx;
-        margin-right: 18rpx;
+        // margin-right: 18rpx;
         flex-shrink: 0;
         border-radius: 16rpx;
       }
@@ -598,12 +598,13 @@ export default {
         .right-footer {
           position: absolute;
           bottom: 0;
-          font-size: 26rpx;
+          font-size: 24rpx;
           color: #999999;
           margin-top: 18rpx;
-          margin-left: 70rpx;
+          margin-left: 60rpx;
 
           .time {
+            white-space: nowrap;
             margin-left: 10rpx;
           }
         }

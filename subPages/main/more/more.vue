@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-09-19 15:39:22
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-19 17:26:03
+ * @LastEditTime: 2023-10-31 11:33:52
  * @FilePath: /smart-park/subPages/main/more/more.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -41,6 +41,12 @@ export default {
             "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230804_49d47bdaf3d2401fb123ceda0db26e35.png",
           title: "养老健康",
           path: "./",
+        },
+        {
+          imageUrl:
+            "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230621_9d4eab73b87143b3bda95f01e799a351.png",
+          title: "审批认证",
+          path: "/subPages/main/owner-review/owner-review",
         },
       ],
     };
