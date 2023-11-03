@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-11-03 14:47:30
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 15:40:15
+ * @LastEditTime: 2023-11-03 16:24:20
  * @FilePath: /smart-park/subPages/user/family/add-family.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -33,6 +33,21 @@
           border="none"
           type="number"
           placeholder="请输入手机号"
+          maxlength="11"
+        ></u--input>
+      </u-form-item>
+      <u-form-item label="性别" prop="f_sex" borderBottom>
+        <u--input
+          v-model="form.f_sex"
+          border="none"
+          placeholder="请输入性别"
+        ></u--input>
+      </u-form-item>
+      <u-form-item label="年龄" prop="f_age" borderBottom>
+        <u--input
+          v-model="form.f_age"
+          border="none"
+          placeholder="请输入年龄"
           maxlength="11"
         ></u--input>
       </u-form-item>
@@ -78,15 +93,17 @@
 export default {
   data() {
     return {
+      start: 0,
       tips: "发送验证码",
       form: {
         f_userbuildingno: "",
         f_buildingmanageid: "",
         f_creatoruserid: "",
         f_status: "0",
-        f_creatortime: "",
         f_mobilephone: "",
         f_userid: "",
+        f_sex: "",
+        f_age: "",
       },
       rules: {
         f_mobilephone: [
@@ -104,8 +121,29 @@ export default {
             trigger: ["blur"],
           },
         ],
+        f_sex: [
+          {
+            type: "string",
+            required: true,
+            message: "请填写性别",
+            trigger: ["blur"],
+          },
+        ],
+        f_age: [
+          {
+            type: "string",
+            required: true,
+            message: "请填写年龄",
+            trigger: ["blur"],
+          },
+        ],
       },
     };
+  },
+  methods: {
+    codeChange() {},
+
+    seconds() {},
   },
 };
 </script>
