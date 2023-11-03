@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-31 12:39:18
+ * @LastEditTime: 2023-11-03 10:19:42
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -33,8 +33,8 @@
             :src="item.url"
             mode=""
             :style="{
-              width: '72rpx',
-              height: '72rpx',
+              width: '100rpx',
+              height: '100rpx',
               marginTop: '20rpx',
             }"
           />

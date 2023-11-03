@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 10:19:27
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-12 16:12:12
+ * @LastEditTime: 2023-11-02 11:53:55
  * @FilePath: /smart-park/api/index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,7 +14,7 @@ export const API = {
   visual: "/api/mongoVisualdev/online_dev/",
   open: "/api/mongoVisualdev/OpenApi/", //登录凭证
   system: "/api/mongoSystem/Permission/", //登录认证
-  workFlow: "api/mongoWorkflow/FlowTask", //创建流程
+  workFlow: "api/mongoWorkflow/FlowTask/", //创建流程
   realName: "/api/mongoThird/huawei/certification/", //实名认证
   upDateUser: "/api/mongoSystem/Permission/Users", //修改角色
 };
@@ -85,6 +85,24 @@ export const batchOperation = (modelId, data) =>
 
 // 创建流程
 export const createFlow = (data) => http.post(API.workFlow, data);
+
+// 获取待认证人员
+export const getFlowList = () => http.post(API.workFlow + `AuditList`);
+
+// 获取审批流程中表单信息
+export const getFlowFormData = (id, operatorRecordId) =>
+  http.get(API.workFlow + `${id}/${operatorRecordId}`);
+
+// 通过审批按钮
+export const parseFlow = (id, operatorRecordId, formData) =>
+  http.post(API.workFlow + `Audit/${id}/${operatorRecordId}`, { formData });
+
+// 通过审批按钮
+export const rejectFlow = (id, operatorRecordId, formData, handleOpinion) =>
+  http.post(API.workFlow + `Reject/${id}/${operatorRecordId}`, {
+    formData,
+    handleOpinion,
+  });
 
 // 实名认证
 export const realName = (idCard, phoneNumber, realName) =>

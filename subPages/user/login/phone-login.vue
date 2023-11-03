@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     async login() {
-      if (this.isAnonymous) this.$jump("./phone-login");
+      // if (this.isAnonymous) this.$jump("./phone-login");
       if (this.lock) return;
       if (this.validateForm()) {
         this.lock = true;

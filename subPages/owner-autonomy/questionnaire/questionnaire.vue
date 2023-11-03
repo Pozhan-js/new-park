@@ -29,27 +29,35 @@
             v-for="(topic, index) in topicList"
             :key="index"
           >
-            <view class="investigation-detail-content-list-row-title">
-              {{ topic.questionTitle }}
+            <view
+              class="investigation-detail-content-list-row-title"
+              style="font-size: 32rpx; font-weight: bold"
+            >
+              <text>{{ index + 1 }}. </text> {{ topic.questionTitle }}
+              <text style="color: #6377f5; margin-left: 30rpx">{{
+                topic.is_single
+              }}</text>
             </view>
             <view class="select-list" v-if="topic.isSelect">
               <view
                 class="investigation-detail-content-list-item"
-                v-for="(info, infoIndex) in checkoutInfoList"
+                v-for="info in topic.selectAnswer"
+                :class="isShowIcon(topic, info) ? 'currentItem' : ''"
                 :key="info"
-                @click="handleClickInfo(infoIndex, index)"
+                @click="handleClickInfo(topic, info)"
               >
                 <view class="name">{{ info }}</view>
-                <u-icon
+                <!-- <u-icon
                   name="checkbox-mark"
-                  v-if="everyAnswerList[index] === infoIndex"
-                ></u-icon>
+                  color="#6377f5"
+                  v-if="isShowIcon(topic, info)"
+                ></u-icon> -->
               </view>
             </view>
 
             <u--textarea
               v-else
-              v-model="everyAnswerList[index]"
+              @input="handleInputInfo($event, topic)"
               placeholder="请输入内容"
             ></u--textarea>
 
@@ -99,13 +107,11 @@ export default {
     return {
       // 请求所有题目
       topicList: [],
-      // 选择题选项
-      checkoutInfoList: [],
       currentAnswerIndex: -1,
-      // 存储最终答题结果
-      answerDataList: [],
       // 存储每道题选择的下标
       everyAnswerList: [],
+      // 存储多选题答案数组
+      multipleChoice: {},
       // 记录当前题目序号
       topicIndex: 0,
       // 判断是下一题还是上一题
@@ -119,9 +125,112 @@ export default {
     },
   },
   methods: {
+    // 判断是否显示图标
+    isShowIcon(topic, info) {
+      let self = this;
+
+      if (
+        this.everyAnswerList.filter(
+          (data) => data.questionTitle === topic.questionTitle
+        ).length
+      ) {
+        let flag = false;
+        this.everyAnswerList.forEach((item, index) => {
+          if (item.questionTitle === topic.questionTitle) {
+            // console.log(info, topic, item);
+            if (self.everyAnswerList[index].answer.includes(info)) {
+              flag = true;
+            }
+          }
+        });
+        return flag;
+      } else {
+        return false;
+      }
+    },
+    handleInputInfo(event, topic) {
+      let self = this;
+      console.log(event, topic);
+      if (
+        this.everyAnswerList.filter(
+          (data) => data.questionTitle === topic.questionTitle
+        ).length
+      ) {
+        this.everyAnswerList.forEach((item, index) => {
+          if (item.questionTitle === topic.questionTitle) {
+            self.everyAnswerList[index].answer = event;
+          }
+        });
+      } else {
+        // 单选首次答题
+        this.everyAnswerList.push({
+          questionTitle: topic.questionTitle,
+          answer: event,
+        });
+      }
+    },
     // 点击显示
-    handleClickInfo(index, titleIndex) {
-      this.everyAnswerList.splice(titleIndex, 0, index);
+    handleClickInfo(topic, info) {
+      let self = this;
+      // 先判断改题目是选择题还是判断题
+      if (topic.isSelect) {
+        // 是选择题
+        if (topic.is_single === "单选") {
+          // TODO单选
+          // 单选修改时
+          if (
+            this.everyAnswerList.filter(
+              (data) => data.questionTitle === topic.questionTitle
+            ).length
+          ) {
+            this.everyAnswerList.forEach((item, index) => {
+              if (item.questionTitle === topic.questionTitle) {
+                self.everyAnswerList[index].answer = [info];
+              }
+            });
+          } else {
+            // 单选首次答题
+            this.everyAnswerList.push({
+              questionTitle: topic.questionTitle,
+              answer: [info],
+            });
+          }
+        } else {
+          // TODO多选
+          if (
+            this.everyAnswerList.filter(
+              (data) => data.questionTitle === topic.questionTitle
+            ).length
+          ) {
+            this.everyAnswerList.forEach((item, index) => {
+              if (item.questionTitle === topic.questionTitle) {
+                if (item.answer.includes(info)) {
+                  // 判断是否存在，存在则需要删除
+                  self.everyAnswerList[index].answer = self.everyAnswerList[
+                    index
+                  ].answer.filter((e) => e != info);
+                } else {
+                  self.everyAnswerList[index].answer.push(info);
+                }
+
+                if (self.everyAnswerList[index].answer.length == 0) {
+                  self.everyAnswerList.splice(index, 1);
+                }
+              }
+            });
+          } else {
+            // 首次答题
+            this.everyAnswerList.push({
+              questionTitle: topic.questionTitle,
+              answer: [info],
+            });
+          }
+        }
+      } else {
+        // 是问答题
+
+        return;
+      }
     },
 
     //点击上一题
@@ -138,10 +247,17 @@ export default {
       const { data } = await getModelInfo("650a5c8e0538024e9740e342", id);
       this.reqData = data;
       this.topicList = data?.tableField109;
-      this.checkoutInfoList = data?.selectAnswer;
     },
     //
     async handlerClickBtn() {
+      if (this.everyAnswerList.length !== this.topicList.length) {
+        uni.showToast({
+          title: "请将题目做完再提交",
+          icon: "error",
+        });
+
+        return;
+      }
       // 避免单人重复提交
       let filterData = getRequestFilter({
         creatorUserId: this.userInfo.id,
@@ -160,9 +276,8 @@ export default {
         const data = await updateModel(
           "650bb5b20538024e9740e396",
           {
-            result: this.everyAnswerList,
-            questionId: this.reqData._id,
-            answerPerson: this.userInfo.id,
+            tableField102: this.everyAnswerList,
+            questionID: this.reqData._id,
           },
           selectResult.data?.list[0]._id
         );
@@ -176,16 +291,19 @@ export default {
       } else {
         try {
           // 提交答案
-          const data = await createModel("650bb5b20538024e9740e396", {
-            result: this.everyAnswerList,
-            questionId: this.reqData._id,
-            answerPerson: this.userInfo.id,
+          const data = await createModel("65434f85876f5a37067f186d", {
+            tableField102: this.everyAnswerList,
+            questionID: this.reqData._id,
           });
 
           if (data.code === 200) {
             uni.showToast({
               title: "提交成功",
               icon: "success",
+            });
+
+            uni.navigateBack({
+              delta: 1,
             });
           }
         } catch (error) {
@@ -208,10 +326,12 @@ export default {
 <style lang="scss" scoped>
 .investigation-detail {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 1px;
   box-sizing: border-box;
   background-color: #b1bbf5;
+  padding-bottom: constant(safe-area-inset-bottom) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
   position: relative;
   // text-align: center;
 
@@ -219,6 +339,7 @@ export default {
     margin: 15rpx;
     font-size: 24rpx;
     color: #333333;
+
     &-title {
       margin-bottom: 8rpx;
     }
@@ -230,7 +351,7 @@ export default {
     background: #fff;
     border-radius: 20rpx;
     padding: 40rpx;
-    overflow: hidden;
+    overflow: auto;
     opacity: 1;
     margin-bottom: 0;
 
@@ -244,7 +365,7 @@ export default {
 
     .investigation-detail-content {
       width: 100%;
-      height: 750rpx;
+      // height: 750rpx;
       // overflow: hidden;
 
       &-list {
@@ -252,7 +373,8 @@ export default {
         overflow: hidden;
 
         &-row-title {
-          margin-bottom: 10rpx;
+          //   font-size: 28rpx;
+          margin-bottom: 40rpx;
         }
 
         .select-list {
@@ -272,7 +394,7 @@ export default {
 
           .name {
             font-size: 28rpx;
-            color: #333333;
+            // color: #333333;
             margin-left: 56rpx;
           }
         }
@@ -323,6 +445,11 @@ export default {
     margin-bottom: constant(safe-area-inset-bottom) !important;
     margin-bottom: env(safe-area-inset-bottom) !important;
   }
+}
+
+.currentItem {
+  background-color: #6377f5 !important;
+  color: #fff !important;
 }
 
 .transition {

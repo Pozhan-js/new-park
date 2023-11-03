@@ -643,6 +643,15 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "owner-review/review-detail",
+					"style": {
+						"navigationBarTitleText": "业主认证"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
 			]
 		},

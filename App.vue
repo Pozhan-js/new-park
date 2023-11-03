@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:10:10
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-19 10:07:57
+ * @LastEditTime: 2023-11-02 14:22:50
  * @FilePath: /smart-park/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -19,7 +19,7 @@ export default {
       其他: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230901_44dd4d96c6fb4b209929a1d9b15fbb89.png",
     },
     // 判断是匿名登录还是正常登录
-    isAnonymous: false,
+    // isAnonymous: false,
   },
   onLaunch: function () {
     uni.$set = this.$set;
