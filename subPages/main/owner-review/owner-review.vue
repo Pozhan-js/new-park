@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-30 14:29:36
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-02 12:04:13
+ * @LastEditTime: 2023-11-03 14:13:00
  * @FilePath: /smart-park/subPages/main/owner-review/owner-review.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -56,7 +56,7 @@
             ref="swipeActionItem"
             :options="options"
             id=""
-            @click="removeDetils(list, i)"
+            @click="removeDetails(pended)"
           >
             <view class="container-item">
               <view class="item-title">{{ pended.roomName }}</view>
@@ -133,11 +133,14 @@
     <view class="owner-review-content" v-else>
       <view
         class="owner-review-content-container"
-        v-for="pend in pendingReviewList"
+        v-for="pend in filterPendingReviewList"
         :key="pend.id"
       >
         <u-swipe-action>
-          <u-swipe-action-item :options="options2" @click="handleActionItem">
+          <u-swipe-action-item
+            :options="options2"
+            @click="handleActionItem(pend)"
+          >
             <view
               class="container-item-not no-parse flex-a-center-j-space-between"
               @click.stop="featuresDetail(pend.id, pend.operatorRecordId)"
@@ -162,7 +165,13 @@
 </template>
 
 <script>
-import { getFlowList, getModelList } from "@/api";
+import {
+  getFlowList,
+  getModelList,
+  rejectFlow,
+  getFlowFormData,
+  deleteModel,
+} from "@/api";
 import { getRequestFilter } from "@/common/function";
 export default {
   data() {
@@ -202,6 +211,7 @@ export default {
       ],
       // 表单数据
       formData: {},
+      reqFormData: {},
       // 获取所有待审核用户
       pendingReviewList: [],
       // 获取所有以审核用户
@@ -220,7 +230,14 @@ export default {
       this.reviewStatus = name;
     },
 
-    removeDetils(list, index) {},
+    async removeDetails(remove) {
+      const result = await deleteModel("64f6d064d85a4b7b32ec641d", remove._id);
+      this.getPendingReviewList();
+      uni.showToast({
+        title: result.msg,
+        duration: 600,
+      });
+    },
 
     featuresDetail(id, operatorRecordId) {
       if (this.isParse) return;
@@ -253,21 +270,41 @@ export default {
       }
     },
 
-    handleActionItem({ index }) {
-      console.log(index);
-
+    async handleActionItem(itemData) {
+      let { data } = await getFlowFormData(
+        itemData.id,
+        itemData.operatorRecordId
+      );
+      // console.log(data);
+      this.reqFormData = JSON.parse(data.task.taskOperatorRecord[1].nodeData);
+      // console.log(index);
       // 直接发送
+      const result = await rejectFlow(
+        itemData.id,
+        itemData.operatorRecordId,
+        JSON.stringify(this.reqFormData),
+        ""
+      );
+
+      this.getPendingReviewList();
+
+      uni.showToast({
+        title: result.msg,
+        duration: 600,
+      });
+    },
+  },
+  computed: {
+    filterPendingReviewList() {
+      return this.pendingReviewList?.filter((item) => {
+        return item.status === 1;
+      });
     },
   },
   onShow() {
-    // console.log("1");
     if (this.reviewStatus) {
       this.getPendingReviewList();
     }
-  },
-  onLoad() {
-    // 该接口后台会进行token判断
-    // this.getPendingReviewList();
   },
 };
 </script>

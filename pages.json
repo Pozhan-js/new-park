@@ -140,6 +140,24 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "family/family",
+					"style": {
+						"navigationBarTitleText": "家庭成员"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "family/add-family",
+					"style": {
+						"navigationBarTitleText": "添加家庭成员"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
 			]
 		},

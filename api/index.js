@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 10:19:27
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-02 11:53:55
+ * @LastEditTime: 2023-11-03 11:13:27
  * @FilePath: /smart-park/api/index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -97,7 +97,7 @@ export const getFlowFormData = (id, operatorRecordId) =>
 export const parseFlow = (id, operatorRecordId, formData) =>
   http.post(API.workFlow + `Audit/${id}/${operatorRecordId}`, { formData });
 
-// 通过审批按钮
+// 拒绝审批按钮
 export const rejectFlow = (id, operatorRecordId, formData, handleOpinion) =>
   http.post(API.workFlow + `Reject/${id}/${operatorRecordId}`, {
     formData,

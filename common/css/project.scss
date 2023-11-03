@@ -302,3 +302,14 @@ $nums: (
   text-overflow: ellipsis; //溢出用省略号显示
   white-space: nowrap; //溢出不换行
 }
+
+.page-box{
+  width: 100vw;
+  // height: fit-content;
+  min-height: 100vh;
+  background: #f4f5f7;
+  padding: 30rpx;
+  box-sizing: border-box;
+  padding-bottom: constant(safe-area-inset-bottom) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}

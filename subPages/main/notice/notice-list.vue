@@ -82,7 +82,7 @@ export default {
     //获取列表数据集
     async getNoticeList() {
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
-      console.log(data);
+      // console.log(data);
       this.dataList = data?.list.map((item) => {
         return {
           title: item.title,

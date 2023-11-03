@@ -159,6 +159,9 @@ export default {
 
     clickFunction(name) {
       switch (name) {
+        case 0:
+          this.$jump("/subPages/user/family/family");
+          break;
         case 1:
           this.$jump("/subPages/user/user-activity/user-activity");
           break;

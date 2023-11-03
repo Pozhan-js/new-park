@@ -49,9 +49,9 @@ export function message(msg = "", state = true, info) {
     //使用||true是为了防止回调函数返回false时导致后面的代码不执行
     //这样保证了最后返回的是result对象,用于链式调用
     close: () => (params = result = null) || uni.hideToast(),
-    success: cb => ((state == "success" && cb(params)) || true) && result,
-    error: cb => ((state == "error" && cb(params)) || true) && result,
-    finally: cb => (cb(state, params) || true) && result,
+    success: (cb) => ((state == "success" && cb(params)) || true) && result,
+    error: (cb) => ((state == "error" && cb(params)) || true) && result,
+    finally: (cb) => (cb(state, params) || true) && result,
   };
   hideMessage = result.close;
   return result; //返回结果
@@ -74,7 +74,7 @@ export function goToPath(
     return Promise.reject("method传入错误,没有该方法!");
   return new Promise((res, rej) => {
     setTimeout(() => {
-      console.log(join(path.trim(), query),);
+      // console.log(join(path.trim(), query),);
       uni[method]({
         url: join(path.trim(), query),
         events,
@@ -185,7 +185,7 @@ export function sleep(fn, time = 0) {
     time = fn;
     fn = null;
   }
-  return new Promise(res =>
+  return new Promise((res) =>
     setTimeout(() => res(isFunction(fn, true)), time >> 0 || 300)
   );
 }
@@ -209,5 +209,3 @@ export function getNextDayTimestamp(num = 1, isDiff = false) {
     nowTimestamp, //计算时的当前时间戳
   };
 }
-
-

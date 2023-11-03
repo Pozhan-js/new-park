@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-31 17:08:37
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-02 14:30:45
+ * @LastEditTime: 2023-11-03 11:51:17
  * @FilePath: /smart-park/subPages/main/review-detail/review-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -71,17 +71,6 @@
           <text style="color: red">*</text>电话号码
         </view>
         <view class="review-detail-form-item-content">
-          <!-- <view class="radio-list">
-            <u-radio-group v-model="reviewStatus" @change="groupChange">
-              <u-radio
-                shape="circle"
-                :label="item.name"
-                :name="item.name"
-                v-for="item in radiolist1"
-                :key="item"
-              ></u-radio>
-            </u-radio-group>
-          </view> -->
           <u--input
             placeholder="请输入内容"
             border="none"
@@ -112,6 +101,7 @@
 
 <script>
 import { getFlowFormData, parseFlow } from "@/api";
+import { sleep } from "@/common/function";
 export default {
   data() {
     return {
@@ -144,6 +134,12 @@ export default {
         title: result.msg,
         duration: 600,
       });
+
+      sleep(() => {
+        if (result.code === 200) {
+          this.cancelBtn();
+        }
+      }, 800);
     },
     // 返回上一页函数
     cancelBtn() {

@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-24 15:25:46
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-26 15:19:56
+ * @LastEditTime: 2023-11-03 14:18:05
  * @FilePath: /smart-park/subPages/user/about-us/about-us.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -75,7 +75,7 @@ export default {
 <style lang="scss" scoped>
 .about-us {
   width: 100vw;
-  height: fit-content;
+  // height: fit-content;
   min-height: 100vh;
   background: #f4f5f7;
   padding: 30rpx;
