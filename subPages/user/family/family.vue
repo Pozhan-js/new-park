@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-11-03 14:16:53
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 16:03:21
+ * @LastEditTime: 2023-11-06 16:11:04
  * @FilePath: /smart-park/subPages/user/family/family.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -10,26 +10,61 @@
   <view class="family page-box">
     <view class="family-item">
       <!-- 图标识别 -->
-      <view
-        class="type flex-a-center"
-        :class="{ manager: item.F_UserId == user.id }"
-      >
+      <view class="type flex-a-center manager">
         <image
           style="width: 60rpx; height: 60rpx"
           src="https://kindoucloud.com:8011/api/file/Image/systemicon/ycj/20221227_249ae9d5470e447482048364768d46f3.png"
         ></image>
         <view class="type-info">
-          {{ item.F_UserId == user.id ? "业主" : "家属" }}
+          {{ true ? "业主" : "" }}
         </view>
       </view>
 
-      <!-- 用户信息 -->
+      <!-- 业主用户信息 -->
       <view class="user-info flex-a-center">
         <u-avatar size="120rpx" :src="headerIcon"></u-avatar>
         <view class="user-info-text">
-          <view class="name">c1栋106号</view>
+          <view class="name">{{ parentsInfo.realName }}</view>
           <view>
-            <u--text mode="phone" text="13823167094" format="encrypt"></u--text>
+            <u--text
+              mode="phone"
+              :text="parentsInfo.mobilePhone + ''"
+              format="encrypt"
+            ></u--text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 横线 -->
+      <view>
+        <u-line margin="20rpx 5rpx"></u-line>
+        <view class="status success"> 通过 </view>
+      </view>
+    </view>
+
+    <!-- TODO成员列表信息展示 -->
+    <view class="family-item" v-for="info in infoList" :key="info._id">
+      <!-- 图标识别 -->
+      <view class="type flex-a-center">
+        <image
+          style="width: 60rpx; height: 60rpx"
+          src="https://kindoucloud.com:8011/api/file/Image/systemicon/ycj/20221227_249ae9d5470e447482048364768d46f3.png"
+        ></image>
+        <view class="type-info">
+          {{ info.parentsID ? "家属" : "" }}
+        </view>
+      </view>
+
+      <!-- 成员用户信息 -->
+      <view class="user-info flex-a-center">
+        <u-avatar
+          size="120rpx"
+          src="/static/image/default-avatar.png"
+        ></u-avatar>
+        <view class="user-info-text">
+          <view class="name">{{ info.nickName }}</view>
+          <view>
+            <u--text mode="phone" :text="info.phone" format="encrypt"></u--text>
           </view>
         </view>
       </view>
@@ -60,9 +95,22 @@
 <script>
 import storage from "@/common/function/storage";
 import config from "@/common/config";
+import { getModelList } from "@/api";
+import { getRequestFilter } from "@/common/function";
+import infoMixin from "@/common/mixins/info";
 export default {
+  mixins: [infoMixin],
   data() {
-    return {};
+    return {
+      roomName: "c1栋106号",
+      nickName: "xx",
+      phone: "",
+      parentsInfo: {},
+      familyList: [],
+
+      // 判断是否能添加该用户为成员(不能再用户列表中已注册的用户)
+      infoList: [],
+    };
   },
   computed: {
     headerIcon() {
@@ -76,6 +124,19 @@ export default {
         url: "/subPages/user/family/add-family",
       });
     },
+    // 获取该用户的成员数据
+    async getFamilyDataList() {
+      let filterData = getRequestFilter({
+        parentsID: storage.get("UserInfo").id,
+      });
+
+      let { data } = await getModelList("64f6d064d85a4b7b32ec641d", filterData);
+      this.infoList = data?.list;
+    },
+  },
+  onShow() {
+    this.parentsInfo = storage.get("UserInfo");
+    this.getFamilyDataList();
   },
 };
 </script>
