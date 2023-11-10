@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 10:17:50
+ * @LastEditTime: 2023-11-09 16:46:03
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -12,7 +12,7 @@
     <u-status-bar bgColor="#FFF"></u-status-bar>
 
     <view class="top-app flex-a-center-j-space-between">
-      <view class="park-name">长江友邻社区</view>
+      <view class="park-name">东原麓·印长江C区</view>
       <view class="time flex-a-center">
         <image
           style="height: 46rpx; width: 46rpx"
@@ -68,11 +68,13 @@
             </view>
           </view>
         </template>
+        <!--  v-if="isShowItem('业主自治')" -->
         <view
           class="pages-content-business-item box2 padding-20 flex-center"
+          v-if="isShowItem('业主自治')"
           @click="toOwnerAutonomy"
         >
-          <view class="item-content flex-a-center">
+          <view class="item-content flex-a-center" @click="toSquarePage">
             <view class="title">业主自治</view>
             <image
               style="width: 110rpx; height: 110rpx; margin-left: 16rpx"
@@ -83,7 +85,8 @@
         </view>
         <view
           class="pages-content-business-item box3 padding-20 flex-center"
-          @click="toMarket"
+          v-if="isShowItem('便民广场')"
+          @click="toSquarePage"
         >
           <view class="item-content flex-a-center">
             <view class="title">便民广场</view>
@@ -103,11 +106,6 @@
         <u-grid :border="false" col="4">
           <template v-for="(item, index) in baseList">
             <u-grid-item @click="clickGridItem(item)" :key="index">
-              <!-- :style="{
-                  width: '110rpx',
-                  height: '110rpx',
-                  marginTop: '20rpx',
-                }" -->
               <image
                 class="grid-image"
                 :style="{
@@ -126,7 +124,7 @@
       <!-- 公告 -->
       <view class="pages-content-placard">
         <view class="placard-header">
-          <view class="placard-header-left">社区公告</view>
+          <view class="placard-header-left">小区公告</view>
           <view class="placard-header-right">
             <view class="right-text" @click="toNoticeList">更多 </view>
             <u-icon size="24rpx" name="arrow-right"></u-icon>
@@ -159,7 +157,7 @@
       <!-- 社区活动 -->
       <view class="pages-content-activity">
         <view class="activity-header">
-          <view class="activity-header-left">社区活动</view>
+          <view class="activity-header-left">小区活动</view>
           <view class="activity-header-right">
             <view
               class="right-text"
@@ -169,43 +167,58 @@
             <u-icon size="24rpx" name="arrow-right"></u-icon>
           </view>
         </view>
-        <!-- 活动内容 -->
-        <view
-          class="activity-content flex-a-center"
-          v-for="item in currentPageActivityList"
-          :key="item._id"
-          @click="toActivityDetailPage(item)"
+        <!-- 活动内容  -->
+        <template v-if="currentPageActivityList.length">
+          <view
+            class="activity-content flex-a-center"
+            v-for="item in currentPageActivityList"
+            :key="item._id"
+            @click="toActivityDetailPage(item)"
+          >
+            <view class="activity-content-left">
+              <image :src="item.activity_log[0]" mode="" />
+            </view>
+            <view class="activity-content-right">
+              <view class="right-title text-1-hidden">
+                {{ item.activity_title }}
+              </view>
+              <view class="right-container">
+                <view class="right-container-item flex-a-center">
+                  <u-icon name="clock" size="16" color="#999"></u-icon>
+                  <view class="item-text">{{
+                    $u.timeFormat(item.hold_date, "yyyy-mm-dd") +
+                    " " +
+                    item.hold_time
+                  }}</view>
+                </view>
+                <view class="right-container-item flex-a-center">
+                  <u-icon name="map" size="16" color="#999"></u-icon>
+                  <view class="item-text">{{
+                    item.activity_locations || "未知"
+                  }}</view>
+                </view>
+                <view class="right-container-item flex-a-center">
+                  <view class="item-text"
+                    >限定报名人数
+                    <text style="font-size: 32rpx; color: #fb8753">
+                      {{ item.people_num }} </text
+                    >人</view
+                  >
+                </view>
+              </view>
+            </view>
+            <!-- 按钮 -->
+            <!-- <view class="activity-btn">立即报名</view> -->
+          </view>
+        </template>
+
+        <!-- 内容为空 -->
+        <u-empty
+          v-else
+          mode="data"
+          icon="http://cdn.uviewui.com/uview/empty/list.png"
         >
-          <view class="activity-content-left">
-            <image :src="item.activity_log[0]" mode="" />
-          </view>
-          <view class="activity-content-right">
-            <view class="right-title text-1-hidden">
-              {{ item.activity_title }}
-            </view>
-            <view class="right-container">
-              <view class="right-container-item flex-a-center">
-                <u-icon name="clock" size="16" color="#999"></u-icon>
-                <view class="item-text">{{
-                  $u.timeFormat(item.hold_date, "yyyy-mm-dd") +
-                  " " +
-                  item.hold_time
-                }}</view>
-              </view>
-              <view class="right-container-item flex-a-center">
-                <u-icon name="map" size="16" color="#999"></u-icon>
-                <view class="item-text">{{
-                  item.activity_locations || "未知"
-                }}</view>
-              </view>
-              <view class="right-container-item flex-a-center">
-                <view class="item-text">{{ item.people_num }}人已报名</view>
-              </view>
-            </view>
-          </view>
-          <!-- 按钮 -->
-          <!-- <view class="activity-btn">立即报名</view> -->
-        </view>
+        </u-empty>
       </view>
 
       <view-tabbar tabIndex="0"></view-tabbar>
@@ -274,7 +287,12 @@ export default {
       return (name) => {
         if (this.roleList && this.userInfo) {
           const data = this.roleList?.find((item) => item.name === name);
-          return data && data.role.split(",").includes(this.userInfo.roleId[0]);
+          return (
+            data &&
+            data.role
+              .split(",")
+              .some((info) => this.userInfo.roleId.includes(info))
+          );
         }
         return false; // 如果 roleList 或 userInfo 未定义，返回默认值或适当的值
       };
@@ -379,6 +397,19 @@ export default {
         },
       });
     },
+    // 跳转到广场
+    toSquarePage() {
+      if (storage.get("parse") === "未通过") {
+        uni.showToast({
+          title: "您的账号审批未通过",
+          icon: "none",
+        });
+        return;
+      }
+      uni.navigateTo({
+        url: `/subPages/main/square/square`,
+      });
+    },
     //点击公告跳转到公告列表
     toNoticeList() {
       if (storage.get("parse") === "未通过") {
@@ -406,12 +437,12 @@ export default {
       });
     },
     // 跳转到又令市场
-    toMarket() {
-      uni.showToast({
-        title: "暂未开放",
-        icon: "none",
-      });
-    },
+    // toMarket() {
+    //   uni.showToast({
+    //     title: "暂未开放",
+    //     icon: "none",
+    //   });
+    // },
     //获取列表数据集
     async getNoticeList() {
       //显示加载框
@@ -456,10 +487,14 @@ export default {
           return this.getRole(item.menueItem);
         }) || [];
     },
+    // 权限判断函数
     getRole(name = "") {
       let data = this.roleList?.find((item) => item.name == name);
-      return data?.role.split(",").includes(this.userInfo.roleId[0]);
+      return data?.role
+        .split(",")
+        .some((data) => this.userInfo.roleId.includes(data));
     },
+    // 时间格式化函数
     getNowDate() {
       this.nowDate = `星期${"日一二三四五六".charAt(
         new Date().getDay()
@@ -499,19 +534,18 @@ export default {
     // 当组件挂载时执行
     this.getBanner({ pageSize: -1 });
   },
-  async created() {},
   async onShow() {
-    this.getNowDate();
-    // 当组件创建时执行
     this.getMenuRoleList();
     this.getMeuList();
+    this.getNowDate();
+    // 当组件创建时执行
+
     this.getNoticeList();
     // 获取活动
     this.getActivityList();
     // 查找用户是否被审批
     this.getApprove();
   },
-  async onLoad() {},
 };
 </script>
 

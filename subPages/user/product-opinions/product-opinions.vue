@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-25 10:29:24
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-30 10:17:23
+ * @LastEditTime: 2023-11-07 10:36:55
  * @FilePath: /smart-park/subPages/user/product-opinions/product-opinions.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -93,7 +93,7 @@
       </u-cell-group>
     </view>
 
-    <view class="submit" @click="submit"> 提交 </view>
+    <button class="submit circle-button qu-btn" @click="submit">提交</button>
 
     <!-- 标题S -->
     <u-modal
@@ -320,14 +320,17 @@ export default {
       width: 100%;
     }
   }
+}
+.qu-btn {
+  // position: absolute;
+  // bottom: 0;
+  width: 90%;
+  margin: 100rpx auto;
+  margin-bottom: constant(safe-area-inset-bottom) !important;
+  margin-bottom: env(safe-area-inset-bottom) !important;
 
-  .submit {
-    background: #6377f5;
-    border-radius: 12rpx;
-    margin: 40rpx 15rpx;
-    padding: 20rpx;
-    text-align: center;
-    color: #ffffff;
+  &:active {
+    transform: scale(0.98);
   }
 }
 </style>

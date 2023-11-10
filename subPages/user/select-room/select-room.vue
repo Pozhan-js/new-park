@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { getModelList, createFlow, realName, updateRole } from "@/api";
+import { getModelList, createFlow } from "@/api";
 import infoMixin from "@/common/mixins/info";
 import userMixin from "@/common/mixins/user";
 export default {
@@ -249,12 +249,6 @@ export default {
           }
         });
 
-        // 实名认证
-        // const realInfoData = await realName(
-        //   this.idCard,
-        //   this.mobilPhone,
-        //   this.realNameVal
-        // );
         // 认证成功
         // if (realInfoData.data.result.verificationResult === "1") {
         try {
@@ -267,22 +261,6 @@ export default {
               roomName: `${this.pickObj.pickValue}栋${this.pickHourseObj.pickValue}号`,
               sex: this.sex,
               age: this.age,
-              // realName: this.realNameVal,
-              // phone: this.mobilPhone,
-              // idCardNum: this.idCard,
-              // age:
-              //   new Date().getFullYear() -
-              //     this.idCard.split("")?.slice(6, 10).join("") || "",
-              // nickName: `${
-              //   this.realNameVal.split("").length <= 3
-              //     ? this.realNameVal.split("")[0]
-              //     : `${this.realNameVal.split("").slice(1)}`
-              // }先生`,
-
-              // sex:
-              //   this.idCard.split("")[this.idCard.split("").length - 2] % 2
-              //     ? "男"
-              //     : "女",
             }),
             flowId: "64f6d064d85a4b7b32ec641d",
             status: 0,

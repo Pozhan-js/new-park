@@ -24,11 +24,9 @@
       </view>
     </view>
     <view class="vote-detail-bottom">
-      <u-button
-        type="primary"
-        text="确定"
-        @click="addAndEditResult(detailId)"
-      ></u-button>
+      <button class="circle-button qu-btn" @click="addAndEditResult(detailId)">
+        提交
+      </button>
     </view>
   </view>
 </template>
@@ -230,11 +228,19 @@ export default {
   }
 
   &-bottom {
+  }
+
+  .qu-btn {
+    // position: absolute;
+    // bottom: 0;
+    width: 80%;
     margin: 100rpx auto;
-    width: 650rpx;
-    height: 40rpx;
-    background: #ffffff;
-    border-radius: 0rpx 20rpx;
+    margin-bottom: constant(safe-area-inset-bottom) !important;
+    margin-bottom: env(safe-area-inset-bottom) !important;
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 }
 </style>

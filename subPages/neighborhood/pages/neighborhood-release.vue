@@ -1,113 +1,212 @@
 <template>
   <view class="say-some box">
-    <u-navbar bgColor="transparent" :placeholder="true">
+    <u-navbar bgColor="#fff" title="活动发布" :placeholder="true">
       <view slot="left"> </view>
     </u-navbar>
 
     <!-- ========================== -->
-    <view class="active-one">
-      <view class="title">活动名称</view>
-      <u--input
-        border="surround"
-        v-model="formInfoData.activity_title"
-      ></u--input>
-    </view>
+    <u--form
+      labelPosition="top"
+      :labelStyle="{ 'margin-bottom': '5rpx' }"
+      :model="formInfoData"
+      :rules="rules"
+      ref="activeForm"
+      labelWidth="100"
+    >
+      <u-form-item label="活动标题" prop="activity_title" borderBottom required>
+        <u--input
+          v-model="formInfoData.activity_title"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
 
-    <view class="active-one">
-      <view class="title">活动内容</view>
-      <!--  v-if="!regex.test(formInfoData.activity_content)" -->
-      <u--textarea
-        v-model="formInfoData.activity_content"
-        :cursorSpacing="40"
-        :showConfirmBar="false"
-        placeholder="请输入内容"
-      ></u--textarea>
-      <!-- <u-parse v-else :content="formInfoData.activity_content"></u-parse> -->
-    </view>
+      <u-form-item
+        label="活动联系人"
+        prop="phone_contact"
+        borderBottom
+        required
+      >
+        <u--input
+          v-model="formInfoData.phone_contact"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
 
-    <!-- 时间选择 -->
-    <view id="auth-four" @click="handleClickType('start')">
-      <view class="flex-a-center-j-space-between">
-        <view class="title">活动开始时间</view>
-        <u-icon name="arrow-right" size="12"></u-icon>
-      </view>
-      <view v-show="formInfoData.activity_time[0]">{{
-        $u.timeFormat(formInfoData.activity_time[0])
-      }}</view>
-    </view>
+      <u-form-item label="联系电话" prop="phone_number" borderBottom required>
+        <u--input
+          v-model="formInfoData.phone_number"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
 
-    <view id="auth-four" @click="handleClickType('end')">
-      <view class="flex-a-center-j-space-between">
-        <view class="title">活动结束时间</view>
-        <u-icon name="arrow-right" size="12"></u-icon>
-      </view>
-      <view v-show="formInfoData.activity_time[1]">{{
-        $u.timeFormat(formInfoData.activity_time[1])
-      }}</view>
-    </view>
+      <u-form-item label="活动类型" prop="active_type" borderBottom required>
+        <u--input
+          v-model="formInfoData.active_type"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
 
-    <view class="active-one">
-      <view class="title">活动图示</view>
-      <u-upload
-        :fileList="fileList1"
-        @afterRead="afterRead"
-        @delete="deletePic"
-        name="1"
-        multiple
-        :maxCount="1"
-      ></u-upload>
-    </view>
+      <u-form-item
+        label="活动地址"
+        prop="activity_location"
+        borderBottom
+        labelPosition="left"
+        required
+      >
+        <u-button
+          type="primary"
+          text="添加活动位置"
+          :plain="true"
+          @click="getAddressBtn"
+          icon="map"
+          size="small"
+          shape="circle"
+        ></u-button>
+        <view v-if="formInfoData.activity_location.address">{{
+          formInfoData.activity_location.address
+        }}</view>
+        <!-- <u-icon slot="right" name="arrow-right" /> -->
+      </u-form-item>
 
-    <view id="auth-three">
-      <view class="title">建议人数</view>
-      <view class="btn">
-        <u-grid :border="false" col="3">
-          <u-grid-item
-            v-for="(baseListItem, baseListIndex) in baseListType"
-            @click="clickQuestionType(baseListItem, baseListType)"
-            :key="baseListIndex"
-          >
-            <view
-              class="btn-item"
-              :class="baseListItem.isActive ? 'active-btn' : ''"
-              >{{ baseListItem.title }}人</view
-            >
-          </u-grid-item>
-        </u-grid>
-      </view>
-    </view>
+      <u-form-item
+        label="活动内容"
+        prop="activity_content"
+        borderBottom
+        required
+      >
+        <u--textarea
+          v-model="formInfoData.activity_content"
+          count
+          height="100"
+          maxlength="500"
+          border="surround"
+          placeholder="请输入内容"
+        ></u--textarea>
+      </u-form-item>
 
-    <view id="auth-five">
-      <view class="title">活动地点</view>
-      <u--input
-        border="surround"
-        v-model="formInfoData.activity_location.address"
-      ></u--input>
-    </view>
-    <view id="auth-five">
-      <view class="title">活动价格</view>
-      <u--input
-        border="surround"
-        type="number"
-        v-model="formInfoData.price"
-      ></u--input>
-    </view>
-    <!-- <view id="auth-five">
-      <view class="title">联系电话</view>
-      <u--input
-        border="surround"
-        type="number"
-        v-model="formInfoData.phone_number"
-      ></u--input>
-    </view> -->
+      <u-form-item label="活动图示" prop="activity_log" borderBottom required>
+        <u-upload
+          :fileList="fileList1"
+          @afterRead="afterRead"
+          @delete="deletePic"
+          name="1"
+          multiple
+          :maxCount="1"
+        ></u-upload>
+      </u-form-item>
 
-    <view class="form-footer" @click="clickForm">提交表单</view>
+      <u-form-item
+        label="活动起始时间"
+        prop="activity_time"
+        borderBottom
+        labelPosition="left"
+        required
+        @click="showCalendar = true"
+      >
+        <view class="date-range">{{ showDateRange }}</view>
+        <u-icon slot="right" name="arrow-right" />
+      </u-form-item>
+
+      <u-form-item
+        label="举办日期"
+        prop="hold_date"
+        borderBottom
+        labelPosition="left"
+        required
+        @click="holdDateShow"
+      >
+        <view>{{
+          formInfoData.hold_date
+            ? $u.timeFormat(formInfoData.hold_date, "yyyy-mm-dd")
+            : ""
+        }}</view>
+        <u-icon slot="right" name="arrow-right" />
+      </u-form-item>
+
+      <u-form-item
+        label="举办时间"
+        prop="hold_time"
+        borderBottom
+        labelPosition="left"
+        required
+        @click="holdTimeShow"
+      >
+        <view>{{ formInfoData.hold_time }}</view>
+        <u-icon slot="right" name="arrow-right" />
+      </u-form-item>
+
+      <u-form-item label="活动发起人" prop="launching_person" borderBottom>
+        <u--input
+          v-model="formInfoData.launching_person"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
+
+      <u-form-item label="赞助商" prop="sponsor" borderBottom>
+        <u--input
+          v-model="formInfoData.sponsor"
+          border="none"
+          placeholder="请输入内容"
+        ></u--input>
+      </u-form-item>
+
+      <u-form-item label="活动建议人数" prop="people_num" borderBottom>
+        <u-number-box
+          min="0"
+          integer
+          showMinus
+          inputWidth="100"
+          v-model="formInfoData.people_num"
+        ></u-number-box>
+      </u-form-item>
+
+      <u-form-item label="活动建议价格" prop="price" borderBottom>
+        <u-number-box
+          min="0"
+          integer
+          showMinus
+          inputWidth="100"
+          v-model="formInfoData.price"
+        ></u-number-box>
+      </u-form-item>
+
+      <u-form-item label="是否免费" prop="is_free" borderBottom>
+        <u-switch
+          v-model="formInfoData.is_free"
+          :inactiveValue="0"
+          :activeValue="1"
+        ></u-switch>
+      </u-form-item>
+    </u--form>
+
+    <button class="qu-btn circle-button" @click="clickForm">提交表单</button>
     <u-toast ref="uToast" />
+    <!-- 日历组件 -->
+    <u-calendar
+      :show="showCalendar"
+      mode="range"
+      @confirm="confirm"
+      @close="close"
+    ></u-calendar>
+    <!-- 时间选择器 -->
     <u-datetime-picker
-      :show="showDate.includes(showPicker)"
+      v-if="pickerMode === 'date'"
+      :show="showDate"
       @confirm="changeStartDate"
       @cancel="cancelStartDate"
       mode="date"
+    ></u-datetime-picker>
+    <u-datetime-picker
+      v-else
+      :show="showDate"
+      @confirm="changeStartDate"
+      @cancel="cancelStartDate"
+      mode="time"
     ></u-datetime-picker>
     <!-- loading加载效果 -->
     <u-loading-icon :show="loading"></u-loading-icon>
@@ -197,17 +296,125 @@ export default {
       // 表单提交对象
       formInfoData: {
         activity_title: "",
-        price: "",
-        people_num: "",
-        activity_time: [],
-        activity_location: { address: "" },
+        activity_location: {
+          address: "",
+        },
         activity_content: "",
         activity_log: [],
+        activity_time: [],
+        active_type: "",
+        phone_contact: "",
+        phone_number: "",
+        people_num: 0,
+        hold_time: "",
+        hold_date: "",
+        price: 0,
+        is_free: 1,
         is_template: 0,
       },
+      rules: {
+        activity_title: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+        ],
+        activity_content: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+        ],
+        phone_number: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+          {
+            // 自定义验证函数，见上说明
+            validator: (rule, value, callback) => {
+              // 上面有说，返回true表示校验通过，返回false表示不通过
+              // uni.$u.test.mobile()就是返回true或者false的
+              return uni.$u.test.mobile(value);
+            },
+            message: "手机号码不正确",
+            // 触发器可以同时用blur和change
+            trigger: ["change"],
+          },
+        ],
+        active_type: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+        ],
+        phone_contact: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+        ],
+        activity_time: [
+          {
+            type: "array",
+            min: 2,
+            required: true,
+            message: "需要选定时间范围",
+            trigger: ["change"],
+          },
+        ],
+        activity_log: [
+          // 必填规则
+          {
+            min: 1,
+            type: "array",
+            required: true,
+            message: "需上传至少一张图片",
+            // blur和change事件触发检验
+            trigger: ["change"],
+          },
+        ],
+        hold_time: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["change"],
+          },
+        ],
+        hold_date: [
+          // 必填规则
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            // blur和change事件触发检验
+            trigger: ["change"],
+          },
+        ],
+      },
+      showCalendar: false,
+      showStepIcon: false,
+
       // 显示时间选择器
-      showDate: ["start", "end"],
-      showPicker: "",
+      showDate: false,
+      pickerMode: "date",
       // 加载
       loading: false,
       // 编辑回显数据
@@ -239,73 +446,76 @@ export default {
       deep: true,
     },
   },
+  computed: {
+    showDateRange() {
+      return (
+        (this.formInfoData.activity_time[0]
+          ? uni.$u.timeFormat(
+              this.formInfoData.activity_time[0],
+              "yyyy-mm-dd hh:MM:ss"
+            )
+          : "") +
+        " - " +
+        (this.formInfoData.activity_time[1]
+          ? uni.$u.timeFormat(
+              this.formInfoData.activity_time[1],
+              "yyyy-mm-dd hh:MM:ss"
+            )
+          : "")
+      );
+    },
+  },
   methods: {
     // 提交表单
     async clickForm() {
-      // 判断用户是否填写表单
-      let validate = Object.values(this.formInfoData).map((item) => {
-        if (typeof item === "string") {
-          return item;
-        } else if (Array.isArray(item)) {
-          if (item.length === 0) {
-            return "";
-          }
-        } else {
-          if (Object.keys(item).length === 0 || item.address === "") {
-            return "";
-          }
-        }
-      });
-
-      let isEmpty = validate.every((item) => {
-        return item === "";
-      });
-
-      if (!this.formInfoData._id) {
-        this.loading = true;
-        if (!isEmpty) {
-          try {
-            const result = await createModel(
-              "64dc41e943432c56038f3005",
-              this.formInfoData
-            );
-            if (result.code === 200) {
-              uni.navigateTo({
-                url: "/subPages/neighborhood/pages/neighborhood",
-              });
-              this.$refs.uToast.success(`提交表单完成`);
+      this.$refs.activeForm
+        .validate()
+        .then(async (res) => {
+          if (!this.formInfoData._id) {
+            this.loading = true;
+            try {
+              const result = await createModel(
+                "64dc41e943432c56038f3005",
+                this.formInfoData
+              );
+              if (result.code === 200) {
+                uni.navigateTo({
+                  url: "/subPages/neighborhood/pages/neighborhood",
+                });
+                this.$refs.uToast.success(`提交表单完成`);
+              }
+            } catch (error) {
+              this.$refs.uToast.error(error.msg);
+            } finally {
+              this.loading = false;
             }
-          } catch (error) {
-            this.$refs.uToast.success(error.msg);
-          } finally {
-            this.loading = false;
+          } else {
+            // 编辑
+            try {
+              const result = await updateModel(
+                "64dc41e943432c56038f3005",
+                this.formInfoData,
+                this.formInfoData._id
+              );
+              if (result.code === 200) {
+                this.$refs.uToast.success(`修改表单完成`);
+                setTimeout(() => {
+                  uni.navigateBack({
+                    delta: 1,
+                  });
+                }, 500);
+              }
+            } catch (error) {
+              this.$refs.uToast.error(error.msg);
+            } finally {
+              this.loading = false;
+            }
           }
-        } else {
-          this.loading = false;
-          this.$refs.uToast.success(`请按规范发表活动`);
-        }
-      } else {
-        // 编辑
-        try {
-          const result = await updateModel(
-            "64dc41e943432c56038f3005",
-            this.formInfoData,
-            this.formInfoData._id
-          );
-          if (result.code === 200) {
-            this.$refs.uToast.success(`修改表单完成`);
-            setTimeout(() => {
-              uni.navigateBack({
-                delta: 1,
-              });
-            }, 500);
-          }
-        } catch (error) {
-          this.$refs.uToast.success(error.msg);
-        } finally {
-          this.loading = false;
-        }
-      }
+          // uni.$u.toast("校验通过");
+        })
+        .catch((errors) => {
+          uni.$u.toast("校验失败");
+        });
     },
     // 选择人数
     clickQuestionType(data, list) {
@@ -342,6 +552,7 @@ export default {
           Object.assign(item, {
             status: "success",
             message: "",
+            // 这里可以修改
             url: result,
           })
         );
@@ -370,21 +581,83 @@ export default {
         });
       });
     },
-    // 点击显示时间选择器
-    handleClickType(type) {
-      this.showPicker = type;
+
+    // TODO日历
+    confirm(data) {
+      let start = new Date(`${data[0]} 00:00:00`).getTime();
+      let end = new Date(`${data[data.length - 1]} 23:59:59`).getTime();
+      this.formInfoData.activity_time = [start, end];
+      console.log(this.formInfoData.activity_time);
     },
-    changeStartDate(e) {
-      // console.log(value);
-      if (this.showPicker === "start") {
-        this.formInfoData.activity_time[0] = e.value;
+    close() {
+      this.showCalendar = false;
+    },
+
+    //时间选择器
+    changeStartDate({ value, mode }) {
+      if (mode === "time") {
+        // 时间
+        this.formInfoData.hold_time = `${value}:00`;
       } else {
-        this.formInfoData.activity_time[1] = e.value;
+        // 日期
+        this.formInfoData.hold_date = value;
       }
-      this.showPicker = "";
     },
     cancelStartDate() {
-      this.showPicker = "";
+      this.showDate = false;
+    },
+    holdTimeShow() {
+      this.showDate = true;
+      this.pickerMode = "time";
+    },
+    holdDateShow() {
+      this.showDate = true;
+      this.pickerMode = "date";
+    },
+    // 建议人数
+    valChange(e) {
+      console.log(e);
+    },
+    // 获取地址按钮点击
+    async getAddressBtn() {
+      console.log("1");
+      if (this.formInfoData.activity_location.address) {
+        console.log("2");
+        uni.showModal({
+          title: "提示",
+          content: "是否重新选择地址，重新选择地址将会覆盖之前的地址",
+          success: (res) => {
+            if (res.confirm) {
+              uni.chooseLocation({
+                success: (e) => {
+                  console.log("信息", e);
+                  this.formInfoData.activity_location = {
+                    address: e.address + e.name,
+                    point: {
+                      lat: e.latitude,
+                      lng: e.longitude,
+                    },
+                  };
+                },
+              });
+            }
+          },
+        });
+      } else {
+        console.log("3");
+        uni.chooseLocation({
+          success: (e) => {
+            console.log("信息", e);
+            this.formInfoData.activity_location = {
+              address: e.address + e.name,
+              point: {
+                lat: e.latitude,
+                lng: e.longitude,
+              },
+            };
+          },
+        });
+      }
     },
     // 底部tabber切换按钮
     handleClick(name) {
@@ -401,7 +674,10 @@ export default {
       this.value6 = name;
     },
   },
-  onShow() {},
+  onReady() {
+    //onReady 为uni-app支持的生命周期之一
+    this.$refs.activeForm.setRules(this.rules);
+  },
   onLoad() {
     let that = this;
     const eventChannel = this.getOpenerEventChannel();
@@ -452,7 +728,7 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
@@ -462,7 +738,7 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
@@ -472,7 +748,7 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
@@ -482,7 +758,7 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
@@ -492,7 +768,7 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
@@ -502,25 +778,25 @@ export default {
 
     .title {
       font-size: 30rpx;
-      font-weight: bold;
+      // font-weight: bold;
       margin-bottom: 20rpx;
     }
   }
 
-  .form-footer {
-    height: 100rpx;
-    color: #fff;
-    font-size: 30rpx;
-    line-height: 80rpx;
-    text-align: center;
-    background-color: #00a0e9;
-    z-index: 999;
+  // .form-footer {
+  //   height: 100rpx;
+  //   color: #fff;
+  //   font-size: 30rpx;
+  //   line-height: 80rpx;
+  //   text-align: center;
+  //   background-color: #00a0e9;
+  //   z-index: 999;
 
-    &:active {
-      color: #666;
-      // opacity: 0.5;
-    }
-  }
+  //   &:active {
+  //     color: #666;
+  //     // opacity: 0.5;
+  //   }
+  // }
 }
 
 .btn-item {
@@ -533,6 +809,18 @@ export default {
   // border: 1px solid greenyellow;
   text-align: center;
   margin: 20rpx;
+}
+.qu-btn {
+  // position: absolute;
+  // bottom: 0;
+  width: 90%;
+  margin: 100rpx auto;
+  margin-bottom: constant(safe-area-inset-bottom) !important;
+  margin-bottom: env(safe-area-inset-bottom) !important;
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .active-btn {

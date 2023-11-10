@@ -2,12 +2,13 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:10:10
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-02 14:22:50
+ * @LastEditTime: 2023-11-07 17:55:07
  * @FilePath: /smart-park/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script>
-// import storage from "@/common/function/storage";
+import { getRequestFilter } from "@/common/function";
+import { getModelList } from "@/api";
 export default {
   globalData: {
     icon: {
@@ -21,10 +22,21 @@ export default {
     // 判断是匿名登录还是正常登录
     // isAnonymous: false,
   },
-  onLaunch: function () {
+  onLaunch: async function () {
     uni.$set = this.$set;
+
+    // let filterTypeData = getRequestFilter({
+    //   key: "首页菜单",
+    // });
+
+    // const { data } = await getModelList(
+    //   "65250f6f388a8c7a0eb9b934",
+    //   filterTypeData
+    // );
+
+    // uni.setStorageSync("menuData", data?.list[0].tableField103);
   },
-  onShow: function () {
+  onShow: async function () {
     // #ifdef APP-PLUS
     // 隐藏启动页
     plus.navigator.closeSplashscreen();

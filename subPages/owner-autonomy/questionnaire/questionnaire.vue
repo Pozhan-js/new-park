@@ -424,19 +424,6 @@ export default {
     opacity: 0.2;
   }
 
-  // &-footer {
-  //   width: 100%;
-  //   text-align: center;
-  //   background-color: #6377f5;
-  //   position: fixed;
-  //   bottom: 0;
-  //   font-size: 36rpx;
-  //   font-weight: bold;
-  //   color: #ffffff;
-  //   padding-bottom: constant(safe-area-inset-bottom) !important;
-  //   padding-bottom: env(safe-area-inset-bottom) !important;
-  // }
-
   .qu-btn {
     // position: absolute;
     // bottom: 0;
@@ -450,11 +437,5 @@ export default {
 .currentItem {
   background-color: #6377f5 !important;
   color: #fff !important;
-}
-
-.transition {
-  width: 100rpx;
-  height: 100rpx;
-  background-color: red;
 }
 </style>

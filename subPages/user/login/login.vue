@@ -36,8 +36,8 @@ import Agreement from "./components/Agreement";
 import userMixin from "@/common/mixins/user";
 import infoMixin from "@/common/mixins/info";
 import { getRequestFilter } from "@/common/function";
-import { getModelList, updateRole } from "@/api";
-import { updateUserInfo } from "@/api/user";
+import { getModelList } from "@/api";
+import { updateUserInfo, getUserInfo } from "@/api/user";
 export default {
   mixins: [userMixin, infoMixin],
   components: { Agreement },
@@ -46,6 +46,8 @@ export default {
       isAgreement: false,
       errText: "",
       agreementText: "我已阅读并同意#user[用户协议]、#privacy[隐私政策]",
+      // 用户信息含角色信息
+      userInfoData: {},
     };
   },
   computed: {
@@ -72,9 +74,15 @@ export default {
       if (code) {
         // this.phoneLogin(e).then(() => this.$helper.rollback(1200));
         this.phoneLogin(e).then(async () => {
-          // 登陆成功后将角色改为(过滤参数)
+          // 判断是否是首次登录 如果是首次登录
+          let userResult = await getUserInfo();
+          this.userInfoData = userResult.data || {};
 
-          let updateData = { roleId: ["688d94fae4204ef0ae2c17a0ec1aef3b"] };
+          // console.log("用户信息", this.userInfoData);
+          // 登陆成功后将角色改为(过滤参数)
+          let updateData = {
+            roleId: this.userInfoData.roleId,
+          };
           const params = getObjectAssignProperty(updateData, ["roleId|roleId"]);
 
           const updateInfo = updateUserInfo(this.userInfo.id, params).then(() =>

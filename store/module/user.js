@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:02:55
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-19 10:27:12
+ * @LastEditTime: 2023-11-07 16:10:14
  * @FilePath: /smart-park/store/module/user.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -44,6 +44,7 @@ function getStateDefaultValue(state) {
       token: null,
       openToken: null,
       userInfo: {},
+      menuList: [],
     },
     state
   );
@@ -76,6 +77,10 @@ export default {
       Object.assign(state, getStateDefaultValue({}));
       storage.clear();
     },
+    // 获取用户列表
+    SET_USER_MENU(state, list) {
+      state.menuList = list;
+    },
   },
   actions: {
     async updateUserInfo({ commit }, token) {
@@ -92,6 +97,21 @@ export default {
     },
     logout({ commit }) {
       commit("CLEAR_ALL_DATA");
+    },
+    // 获取用户菜单信息
+    async getUserMenuList({ commit }, filter) {
+      try {
+        const result = await getModelList("65250f6f388a8c7a0eb9b934", filter);
+        console.log("获取菜单", result);
+        if (result?.code !== 200) throw null;
+
+        console.log("获取菜单", result);
+
+        commit("SET_USER_MENU", result?.data.list[0].tableField103);
+        storage.set("menuList", []);
+      } catch (error) {
+        return Promise.reject({ code: 400 });
+      }
     },
   },
 };

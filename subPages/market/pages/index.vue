@@ -49,9 +49,12 @@
       <u-toast ref="uToast" />
     </view> -->
 
-    <view class="home-choose flex-a-center-j-space-between">
-      <view class="home-choose-item box" @click="clickRelease">
-        <view>
+    <view class="home-choose">
+      <view
+        class="home-choose-item flex-a-center-j-space-between box"
+        @click="clickRelease"
+      >
+        <view class="">
           <view class="item-title">发布闲置</view>
           <view>卖闲置 换现金</view>
         </view>
@@ -60,7 +63,7 @@
           mode=""
         />
       </view>
-      <view class="home-choose-item box" style="margin-left: 20rpx">
+      <!-- <view class="home-choose-item box" style="margin-left: 20rpx">
         <view>
           <view class="item-title">在线估价</view>
           <view>平台估价可靠</view>
@@ -69,7 +72,7 @@
           src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_0a514b9fcdb7426f863f1668cee859ef.png"
           mode=""
         />
-      </view>
+      </view> -->
     </view>
 
     <view class="home-content">
@@ -132,61 +135,7 @@ export default {
       list1: [
         "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_8c0f35d609794696ac794f74afdcdb5e.png",
         "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_8c0f35d609794696ac794f74afdcdb5e.png",
-        // "https://cdn.uviewui.com/uview/swiper/swiper2.png",
-        // "https://cdn.uviewui.com/uview/swiper/swiper3.png",
       ],
-
-      // baseList: [
-      //   {
-      //     id: 1,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_3bfcf278650847228eec2f69fba4b3aa.png",
-      //     title: "二手手机",
-      //     pageUrl: "/subPages/market/product/product",
-      //   },
-      //   {
-      //     id: 2,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_765a51386ea443fcbcd9a7dea24dcb87.png",
-      //     title: "高价旧物",
-      //   },
-      //   {
-      //     id: 3,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_16f68fb00a3f41c88de325b632fdaac8.png",
-      //     title: "婴童居室",
-      //   },
-      //   {
-      //     id: 4,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_dfac4052482d48c891b2af8e5f5cc066.png",
-      //     title: "座椅出行",
-      //   },
-      //   {
-      //     id: 5,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_786af8a36d2642c69d6a18270d6ad452.png",
-      //     title: "限量潮品",
-      //   },
-      //   {
-      //     id: 6,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_83a411879e76414eac6bfc2bf18b70fe.png",
-      //     title: "婴童服饰",
-      //   },
-      //   {
-      //     id: 7,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_7c2d8816ae884a23884624bbefbc833f.png",
-      //     title: "童书育儿",
-      //   },
-      //   {
-      //     id: 8,
-      //     image:
-      //       "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_d8175e90b28149c38168b5220989fb8f.png",
-      //     title: "更多分类",
-      //   },
-      // ],
       tabIndex: 0,
     };
   },
@@ -279,7 +228,7 @@ export default {
 
     &-item {
       @extend %display-space;
-      width: 326rpx;
+      width: 100%;
       height: 150rpx;
       background: linear-gradient(180deg, #ecfff8 0%, #fdfefe 100%);
       border-radius: 14rpx;

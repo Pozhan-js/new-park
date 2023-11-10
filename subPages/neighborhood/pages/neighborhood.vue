@@ -141,7 +141,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("neighborhood", ["activityList"]),
+    // ...mapState("neighborhood", ["activityList"]),
     ...mapGetters("neighborhood", ["newNeighborhoodSwiper", "newActivityList"]),
   },
   methods: {

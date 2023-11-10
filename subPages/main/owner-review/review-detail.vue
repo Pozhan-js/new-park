@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-31 17:08:37
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 11:51:17
+ * @LastEditTime: 2023-11-07 12:18:00
  * @FilePath: /smart-park/subPages/main/review-detail/review-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -154,7 +154,7 @@ export default {
     this.id = id;
     this.endId = recordId;
     let { data } = await getFlowFormData(id, recordId);
-    console.log(data);
+    // console.log(data);
     this.formData = JSON.parse(data.task.taskOperatorRecord[1].nodeData);
   },
 };

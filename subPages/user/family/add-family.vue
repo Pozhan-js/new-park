@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-11-03 14:47:30
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-07 09:37:08
+ * @LastEditTime: 2023-11-08 11:28:04
  * @FilePath: /smart-park/subPages/user/family/add-family.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -78,11 +78,11 @@
 </template>
 
 <script>
-import { createModel, getModelList } from "@/api";
+import { getModelList, createFlow } from "@/api";
 import { createUser } from "@/api/user";
 import storage from "@/common/function/storage";
 import { getRequestFilter, sleep } from "@/common/function";
-import { sendCode } from "@/api/user";
+import { sendCode, validateCode } from "@/api/user";
 import userMixin from "@/common/mixins/user";
 import infoMixin from "@/common/mixins/info";
 export default {
@@ -239,25 +239,49 @@ export default {
         return;
       }
       // 获取用户id
-      this.form.formUser = this.userInfoID;
+      // this.form.formUser = this.userInfoID; 15526263028
 
       // 校验
       this.$refs.addFamilyForm
         .validate()
         .then(async (res) => {
-          // 验证码校验
-          await this.codeLogin.apply(
-            this,
-            Object.values({
-              smsCode: this.form.smsCode,
-              phone: this.form.phone,
-            })
+          // TODO验证码校验
+          let loginInfo = await validateCode(
+            this.form.phone,
+            this.form.smsCode
           );
 
-          let createData = await createModel(
-            "64f6d064d85a4b7b32ec641d",
-            this.form
-          );
+          if (loginInfo !== 200) {
+            uni.showToast({
+              title: "验证码错误",
+              icon: "none",
+              duration: 600,
+            });
+
+            return;
+          }
+          // await this.codeLogin.apply(
+          //   this,
+          //   Object.values({
+          //     smsCode: this.form.smsCode,
+          //     phone: this.form.phone,
+          //   })
+          // );
+          // TODO 此处需要创建流程
+          let createData = await createFlow({
+            data: JSON.stringify({
+              phone: this.form.phone,
+              parentsID: this.parentsInfo.formUser,
+              formUser: this.userInfoID,
+              nickName: this.form.nickName,
+              roomId: this.parentsInfo.roomId,
+              roomName: this.parentsInfo.roomName,
+              sex: this.form.sex,
+              age: this.form.age,
+            }),
+            flowId: "64f6d064d85a4b7b32ec641d",
+            status: 0,
+          });
           if (createData.code === 200) {
             uni.showToast({
               title: "添加成员成功",

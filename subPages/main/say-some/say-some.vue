@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-06 10:29:35
+ * @LastEditTime: 2023-11-07 10:31:31
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -147,12 +147,9 @@
       </view>
     </view>
 
-    <u-button
-      :loading="loading"
-      type="primary"
-      text="提交"
-      @click="submit"
-    ></u-button>
+    <button class="circle-button qu-btn" :loading="loading" @click="submit">
+      提交
+    </button>
   </view>
 </template>
 
@@ -538,6 +535,19 @@ export default {
         }
       }
     }
+  }
+}
+
+.qu-btn {
+  // position: absolute;
+  // bottom: 0;
+  width: 90%;
+  margin: 100rpx auto;
+  margin-bottom: constant(safe-area-inset-bottom) !important;
+  margin-bottom: env(safe-area-inset-bottom) !important;
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 

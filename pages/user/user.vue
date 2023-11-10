@@ -160,6 +160,7 @@ export default {
     clickFunction(name) {
       switch (name) {
         case 0:
+          // 判断是否有权限 有权限在跳转
           this.$jump("/subPages/user/family/family");
           break;
         case 1:
