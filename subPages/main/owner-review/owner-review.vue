@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-30 14:29:36
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 14:13:00
+ * @LastEditTime: 2023-11-10 11:44:55
  * @FilePath: /smart-park/subPages/main/owner-review/owner-review.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -75,14 +75,14 @@
                 </view>
                 <view class="item-data-value">审核通过</view>
               </view>
-
+              <!-- 
               <view class="item-data">
                 <view class="item-data-label flex-a-center">
                   <u-icon name="order" color="#2979ff" size="32rpx"></u-icon>
                   <view class="label">用户id</view>
                 </view>
                 <view class="item-data-value">{{ pended.formUser }}</view>
-              </view>
+              </view> -->
 
               <view class="item-data">
                 <view class="item-data-label flex-a-center">
@@ -92,37 +92,37 @@
                 <view class="item-data-value">{{ pended.phone }}</view>
               </view>
 
-              <view class="item-data">
+              <!-- <view class="item-data">
                 <view class="item-data-label flex-a-center">
                   <u-icon name="order" color="#2979ff" size="32rpx"></u-icon>
                   <view class="label">创建用户</view>
                 </view>
                 <view class="item-data-value">{{ pended.roomName }}</view>
-              </view>
-
+              </view> -->
+              <!-- 
               <view class="item-data">
                 <view class="item-data-label flex-a-center">
                   <u-icon name="order" color="#2979ff" size="32rpx"></u-icon>
                   <view class="label">创建时间</view>
                 </view>
                 <view class="item-data-value">{{ pended.creatorTime }}</view>
-              </view>
+              </view> -->
 
-              <view class="item-data">
+              <!-- <view class="item-data">
                 <view class="item-data-label flex-a-center">
                   <u-icon name="order" color="#2979ff" size="32rpx"></u-icon>
                   <view class="label">审核用户</view>
                 </view>
                 <view class="item-data-value">{{ pended.creatorUserId }}</view>
-              </view>
+              </view> -->
 
-              <view class="item-data">
+              <!-- <view class="item-data">
                 <view class="item-data-label flex-a-center">
                   <u-icon name="order" color="#2979ff" size="32rpx"></u-icon>
                   <view class="label">审核时间</view>
                 </view>
                 <view class="item-data-value">{{ pended.creatorTime }}</view>
-              </view>
+              </view> -->
             </view>
           </u-swipe-action-item>
         </u-swipe-action>
@@ -154,9 +154,10 @@
     </view>
 
     <u-loadmore
-      v-if="false"
       :line="true"
+      icon
       :status="status"
+      @loadmore="handleLoadmore"
       :loading-text="loadingText"
       :loadmore-text="loadmoreText"
       :nomore-text="nomoreText"
@@ -198,8 +199,11 @@ export default {
 
       status: "nomore",
       loadingText: "努力加载中",
-      loadmoreText: "轻轻上拉",
+      loadmoreText: "点击加载更多",
       nomoreText: "实在没有了",
+      pageIndex: 1,
+      pageSize: 10,
+      total: 0,
 
       radiolist1: [
         {
@@ -248,24 +252,29 @@ export default {
 
     // 获取待审核人员
     async getPendingReviewList() {
+      let that = this;
       if (!this.isParse) {
         // 未审批数量    // 该接口后台会进行token判断
         const { data } = await getFlowList();
         this.pendingReviewList = data?.list || [];
         this.pendedReviewList = [];
+
+        this.total = data?.pagination.total;
       } else {
         let filterData = this.buildNumber
           ? getRequestFilter({
               roomName: this.buildNumber,
             })
-          : {};
+          : { currentPage: this.pageIndex, pageSize: this.pageSize };
         // 已审批数量
         const { data } = await getModelList(
           "64f6d064d85a4b7b32ec641d",
           filterData
         );
+        this.pageIndex++;
+        this.total = data?.pagination.total;
 
-        this.pendedReviewList = data?.list || [];
+        this.pendedReviewList = [...that.pendedReviewList, ...data?.list];
         this.pendingReviewList = [];
       }
     },
@@ -293,6 +302,19 @@ export default {
         duration: 600,
       });
     },
+
+    // 点击底部
+    handleLoadmore() {
+      this.status = "loading";
+      this.getPendingReviewList();
+      setTimeout(() => {
+        if (this.total - this.pageSize > this.pageSize) {
+          this.status = "loadmore";
+        } else {
+          this.status = "nomore";
+        }
+      }, 400);
+    },
   },
   computed: {
     filterPendingReviewList() {
@@ -304,6 +326,32 @@ export default {
   onShow() {
     if (this.reviewStatus) {
       this.getPendingReviewList();
+    }
+  },
+  onReachBottom() {
+    // console.log("底部", this.total);
+    let listLength;
+    if (this.isParse) {
+      listLength = this.total;
+      // 通过审核
+      if (listLength < this.pageSize) {
+        this.status = "nomore";
+      }
+      if (listLength > this.pageSize) {
+        this.status = "loadmore";
+        this.pageIndex++;
+      }
+    } else {
+      listLength = this.total;
+      //待通过审核
+      if (listLength < this.pageSize) {
+        this.status = "nomore";
+      }
+      if (listLength > this.pageSize) {
+        this.status = "loadmore";
+      }
+
+      console.log("状态", this.status);
     }
   },
 };
