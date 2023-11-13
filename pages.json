@@ -25,8 +25,7 @@
 		{
 			"path": "pages/server/server",
 			"style": {
-				"navigationBarTitleText": "监督",
-				"enablePullDownRefresh":true
+				"navigationBarTitleText": "监督"
 			}
 		}
 		
@@ -586,6 +585,20 @@
 					"style": {
 						"navigationBarTitleText": "详情",
 						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				}
+			]
+		},
+		{
+			"root": "subPages/test",
+			"pages": [
+				{
+					"path": "test",
+					"style": {
+						"navigationBarTitleText": "测试虚拟"
 					},
 					"meta": {
 						"verifyLogin": true
