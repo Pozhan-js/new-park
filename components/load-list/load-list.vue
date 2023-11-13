@@ -7,19 +7,22 @@
     v-else-if="!(nomore || listData.length)"
     :text="emptyText"
     :mode="emptyModel"
-    :icon="emptyIcon">
+    :icon="emptyIcon"
+  >
   </u-empty>
   <u-list
     v-else
     :width="width"
     :height="height"
     @scroll="handleScroll"
-    @scrolltolower="scrolltolower">
+    @scrolltolower="scrolltolower"
+  >
     <slot
       :keyName="keyName"
       :valueName="valueName"
       :list="listData"
-      :pagination="pagination">
+      :pagination="pagination"
+    >
       <!-- 默认 -->
       <u-list-item v-for="(item, i) in listData" :key="getKey(item, i)">
         <u-cell isLink :border="false" @click="() => cellClickHandler(item)">
@@ -37,7 +40,8 @@
       v-else-if="isEnd && nomore"
       line
       status="nomore"
-      marginTop="12" />
+      marginTop="12"
+    />
   </u-list>
 </template>
 
@@ -187,7 +191,7 @@ export default {
     },
     scrolltolower() {
       //上拉加载
-      this.loadLock(async unlock => {
+      this.loadLock(async (unlock) => {
         this.pagination.currentPage++;
         if (pagesLoadState(this.pagination)) {
           this.isEnd = false;
@@ -202,7 +206,7 @@ export default {
       if (this.isUpLoadKey !== 0) {
         this.isUpLoadKey = 0;
         this.loadLock("unlock");
-        this.loadLock(unlock => {
+        this.loadLock((unlock) => {
           this.updateCurrentPage(false, () => {
             this.isUpLoadKey = 1;
             isFunction(fn, true);

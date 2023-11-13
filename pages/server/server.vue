@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-13 09:37:14
+ * @LastEditTime: 2023-11-13 17:32:58
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -25,9 +25,7 @@
             :src="getHeardImg(item.userIcon)"
             shape="circle"
           ></u-avatar>
-          <!-- <view class="item-info-num">{{
-            item.showName ? "匿名用户" : item.roomNum
-          }}</view> -->
+
           <view class="item-info-num">
             <u--text
               color="#252B50"
@@ -124,6 +122,9 @@
 
         <view class="dot">{{ item.questionType }}</view>
       </view>
+
+      <u-loadmore v-if="loading" line status="loading" marginTop="12" />
+      <u-loadmore v-else-if="nomore" line status="nomore" marginTop="12" />
     </view>
     <view class="empty" v-else>
       <u-empty mode="list" icon="http://cdn.uviewui.com/uview/empty/data.png">
@@ -173,6 +174,12 @@ export default {
       // 接收点赞数据
       thumbUpData: "",
       // 总点赞数
+
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      loading: false,
+      isEnd: false,
     };
   },
   computed: {
@@ -363,11 +370,22 @@ export default {
       uni.showLoading({
         title: "加载中",
       });
+
+      let that = this;
+
       if (type === "全部") {
-        const res = await getModelList("64d1dcab8b140b0b56b6ed90");
-        this.shootCasuallyListData = res.data?.list.sort((a, b) => {
-          return b.creatorTime - a.creatorTime;
-        });
+        let pageNation = {
+          currentPage: this.currentPage,
+          pageSize: this.pageSize,
+        };
+        const res = await getModelList("64d1dcab8b140b0b56b6ed90", pageNation);
+        this.shootCasuallyListData = [
+          ...that.shootCasuallyListData,
+          ...res.data?.list.sort((a, b) => {
+            return b.creatorTime - a.creatorTime;
+          }),
+        ];
+        this.total = res.data?.pagination.total;
       } else {
         let reqData = getRequestFilter({
           questionType: type,
@@ -442,24 +460,32 @@ export default {
     // 现获取点赞结果
     this.getShootCasuallyList();
   },
+  onReachBottom() {
+    // console.log("划到底部");
+    // 当滑动到底部先判断当前是否还有数据需要请求
+    if (this.shootCasuallyListData.length < this.total) {
+      // 说明还有数据需要请求
+      this.loading = true;
+    }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .server {
   width: 100vw;
-  overflow: scroll;
+  // overflow: scroll;
   background: #f4f5f7;
-  height: 100vh;
+  min-height: 100vh;
 
   &-container {
     padding: 20rpx;
     box-sizing: border-box;
-    overflow: scroll;
+    // overflow: scroll;
     width: 100%;
     margin-top: 20rpx;
     // padding-bottom: 200rpx;
-    padding-bottom: 64px;
+    padding-bottom: 100px;
     // margin-bottom: 200rpx;
 
     &-item {

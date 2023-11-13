@@ -592,20 +592,7 @@
 				}
 			]
 		},
-		{
-			"root": "subPages/test",
-			"pages": [
-				{
-					"path": "test",
-					"style": {
-						"navigationBarTitleText": "测试虚拟"
-					},
-					"meta": {
-						"verifyLogin": true
-					}
-				}
-			]
-		},
+		
 		{
 			"root": "subPages/main",
 			"pages": [
