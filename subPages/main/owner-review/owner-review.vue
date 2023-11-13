@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-10-30 14:29:36
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-10 11:44:55
+ * @LastEditTime: 2023-11-10 14:31:05
  * @FilePath: /smart-park/subPages/main/owner-review/owner-review.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -54,6 +54,7 @@
         <u-swipe-action style="width: 100%; padding: 0rpx 30rpx">
           <u-swipe-action-item
             ref="swipeActionItem"
+            :threshold="60"
             :options="options"
             id=""
             @click="removeDetails(pended)"

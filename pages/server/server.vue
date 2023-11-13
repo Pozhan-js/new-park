@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-31 10:53:15
+ * @LastEditTime: 2023-11-13 09:37:14
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -67,13 +67,6 @@
         </view>
 
         <view class="item-tools flex-a-center-j-space-between">
-          <!-- <view class="item-tools-date flex-a-center">
-            <u-icon size="20" name="clock" color="#6377f5"></u-icon>
-            <view class="time" style="font-size: 24rpx">{{
-              isTimeOut(item.creatorTime)
-            }}</view>
-          </view> -->
-
           <view class="item-address flex-a-center">
             <u-icon name="map-fill" size="20" color="#6377f5"></u-icon>
             <view class="address" style="margin-left: 10rpx">{{
@@ -100,20 +93,29 @@
 
         <!-- 赞／评论区 -->
         <view class="post-footer">
-          <!-- <view class="footer_content">
-				<image class="liked" src="../../static/index/liked.png"></image>
-				<text class="nickname" v-for="(user,index_like) in post.like" :key="index_like">{{user.username}}</text>
-			</view> -->
           <view
             class="footer_content"
             v-for="(comment, comment_index) in item.comments"
             :key="comment_index"
             @tap="reply(index, comment_index)"
           >
-            <text class="comment-nickname"
-              >{{ comment.comment_person_name }}
+            <text class="comment-nickname">
+              <text
+                v-if="comment.role.includes('a6ba7e622d714844bf3055a63e184edf')"
+                style="color: #6377f5"
+                >管理员</text
+              >
+              {{ comment.comment_person_name }}
               <text v-if="comment.reply_person_name"
-                >回复{{ comment.reply_person_name }}</text
+                >回复
+                <text
+                  v-if="
+                    comment.role.includes('a6ba7e622d714844bf3055a63e184edf')
+                  "
+                  style="color: #6377f5"
+                  >管理员</text
+                >
+                {{ comment.reply_person_name }}</text
               >：
               <text class="comment-content">{{ comment.content }}</text>
             </text>
@@ -179,18 +181,8 @@ export default {
       return this.shootCasuallyListData.map((data) => {
         return {
           ...data,
-          // islike: 0,
-          // image: data.image.map((item) => {
-          //   return {
-          //     ...item,
-          //     url: helper.filterCover(item.url),
-          //   };
-          // }),
         };
       });
-      // .sort((a, b) => {
-      //   return b.creatorTime - a.creatorTime;
-      // });
     },
     baseUrl() {
       return config.baseURL;
@@ -240,15 +232,18 @@ export default {
             .post_id;
       }
 
-      const userinfo = await getModelList(
+      let userinfo = await getModelList(
         "64f6d064d85a4b7b32ec641d",
-        this.userInfo.id
+        getRequestFilter({
+          formUser: this.userInfo.id,
+        })
       );
-      console.log(userinfo);
+      // console.log("用户信息", userinfo);
 
       let data = {
         post_id: this.shootCasuallyListData[this.index]._id,
         // "parent_comment_id":
+        role: this.userInfo.roleId,
         user_id: this.userInfo.id,
         comment_person_name: userinfo.data.list[0].roomName, //this.userInfo.realName,
         reply_id: reply_id,
@@ -289,11 +284,6 @@ export default {
         console.log(res);
         this.shootCasuallyListData[index].islike = res.data;
         this.shootCasuallyListData[index].like_count += 1;
-        // console.log(res);
-        // this.dataList[index].like.push({
-        // 	"uid": this.user_id,
-        // 	"username": "," + this.username
-        // });
       } else {
         // 已点
         deleteModel(

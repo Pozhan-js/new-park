@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-09 16:46:03
+ * @LastEditTime: 2023-11-10 15:27:13
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -193,7 +193,7 @@
                 </view>
                 <view class="right-container-item flex-a-center">
                   <u-icon name="map" size="16" color="#999"></u-icon>
-                  <view class="item-text">{{
+                  <view class="item-text text-2-hidden">{{
                     item.activity_locations || "未知"
                   }}</view>
                 </view>

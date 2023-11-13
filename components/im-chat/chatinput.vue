@@ -11,6 +11,7 @@
         v-model="inputValue"
         :focus="focus"
         @blur="blur"
+        :cursor-spacing="20"
         :placeholder="placeholder"
       />
     </view>

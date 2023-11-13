@@ -25,7 +25,8 @@
 		{
 			"path": "pages/server/server",
 			"style": {
-				"navigationBarTitleText": "监督"
+				"navigationBarTitleText": "监督",
+				"enablePullDownRefresh":true
 			}
 		}
 		

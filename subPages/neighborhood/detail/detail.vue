@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-10 09:58:30
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-09 17:46:36
+ * @LastEditTime: 2023-11-10 14:39:34
  * @FilePath: /smart-park/subPages/main/activity/activity-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -237,17 +237,17 @@ export default {
       loading: true,
       rowsHeightList: [
         "280px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
-        "18px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
+        "28px",
       ],
     };
   },

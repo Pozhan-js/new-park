@@ -32,14 +32,14 @@
           <view class="tab-item-right">
             <view class="title text-hidden">{{ data.activity_title }}</view>
             <view class="content">
-              <view
+              <!-- <view
                 class="content-btn"
                 v-if="data.activity_time[1] > new Date().getTime()"
                 >立即报名</view
-              >
+              > -->
               <view class="content-item">
                 <view class="content-item-icon">
-                  <u-icon name="map" size="24rpx"></u-icon>
+                  <u-icon name="map" size="16"></u-icon>
                 </view>
                 <view class="content-item-text text-hidden">{{
                   data.activity_locations
@@ -47,7 +47,7 @@
               </view>
               <view class="content-item">
                 <view class="content-item-icon">
-                  <u-icon name="clock" size="24rpx"></u-icon>
+                  <u-icon name="clock" size="16"></u-icon>
                 </view>
                 <view class="content-item-text">{{
                   $u.timeFrom(data.activity_time[0], "yyyy-mm-dd hh:MM:ss")
@@ -62,8 +62,12 @@
                 >
                 </u-avatar-group>
                 <view class="content-item-text"
-                  >{{ data.people_num }} 人已报名</view
-                >
+                  >限定报名人数
+                  <text style="font-size: 32rpx; color: #fb8753">
+                    {{ data.people_num }}
+                  </text>
+                  人
+                </view>
               </view>
             </view>
           </view>
@@ -71,7 +75,7 @@
       </view>
 
       <view class="empty" v-else>
-        <u-empty mode="list" icon="http://cdn.uviewui.com/uview/empty/data.png">
+        <u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/list.png">
         </u-empty>
       </view>
     </view>
@@ -153,8 +157,9 @@ export default {
         case "最新活动":
           this.activityPagesList = this.newActivityList.filter((item) => {
             return (
-              item.activity_time[0] < new Date().getTime() &&
-              item.activity_time[1] > new Date().getTime()
+              (item.activity_time[0] < new Date().getTime() &&
+                item.activity_time[1] > new Date().getTime()) ||
+              item.activity_time[0] > new Date().getTime()
             );
           });
           break;
@@ -197,8 +202,9 @@ export default {
     newActivityList(val) {
       this.activityPagesList = val.filter((item) => {
         return (
-          item.activity_time[0] < new Date().getTime() &&
-          item.activity_time[1] > new Date().getTime()
+          (item.activity_time[0] < new Date().getTime() &&
+            item.activity_time[1] > new Date().getTime()) ||
+          item.activity_time[0] > new Date().getTime()
         );
       });
     },
@@ -261,6 +267,7 @@ export default {
           > image {
             width: 100%;
             height: 100%;
+            border-radius: 16rpx;
           }
         }
 
@@ -274,7 +281,7 @@ export default {
             display: inline-block;
 
             height: 46rpx;
-            font-size: 33rpx;
+            font-size: 34rpx;
             color: #333333;
             line-height: 46rpx;
             overflow: hidden; //超出的文本隐藏
@@ -310,7 +317,7 @@ export default {
 
               &-text {
                 // width: 150rpx;
-                font-size: 25rpx;
+                font-size: 28rpx;
                 color: #999999;
                 line-height: 38rpx;
               }
