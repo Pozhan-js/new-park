@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-02 11:27:13
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-13 17:32:58
+ * @LastEditTime: 2023-11-14 10:02:48
  * @FilePath: /smart-park/pages/server/server.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -174,12 +174,14 @@ export default {
       // 接收点赞数据
       thumbUpData: "",
       // 总点赞数
-
+      currentType: "全部",
       currentPage: 1,
       pageSize: 10,
       total: 0,
       loading: false,
-      isEnd: false,
+      nomore: false,
+      // 其他类型当前请求数据
+      reqFilterData: [],
     };
   },
   computed: {
@@ -245,7 +247,6 @@ export default {
           formUser: this.userInfo.id,
         })
       );
-      // console.log("用户信息", userinfo);
 
       let data = {
         post_id: this.shootCasuallyListData[this.index]._id,
@@ -259,27 +260,21 @@ export default {
       };
       const res = await createModel("64e70412d85a4b7b32ec5d4a", data);
       console.log(this.is_reply, data, res);
-      // console.log(this.is_reply,reply_username,comment_content)
 
-      // this.shootCasuallyListData[this.index].comments.total += 1;
       this.shootCasuallyListData[this.index].comments.push(data);
-      // this.getComList()
       this.init_input();
-
       this.$forceUpdate();
     },
     init_input(type) {
       this.showInput = false;
       this.focus = false;
       this.input_placeholder = "评论";
-      // this.is_reply = false;
     },
     blur: function () {
       this.init_input();
     },
     async like(index) {
       console.log(this.shootCasuallyListData[index]);
-      //
       // 点赞
       if (this.shootCasuallyListData[index].islike === 0) {
         // 未点
@@ -367,17 +362,18 @@ export default {
     // 获取随手拍列表
     async getShootCasuallyList(type = "全部") {
       //显示加载框
-      uni.showLoading({
-        title: "加载中",
-      });
+      // uni.showLoading({
+      //   title: "加载中",
+      // });
 
       let that = this;
 
+      let pageNation = {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+      };
+
       if (type === "全部") {
-        let pageNation = {
-          currentPage: this.currentPage,
-          pageSize: this.pageSize,
-        };
         const res = await getModelList("64d1dcab8b140b0b56b6ed90", pageNation);
         this.shootCasuallyListData = [
           ...that.shootCasuallyListData,
@@ -385,41 +381,45 @@ export default {
             return b.creatorTime - a.creatorTime;
           }),
         ];
+        this.reqFilterData = res.data?.list.sort((a, b) => {
+          return b.creatorTime - a.creatorTime;
+        });
         this.total = res.data?.pagination.total;
       } else {
         let reqData = getRequestFilter({
           questionType: type,
         });
-        const res = await getModelList("64d1dcab8b140b0b56b6ed90", reqData);
-        this.shootCasuallyListData = res.data?.list.sort((a, b) => {
+        const res = await getModelList("64d1dcab8b140b0b56b6ed90", {
+          ...reqData,
+          ...pageNation,
+        });
+
+        this.reqFilterData = res.data?.list.sort((a, b) => {
           return b.creatorTime - a.creatorTime;
         });
+        this.shootCasuallyListData = [
+          ...that.shootCasuallyListData,
+          ...res.data?.list.sort((a, b) => {
+            return b.creatorTime - a.creatorTime;
+          }),
+        ];
+        this.total = res.data?.pagination.total;
       }
       this.getComList();
       this.getLikeList();
+      this.getTypeList();
 
-      // 获取分类
-      let filterTypeData = getRequestFilter({
-        key: "问题类型",
-      });
-      const result = await getModelList(
-        "65250f6f388a8c7a0eb9b934",
-        filterTypeData
-      );
-
-      this.typeList = ["全部", ...result.data?.list[0].value];
-
-      this.$nextTick(async () => {
-        let rectInfo = await this.$u.getRect(".user-header");
-        this.imgWidth = rectInfo.width;
-      });
-
+      this.loading = false;
       //隐藏加载框
-      uni.hideLoading();
+      // uni.hideLoading();
     },
     // 切换tab
     tabClick(item) {
+      this.currentPage = 1;
+      this.currentType = item.name;
+      this.shootCasuallyListData = [];
       this.getShootCasuallyList(item.name);
+      this.top();
     },
     // 判断时间是否超时
     isTimeOut(time) {
@@ -434,6 +434,19 @@ export default {
     // 获取头像
     getHeardImg(url) {
       return this.$helper.filterCover(url) || "";
+    },
+
+    async getTypeList() {
+      // 获取分类
+      let filterTypeData = getRequestFilter({
+        key: "问题类型",
+      });
+      const result = await getModelList(
+        "65250f6f388a8c7a0eb9b934",
+        filterTypeData
+      );
+
+      this.typeList = ["全部", ...result.data?.list[0].value];
     },
 
     // 获取评论图片数组
@@ -455,6 +468,30 @@ export default {
         urls: imgListUrl,
       });
     },
+
+    top() {
+      //回到顶部
+      uni.pageScrollTo({
+        scrollTop: 0,
+        duration: 300,
+      });
+    },
+
+    onBottom() {
+      this.loading = true;
+      this.currentPage++;
+      if (this.currentType === "全部") {
+        this.getShootCasuallyList();
+      } else {
+        this.getShootCasuallyList(this.currentType);
+      }
+    },
+  },
+  onReady() {
+    this.$nextTick(async () => {
+      let rectInfo = await this.$u.getRect(".user-header");
+      this.imgWidth = rectInfo.width;
+    });
   },
   onLoad() {
     // 现获取点赞结果
@@ -463,9 +500,21 @@ export default {
   onReachBottom() {
     // console.log("划到底部");
     // 当滑动到底部先判断当前是否还有数据需要请求
-    if (this.shootCasuallyListData.length < this.total) {
-      // 说明还有数据需要请求
-      this.loading = true;
+    if (this.pageSize < this.total - this.shootCasuallyListData.length) {
+      if (!this.reqFilterData.length) return; //只要有一次请求回来的数据为0那么不再进行判断
+      // 当许请求数据 不止一页时
+      this.onBottom();
+    } else if (this.total < this.pageSize) {
+      // 当第一页数据就小于pageSize
+      this.nomore = true;
+    } else {
+      // 说明虽然最后数据数小于pageSize但是还是有数据 (最后一页数据)
+      if (this.pageSize > this.total - this.shootCasuallyListData.length > 0) {
+        if (!this.reqFilterData.length) return; //只要有一次请求回来的数据为0那么不再进行判断
+        this.onBottom();
+      }
+      // 说明数据总数等于0
+      this.nomore = true;
     }
   },
 };
