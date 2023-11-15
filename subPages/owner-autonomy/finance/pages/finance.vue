@@ -67,7 +67,7 @@
         <view class="tabs">
           <u-tabs :list="tabList" @click="handleClickTab"></u-tabs>
         </view>
-        <view class="finance-details">
+        <view class="finance-details" v-if="billList.length">
           <!-- TODO 可封装成组件 -->
           <view
             class="finance-details-item"
@@ -109,6 +109,13 @@
               </view>
             </view>
           </view>
+        </view>
+        <view v-else>
+          <u-empty
+            mode="data"
+            icon="http://cdn.uviewui.com/uview/empty/data.png"
+          >
+          </u-empty>
         </view>
       </view>
     </view>

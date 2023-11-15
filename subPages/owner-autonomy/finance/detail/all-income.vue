@@ -4,7 +4,7 @@
       <view>
         <view class="income-title">收入明细</view>
         <view class="income-user">账户收入</view>
-        <view class="income-number">{{ allIn.toFixed(2) }}</view>
+        <view class="income-number">{{ allIn }}</view>
       </view>
       <image
         src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230905_b1e8aa1495ed4b8dafb80bbe81d80436.png"
@@ -17,23 +17,15 @@
       <view class="date-time">
         <!-- TODO 这个时间可以封装组件 -->
         <view class="date-time-title flex-a-center">
-          <!-- <view class="label" style="width: 100rpx;">选择:</view> -->
           <picker
             mode="date"
             :value="date"
             fields="year"
-            :start="startDate"
-            :end="endDate"
             @change="bindDateChange"
           >
-            <!-- <u--input
-              placeholder="请选择时间"
-              border="none"
-              v-model="date"
-            ></u--input> -->
             <view class="flex-a-center">
               <view>{{ date }}</view>
-              <u-icon name="arrow-right"></u-icon>
+              <u-icon name="arrow-down"></u-icon>
             </view>
           </picker>
         </view>
@@ -46,12 +38,7 @@
             <u-col textAlign="center" span="6">
               <view class="demo-layout">月份</view>
             </u-col>
-            <!-- <u-col textAlign="center" span="3">
-              <view class="demo-layout">收入</view>
-            </u-col>
-            <u-col textAlign="center" span="4">
-              <view class="demo-layout">来源</view>
-            </u-col> -->
+
             <u-col textAlign="center" span="6">
               <view class="demo-layout">收入</view>
             </u-col>
@@ -70,15 +57,12 @@
               <u-col textAlign="center" span="6">
                 <view class="demo-item">{{ data.month }}月</view>
               </u-col>
-              <!-- <u-col textAlign="center" span="3">
-                <view class="demo-item">5000.00</view>
-              </u-col>
-              <u-col textAlign="center" span="4">
-                <view class="demo-item text-hidden">业主捐款</view>
-              </u-col> -->
+
               <u-col textAlign="center" span="6">
                 <view class="demo-item">
-                  <view class="number">+{{ data.allIn.toFixed(2) }}</view>
+                  <view class="number"
+                    >+{{ Number(data.allIn).toFixed(2) }}</view
+                  >
                   <u-icon name="arrow-right" color="#2979ff" size="16"></u-icon
                 ></view>
               </u-col>
@@ -98,55 +82,25 @@ export default {
   mixins: [infoMixin],
   data() {
     return {
-      showDate: true,
-      show: false,
       date: new Date().getFullYear(),
       // 接收请求参数
       billList: [],
     };
   },
   methods: {
-    showDatePick() {
-      this.show = true;
-      this.showDate = !this.showDate;
-    },
-    handleCancel() {
-      this.show = false;
-      this.showDate = !this.showDate;
-    },
-
-    // 日期选择器确定按钮
-    handleConfirm(value) {
-      console.log(value);
-    },
-
-    handleToDetail() {
-      uni.navigateTo({
-        url: "../billing-details/billing-details",
-      });
+    bindDateChange(e) {
+      console.log("e", e);
+      this.filterDate(e.detail.value);
     },
     // 设置年范围
-    filterDate(year) {
-      return {
-        start: `${year}-01-01 00:00:00`,
-        end: `${year}-12-31 23:59:59`,
-      };
-    },
-    getDate(type) {
-      const date = new Date();
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
+    async filterDate(year) {
+      let start = Date.parse(`${year}-01-01 00:00:00`);
+      let end = Date.parse(`${year}-12-31 23:59:59`);
 
-      if (type === "start") {
-        year = year - 60;
-      } else if (type === "end") {
-        year = year + 2;
-      }
-      month = month > 9 ? month : "0" + month;
-      day = day > 9 ? day : "0" + day;
-      return `${year}-${month}-${day}`;
+      // 获取概念数据
+      await this.getFinanceBill([start, end]);
     },
+
     // 发送请求获取年数据
     async getFinanceBill(range) {
       let reqData = getRequestFilter({
@@ -163,24 +117,18 @@ export default {
     },
   },
   computed: {
-    startDate() {
-      return this.getDate("start");
-    },
-    endDate() {
-      return this.getDate("end");
-    },
     allIn() {
-      return this.billList.reduce((prev, curr) => {
-        return (prev += curr.money);
+      return this.billList?.reduce((prev, curr) => {
+        return (prev += Number(curr.money).toFixed(2));
       }, 0);
     },
     viewDataList() {
       let mouthData = {};
       let dataList = [];
-      this.billList.forEach((item) => {
+      this.billList?.forEach((item) => {
         mouthData[new Date(item.creatorTime).getMonth() + 1] = [];
       });
-      this.billList.forEach((item) => {
+      this.billList?.forEach((item) => {
         if (mouthData[new Date(item.creatorTime).getMonth() + 1]) {
           mouthData[new Date(item.creatorTime).getMonth() + 1].push(item);
         }
@@ -192,8 +140,10 @@ export default {
             return item.is_income == "收入";
           })
           .reduce((prev, curr) => {
-            return (prev += Number(curr.money));
+            return (prev += Number(curr.money).toFixed(2));
           }, 0);
+
+        console.log("inMoney", inMoney);
 
         dataList.push({
           month: item,
@@ -207,12 +157,8 @@ export default {
       });
     },
   },
-  onLoad() {
-    let { start, end } = this.filterDate(this.date);
-    start = Date.parse(start);
-    end = Date.parse(end);
-    // 获取概念数据
-    this.getFinanceBill([start, end]);
+  async onLoad() {
+    await this.filterDate(this.date);
   },
 };
 </script>

@@ -344,17 +344,17 @@ export default {
         this.allOutData.forEach((item) => {
           let value = new Date(item.creatorTime).getDate();
           if (value >= 1 && value < 5) {
-            moneyList[0] -= item.money;
+            moneyList[0] += item.money;
           } else if (value >= 5 && value < 10) {
-            moneyList[1] -= item.money;
+            moneyList[1] += item.money;
           } else if (value >= 10 && value < 15) {
-            moneyList[2] -= item.money;
+            moneyList[2] += item.money;
           } else if (value >= 15 && value < 20) {
-            moneyList[3] -= item.money;
+            moneyList[3] += item.money;
           } else if (value >= 20 && value < 25) {
-            moneyList[4] -= item.money;
+            moneyList[4] += item.money;
           } else if (value >= 25) {
-            moneyList[5] -= item.money;
+            moneyList[5] += item.money;
           }
         });
         data = {
@@ -404,6 +404,7 @@ export default {
         交通: 0,
         通信: 0,
         娱乐: 0,
+        其他: 0,
       };
 
       if (this.moneyType === "支出") {
@@ -473,6 +474,7 @@ export default {
         交通: 0,
         通信: 0,
         娱乐: 0,
+        其他: 0,
       };
       if (this.moneyType === "支出") {
         this.allOutData.forEach((item) => {

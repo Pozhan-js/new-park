@@ -46,10 +46,10 @@
             <view class="header-input flex-a-center">
               <u--input
                 placeholder="请输入金额"
-                type="number"
+                type="digit"
                 border="none"
                 v-model="formData.money"
-              ></u--input>
+              />
               <u-icon name="arrow-right" size="20"></u-icon>
             </view>
           </view>
@@ -105,20 +105,6 @@
             </view>
           </view>
 
-          <!-- <view class="dialogBottom-input-type">
-            <view class="type-title">消费类型:</view>
-            <view class="type-container flex-a-center">
-              <view
-                class="type-item"
-                :class="formData.consumption_type === item ? 'active' : ''"
-                @click="handleClickBranch(item)"
-                v-for="(item, _) in typeList"
-                :key="_"
-                >{{ item }}</view
-              >
-            </view>
-          </view> -->
-
           <!-- 备注 -->
           <view class="dialogBottom-input-remark">
             <text>描述 ：</text>
@@ -143,28 +129,6 @@
         </view>
       </view>
     </u-popup>
-
-    <!-- 添加其他类型的模态框 -->
-    <!-- <u-modal
-      :show="show"
-      :showCancelButton="true"
-      @confirm="handleConfirm"
-      @cancel="handleCancel"
-    >
-      <view class="dialog-content">
-        <view class="dialog-content-image">
-          <image :src="icon['其他']" style="width: 100rpx; height: 100rpx" />
-        </view>
-        <u--input
-          placeholder="请输入内容"
-          border="surround"
-          inputAlign="center"
-          v-model="value"
-          @change="change"
-        ></u--input>
-        <view class="header-icon"></view>
-      </view>
-    </u-modal> -->
   </view>
 </template>
 
@@ -196,7 +160,7 @@ export default {
         consumption_type: "",
         consumption_content: "",
         consumption_info: "",
-        money: "",
+        money: 0,
         pay_type: "",
         consumption_descripte: "",
         bill: [],
@@ -205,13 +169,6 @@ export default {
   },
   methods: {
     handleClickIcon(item) {
-      // if (item === "其他") {
-      //   this.value = "";
-      //   this.show = true;
-      // } else {
-      //   this.formData.consumption_type = item;
-      //   this.dialogIsShow = true;
-      // }
       this.formData.consumption_type = item;
       this.dialogIsShow = true;
     },
@@ -296,7 +253,14 @@ export default {
       });
     },
 
+    // 输入框函数
+    inputValue(e) {
+      const { value } = e.detail;
+      this.formData.money = +String(value).replace(/[^\d\.]/g, "");
+    },
+
     async submitClick() {
+      return console.log("this.formData.money", this.formData.money);
       try {
         this.btnLoading = true;
         if (!this.editId) {
@@ -325,6 +289,19 @@ export default {
       } finally {
         this.btnLoading = false;
         this.dialogIsShow = false;
+
+        this.formData = {
+          is_income: "",
+          consumption_type: "",
+          consumption_content: "",
+          consumption_info: "",
+          money: "",
+          pay_type: "",
+          consumption_descripte: "",
+          bill: [],
+        };
+
+        this.fileList1 = [];
       }
     },
   },

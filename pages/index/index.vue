@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-10 15:27:13
+ * @LastEditTime: 2023-11-14 10:18:41
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -74,7 +74,7 @@
           v-if="isShowItem('业主自治')"
           @click="toOwnerAutonomy"
         >
-          <view class="item-content flex-a-center" @click="toSquarePage">
+          <view class="item-content flex-a-center">
             <view class="title">业主自治</view>
             <image
               style="width: 110rpx; height: 110rpx; margin-left: 16rpx"
