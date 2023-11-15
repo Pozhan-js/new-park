@@ -26,7 +26,7 @@
         <view class="finance-message-left">
           <view class="finance-message-left-header">
             <view class="title">账户余额</view>
-            <view>{{ income - expenditure }}</view>
+            <view>¥{{ income - expenditure }}</view>
           </view>
           <view class="finance-message-left-footer">
             <view class="item">
@@ -101,10 +101,11 @@
                     >
                   </view>
                 </view>
-                <view class="body-content-right">
-                  <view class="content-right-number">{{
+                <view class="body-content-right flex-a-center">
+                  <view class="body-content-right-number">{{
                     Number(data.money).toFixed(2)
                   }}</view>
+                  <u-icon name="arrow-right" color="#5991fa"></u-icon>
                 </view>
               </view>
             </view>
@@ -611,6 +612,10 @@ export default {
             &-right {
               font-size: 38rpx;
               color: #333333;
+
+              &-number {
+                margin-right: 20rpx;
+              }
             }
           }
         }

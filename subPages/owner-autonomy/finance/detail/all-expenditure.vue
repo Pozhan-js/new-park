@@ -1,10 +1,10 @@
 <template>
-  <view class="income-bill">
+  <view class="income-bill container">
     <view class="income-bill-header">
       <view>
         <view class="income-title">支出明细</view>
         <view class="income-user">账户支出</view>
-        <view class="income-number">{{ allOut }}</view>
+        <view class="income-number">¥{{ allOut }}</view>
       </view>
       <image
         src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230905_b1e8aa1495ed4b8dafb80bbe81d80436.png"
@@ -23,8 +23,10 @@
           @change="bindDateChange"
         >
           <view class="flex-a-center">
-            <view->{{ date.split("-")[0] }}</view->
-            <u-icon name="arrow-down"></u-icon>
+            <view style="font-size: 34rpx; color: #fb8753">{{
+              date.split("-")[0]
+            }}</view>
+            <u-icon name="arrow-down" color="#fb8753"></u-icon>
           </view>
         </picker>
       </view>
@@ -56,7 +58,7 @@
           >
             <u-row>
               <u-col textAlign="center" span="6">
-                <view class="demo-item">{{ data.month }}月</view>
+                <view class="demo-item">{{ data.month + 1 }}月</view>
               </u-col>
 
               <u-col textAlign="center" span="6">
@@ -121,6 +123,7 @@ export default {
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
       this.billList = data?.list;
     },
+
     handleToBillDetail(month) {
       uni.navigateTo({
         url: `/subPages/owner-autonomy/finance/detail/my-bill?year=${this.currentYear}&month=${month}`,

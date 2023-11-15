@@ -1,6 +1,5 @@
 <template>
   <view class="add-record">
-    <!-- <u-navbar :title="currentTitle" :placeholder="true" :autoBack="true"> -->
     <u-navbar title="新增账单" :placeholder="true" :autoBack="true"> </u-navbar>
     <view class="add-record-icon">
       <u-grid :border="false">
@@ -19,114 +18,132 @@
       </u-grid>
     </view>
     <!-- 底部弹出层 -->
-    <!-- :overlay="false" -->
     <u-popup
       :show="dialogIsShow"
       mode="bottom"
+      safeAreaInsetBottom
       @close="close"
+      round="10"
       @confirm="handleConfirm"
     >
       <view class="dialogBottom">
-        <!-- d弹出层设置上传照片 -->
-        <view class="dialogBottom-image">
-          <view class="image-title">票据上传</view>
-          <u-upload
-            :fileList="fileList1"
-            @afterRead="afterRead"
-            @delete="deletePic"
-            name="1"
-            multiple
-          ></u-upload>
-        </view>
-
-        <!-- 弹出层输入框 -->
-        <view class="dialogBottom-input">
-          <view class="dialogBottom-input-header">
-            <view class="title">金额</view>
-            <view class="header-input flex-a-center">
-              <u--input
-                placeholder="请输入金额"
-                type="digit"
-                border="none"
-                v-model="formData.money"
-              />
-              <u-icon name="arrow-right" size="20"></u-icon>
-            </view>
-          </view>
-          <view class="dialogBottom-input-header">
-            <view class="title">消费对象</view>
-            <view class="header-input flex-a-center">
-              <u--input
-                placeholder="请输入消费对象"
-                border="none"
-                v-model="formData.consumption_info"
-              ></u--input>
-              <u-icon name="arrow-right" size="20"></u-icon>
-            </view>
-          </view>
-          <view class="dialogBottom-input-header">
-            <view class="title">消费内容</view>
-            <view class="header-input flex-a-center">
-              <u--input
-                placeholder="请输入消费内容"
-                border="none"
-                v-model="formData.consumption_content"
-              ></u--input>
-              <u-icon name="arrow-right" size="20"></u-icon>
-            </view>
-          </view>
-
-          <!-- 支付方式 -->
-          <view class="dialogBottom-input-type">
-            <view class="type-title">选择支付方式:</view>
-            <view class="type-container flex-a-center">
-              <view
-                class="type-item"
-                :class="formData.pay_type === input ? 'active' : ''"
-                @click="handleClickType(input)"
-                v-for="input in inputTypeList"
-                :key="input"
-                >{{ input }}</view
-              >
-            </view>
-          </view>
-
-          <view class="dialogBottom-input-type">
-            <view class="type-title">是否为支出:</view>
-            <view class="type-container flex-a-center">
-              <view
-                class="type-item"
-                :class="formData.is_income === item ? 'active' : ''"
-                @click="handleClickTitle(item)"
-                v-for="(item, _) in isIncomeList"
-                :key="_"
-                >{{ item }}</view
-              >
-            </view>
-          </view>
-
-          <!-- 备注 -->
-          <view class="dialogBottom-input-remark">
-            <text>描述 ：</text>
-            <view class="remark-input">
-              <u--input
-                placeholder="请输入内容"
-                border="none"
-                v-model="formData.consumption_descripte"
-              ></u--input>
-            </view>
-          </view>
-        </view>
-
-        <view class="dialogBottom-button">
-          <u-button
-            type="primary"
-            :loading="btnLoading"
-            loadingText="加载中"
-            @click="submitClick"
-            >提交</u-button
+        <view class="form-title">票据提交</view>
+        <u--form
+          labelPosition="left"
+          labelWidth="80"
+          :model="formData"
+          :rules="rules"
+          ref="editBillForm"
+        >
+          <u-form-item
+            label="票据上传"
+            labelPosition="top"
+            prop="bill"
+            borderBottom
+            required
           >
-        </view>
+            <u-upload
+              :fileList="fileList1"
+              @afterRead="afterRead"
+              @delete="deletePic"
+              :maxCount="2"
+              name="1"
+              multiple
+            ></u-upload>
+          </u-form-item>
+
+          <u-form-item label="金额" prop="money" borderBottom required>
+            <u--input
+              v-model="formData.money"
+              type="digit"
+              border="none"
+            ></u--input>
+            <u-icon slot="right" name="arrow-right"></u-icon>
+          </u-form-item>
+
+          <u-form-item
+            label="消费对象"
+            prop="consumption_info"
+            borderBottom
+            required
+          >
+            <u--input
+              v-model="formData.consumption_info"
+              border="none"
+            ></u--input>
+            <u-icon slot="right" name="arrow-right"></u-icon>
+          </u-form-item>
+
+          <u-form-item
+            label="消费内容"
+            prop="consumption_content"
+            borderBottom
+            required
+          >
+            <u--textarea
+              maxlength="150"
+              :cursorSpacing="20"
+              count
+              v-model="formData.consumption_content"
+              border="surround"
+            ></u--textarea>
+            <u-icon slot="right" name="arrow-right"></u-icon>
+          </u-form-item>
+
+          <u-form-item
+            label="消费描述"
+            prop="consumption_description"
+            borderBottom
+          >
+            <u--textarea
+              maxlength="150"
+              :cursorSpacing="40"
+              count
+              v-model="formData.consumption_description"
+              border="surround"
+            ></u--textarea>
+            <u-icon slot="right" name="arrow-right"></u-icon>
+          </u-form-item>
+
+          <u-form-item label="支付方式" prop="pay_type" borderBottom required>
+            <u-radio-group v-model="formData.pay_type" placement="row">
+              <u-radio
+                activeColor="#6377f5"
+                v-for="(item, index) in inputTypeList"
+                :key="index"
+                shape="circle"
+                :name="item.name"
+                :label="item.name"
+              ></u-radio>
+            </u-radio-group>
+          </u-form-item>
+
+          <u-form-item
+            label="是否为收入"
+            prop="is_income"
+            borderBottom
+            required
+          >
+            <u-radio-group v-model="formData.is_income" placement="row">
+              <u-radio
+                activeColor="#6377f5"
+                v-for="(item, index) in isIncomeList"
+                :key="index"
+                shape="circle"
+                :name="item.name"
+                :label="item.name"
+              ></u-radio>
+            </u-radio-group>
+          </u-form-item>
+        </u--form>
+
+        <button
+          class="circle-button qu-btn"
+          :loading="btnLoading"
+          @click="submitClick"
+        >
+          提交
+        </button>
       </view>
     </u-popup>
   </view>
@@ -138,6 +155,7 @@ import { message } from "@/common/function";
 import Storage from "@/common/function/storage";
 import { UpdateFilePath } from "@/api/file";
 import { createModel, getModelInfo, updateModel } from "@/api";
+
 export default {
   data() {
     return {
@@ -148,9 +166,29 @@ export default {
       value: "",
       // 当前支付类型
       btnLoading: false,
-      inputTypeList: ["现金", "微信", "支付宝", "银行卡"],
-      isIncomeList: ["支出", "收入"],
-      // typeList: ["购物", "交通", "餐饮", "通信", "娱乐"],
+      // inputTypeList: ["现金", "微信", "支付宝", "银行卡"],
+      inputTypeList: [
+        {
+          name: "现金",
+        },
+        {
+          name: "微信",
+        },
+        {
+          name: "支付宝",
+        },
+        {
+          name: "银行卡",
+        },
+      ],
+      isIncomeList: [
+        {
+          name: "支出",
+        },
+        {
+          name: "收入",
+        },
+      ],
       // 是否为编辑
       editId: "",
       show: false,
@@ -162,8 +200,61 @@ export default {
         consumption_info: "",
         money: 0,
         pay_type: "",
-        consumption_descripte: "",
+        consumption_description: "",
         bill: [],
+      },
+
+      // 最新
+      rules: {
+        bill: [
+          {
+            type: "array",
+            max: 2,
+            required: true,
+            message: "最多上传两张",
+            trigger: ["change"],
+          },
+        ],
+        money: [
+          {
+            type: "number",
+            required: true,
+            message: "请输入金额",
+            trigger: ["blur", "change"],
+          },
+        ],
+        consumption_info: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入消费对象",
+            trigger: ["blur", "change"],
+          },
+        ],
+        pay_type: [
+          {
+            type: "string",
+            required: true,
+            message: "请选择消费类型",
+            trigger: ["change"],
+          },
+        ],
+        is_income: [
+          {
+            type: "string",
+            required: true,
+            message: "请选择是收入还是支出",
+            trigger: ["change"],
+          },
+        ],
+        consumption_content: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入消费内容",
+            trigger: ["blur", "change"],
+          },
+        ],
       },
     };
   },
@@ -184,18 +275,9 @@ export default {
         consumption_descripte: "",
         bill: [],
       };
+      this.fileList1 = [];
 
       this.dialogIsShow = false;
-    },
-
-    handleClickType(data) {
-      this.formData.pay_type = data;
-    },
-    handleClickTitle(data) {
-      this.formData.is_income = data;
-    },
-    handleClickBranch(data) {
-      this.formData.consumption_type = data;
     },
 
     // 删除图片
@@ -253,66 +335,67 @@ export default {
       });
     },
 
-    // 输入框函数
-    inputValue(e) {
-      const { value } = e.detail;
-      this.formData.money = +String(value).replace(/[^\d\.]/g, "");
-    },
-
     async submitClick() {
-      return console.log("this.formData.money", this.formData.money);
-      try {
-        this.btnLoading = true;
-        if (!this.editId) {
-          // 添加账单
-          const result = await createModel(
-            "64ec4d02d85a4b7b32ec6019",
-            this.formData
-          );
+      this.formData.money = Number(this.formData.money);
+      this.$refs.editBillForm
+        .validate()
+        .then(async (res) => {
+          // uni.$u.toast("校验通过");
+          try {
+            this.btnLoading = true;
+            if (!this.editId) {
+              // 添加账单
+              const result = await createModel(
+                "64ec4d02d85a4b7b32ec6019",
+                this.formData
+              );
 
-          if (result.code == 200) {
-            message("添加成功");
+              if (result.code == 200) {
+                message("添加成功");
+              }
+            } else {
+              const result = await updateModel(
+                "64ec4d02d85a4b7b32ec6019",
+                this.formData,
+                this.formData._id
+              );
+
+              if (result.code == 200) {
+                message("修改成功");
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          } finally {
+            this.btnLoading = false;
+            this.dialogIsShow = false;
+            this.fileList1 = [];
+
+            this.formData = {
+              is_income: "",
+              consumption_type: "",
+              consumption_content: "",
+              consumption_info: "",
+              money: "",
+              pay_type: "",
+              consumption_descripte: "",
+              bill: [],
+            };
+
+            this.$refs.editBillForm.resetFields();
           }
-        } else {
-          const result = await updateModel(
-            "64ec4d02d85a4b7b32ec6019",
-            this.formData,
-            this.formData._id
-          );
-
-          if (result.code == 200) {
-            message("修改成功");
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        this.btnLoading = false;
-        this.dialogIsShow = false;
-
-        this.formData = {
-          is_income: "",
-          consumption_type: "",
-          consumption_content: "",
-          consumption_info: "",
-          money: "",
-          pay_type: "",
-          consumption_descripte: "",
-          bill: [],
-        };
-
-        this.fileList1 = [];
-      }
+        })
+        .catch((errors) => {
+          uni.$u.toast("校验失败");
+        });
+      // return console.log("this.formData.money", this.formData.money);
     },
   },
   watch: {
     fileList1: {
       handler(val) {
-        // console.log(val);
         if (typeof val[0]?.url === "object") {
           this.formData.bill = val.map((item) => item.url);
-        } else {
-          this.formData.bill = val;
         }
       },
       deep: true,
@@ -320,6 +403,10 @@ export default {
   },
   onShow() {
     this.icon = getApp().globalData.icon;
+  },
+  onReady() {
+    //如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+    this.$refs.editBillForm.setRules(this.rules);
   },
   async onLoad(option) {
     this.currentTitle = option.title;
@@ -389,13 +476,20 @@ export default {
 .dialogBottom {
   width: 100vw;
   height: 80vh;
-  background-color: #fff;
+  overflow: scroll;
   border-radius: 40rpx 40rpx 0 0;
   box-shadow: 0rpx -6rpx 20rpx 1rpx rgba(220, 221, 226, 0.65);
   box-sizing: border-box;
   padding: 20rpx;
-  padding-bottom: constant(safe-area-inset-bottom) !important;
-  padding-bottom: env(safe-area-inset-bottom) !important;
+  // padding-bottom: constant(safe-area-inset-bottom) !important;
+  // padding-bottom: env(safe-area-inset-bottom) !important;
+
+  .form-title {
+    font-size: 36rpx;
+    text-align: center;
+    color: #666;
+    margin-bottom: 30rpx;
+  }
 
   &-image {
     padding: 20rpx 0;
@@ -427,10 +521,6 @@ export default {
         color: #333333;
         line-height: 45rpx;
       }
-
-      // .header-input {
-      //   width: 200rpx;
-      // }
     }
 
     &-type {
@@ -506,5 +596,22 @@ export default {
   /* #ifndef APP-PLUS */
   box-sizing: border-box;
   /* #endif */
+}
+
+.qu-btn {
+  // position: absolute;
+  // bottom: 0;
+  width: 90%;
+  margin: 50rpx auto;
+  margin-bottom: constant(safe-area-inset-bottom) !important;
+  margin-bottom: env(safe-area-inset-bottom) !important;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+::v-deep .u-radio {
+  margin-right: 20rpx;
 }
 </style>
