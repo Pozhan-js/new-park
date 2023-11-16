@@ -12,41 +12,44 @@
 
     <view class="flow-details-container">
       <view
-        class="flow-details-container-item"
+        class="flow-details-container-box"
         v-for="(item, _) in viewData"
         :key="_"
       >
-        <view class="item-header">
-          <view class="item-header-date">
-            <text class="day">{{ item.time }}</text>
-            <!-- <text class="day-time">{{ data.time.timeDate }}</text> -->
+        <view class="flow-details-container-item" v-if="item.details.length">
+          <view class="item-header">
+            <view class="item-header-date">
+              <text class="day">{{ item.time }}</text>
+              <!-- <text class="day-time">{{ data.time.timeDate }}</text> -->
+            </view>
+            <view class="item-header-money">
+              <text>支出 ¥{{ item.allIn }}</text>
+              <text>收入 ¥{{ item.allOut }}</text>
+            </view>
           </view>
-          <view class="item-header-money">
-            <text>支出 {{ item.allIn }}</text>
-            <text>收入 {{ item.allOut }}</text>
-          </view>
-        </view>
-        <view class="item-content">
-          <view
-            class="item-content-data"
-            v-for="data in item.details"
-            @click="handleToBillDetail(data._id)"
-            :key="data._id"
-          >
-            <view class="item-content-data-left">
-              <image :src="icon[data.consumption_type]" mode="" />
-              <view class="left-message">
-                <view>
-                  <text class="title">{{ data.consumption_type }}</text>
-                </view>
-                <view>
-                  <text>{{ data.consumption_info }}</text>
+          <view class="item-content">
+            <view
+              class="item-content-data"
+              v-for="data in item.details"
+              @click="handleToBillDetail(data._id)"
+              :key="data._id"
+            >
+              <view class="item-content-data-left">
+                <image :src="icon[data.consumption_type]" mode="" />
+                <view class="left-message">
+                  <view>
+                    <text class="title">{{ data.consumption_type }}</text>
+                  </view>
+                  <view>
+                    <text>{{ data.consumption_info }}</text>
+                  </view>
                 </view>
               </view>
+              <view class="item-content-data-right">{{
+                (data.is_income === "收入" ? "+" : "-") +
+                Number(data.money).toFixed(2)
+              }}</view>
             </view>
-            <view class="item-content-data-right">{{
-              Number(data.money).toFixed(2)
-            }}</view>
           </view>
         </view>
       </view>

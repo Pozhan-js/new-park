@@ -38,13 +38,13 @@
             <view class="center-item">
               <view>总支出</view>
               <view class="center-num">{{
-                myAllOutOrIn.outMoney.toFixed(2)
+                addCommas(myAllOutOrIn.outMoney.toFixed(2))
               }}</view>
             </view>
             <view class="center-item">
               <view>总收入</view>
               <view class="center-num">{{
-                myAllOutOrIn.inMoney.toFixed(2)
+                addCommas(myAllOutOrIn.inMoney.toFixed(2))
               }}</view>
             </view>
           </view>
@@ -52,15 +52,17 @@
           <view class="user-content-card-bottom">
             <view>结余</view>
             <view>
+              <!-- #7587ef -->
               <u-line-progress
                 :percentage="
                   (
-                    ((myAllOutOrIn.inMoney + myAllOutOrIn.outMoney) * 100) /
+                    ((myAllOutOrIn.inMoney - myAllOutOrIn.outMoney) * 100) /
                     myAllOutOrIn.inMoney
                   ).toFixed(2)
                 "
                 height="8"
-                activeColor="#ff0000"
+                inactiveColor="#7587ef"
+                activeColor="#59bb73"
               ></u-line-progress>
             </view>
           </view>
@@ -101,8 +103,10 @@ import infoMixin from "@/common/mixins/info";
 import { getRequestFilter } from "@/common/function";
 import { getModelList } from "@/api";
 import Tabbar from "../../components/government-tabbar.vue";
+
 export default {
   mixins: [infoMixin],
+
   data() {
     return {
       tabbarType: "我的",
@@ -157,8 +161,22 @@ export default {
         url: "/subPages/owner-autonomy/finance/detail/my-bill",
       });
     },
+    addCommas(number) {
+      let parts = number.toString().split(".");
+      let left = parts[0];
+      if (left.length <= 3) {
+        return parts.length > 1 ? left + "." + parts[1] : left;
+      }
+      let result = "";
+      while (left.length > 3) {
+        result = "," + left.slice(-3) + result;
+        left = left.slice(0, -3);
+      }
+      result = left + result;
+      return parts.length > 1 ? result + "." + parts[1] : result;
+    },
   },
-  async onLoad() {
+  async onShow() {
     // 请求所有自己创建的清单
     try {
       // 获取过滤参数
@@ -168,7 +186,7 @@ export default {
         filterData
       );
       this.myDataList = data?.list.sort((a, b) => {
-        return a - b;
+        return a.creatorTime - b.creatorTime;
       });
     } catch (error) {
       console.log(error);

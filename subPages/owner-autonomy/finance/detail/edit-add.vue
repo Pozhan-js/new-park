@@ -81,8 +81,8 @@
             required
           >
             <u--textarea
-              maxlength="150"
-              :cursorSpacing="20"
+              :maxlength="150"
+              :cursorSpacing="40"
               count
               v-model="formData.consumption_content"
               border="surround"
@@ -96,7 +96,7 @@
             borderBottom
           >
             <u--textarea
-              maxlength="150"
+              :maxlength="150"
               :cursorSpacing="40"
               count
               v-model="formData.consumption_description"
@@ -204,7 +204,6 @@ export default {
         bill: [],
       },
 
-      // 最新
       rules: {
         bill: [
           {
@@ -272,7 +271,7 @@ export default {
         consumption_info: "",
         money: "",
         pay_type: "",
-        consumption_descripte: "",
+        consumption_description: "",
         bill: [],
       };
       this.fileList1 = [];
@@ -284,6 +283,7 @@ export default {
     deletePic(event) {
       this[`fileList${event.name}`].splice(event.index, 1);
     },
+
     // 新增图片
     async afterRead(event) {
       // 当设置 multiple 为 true 时, file 为数组格式，否则为对象格式
@@ -311,6 +311,7 @@ export default {
         fileListLen++;
       }
     },
+
     uploadFilePromise(url) {
       let that = this;
       return new Promise((resolve, reject) => {
@@ -378,7 +379,7 @@ export default {
               consumption_info: "",
               money: "",
               pay_type: "",
-              consumption_descripte: "",
+              consumption_description: "",
               bill: [],
             };
 
@@ -419,15 +420,11 @@ export default {
         );
         if (result.code === 200) {
           this.dialogIsShow = true;
-
           this.formData = result?.data;
-          this.fileList1 = [
-            {
-              ...result?.data.bill[0],
-              url: this.$helper.filterCover(result?.data.bill[0].url) || "",
-            },
-          ];
-          console.log(result);
+          this.fileList1 = result?.data.bill.map((item, index) => ({
+            ...item,
+            url: this.$helper.filterCover(result?.data.bill[index].url) || "",
+          }));
         }
       } catch (error) {
         console.log(error);

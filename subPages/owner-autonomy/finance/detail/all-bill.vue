@@ -3,12 +3,12 @@
     <!-- 头部信息 -->
     <view class="all-bills-header">
       <view class="all-bills-header-top">
-        <view class="user-message">
+        <view class="user-message" style="margin-top: 30rpx">
           <view class="title">我的账户</view>
           <view class="balance">
             <view class="balance-title">账户结余</view>
             <view class="balance-number">{{
-              (myAllOutOrIn.outMoney + myAllOutOrIn.inMoney).toFixed(2)
+              (myAllOutOrIn.inMoney - myAllOutOrIn.outMoney).toFixed(2)
             }}</view>
           </view>
         </view>
@@ -31,37 +31,29 @@
       </view>
     </view>
 
+    <!-- 时间 -->
+    <view class="date-time">
+      <!-- TODO 这个时间可以封装组件 -->
+      <view class="date-time-title flex-a-center">
+        <picker
+          mode="date"
+          :value="date"
+          fields="year"
+          @change="bindDateChange"
+        >
+          <view class="flex-a-center">
+            <view
+              style="font-size: 34rpx; color: #fb8753; margin-right: 20rpx"
+              >{{ date.split("-")[0] }}</view
+            >
+            <u-icon name="arrow-down" color="#fb8753"></u-icon>
+          </view>
+        </picker>
+      </view>
+    </view>
+
     <!-- 列表数据 -->
     <view class="all-bills-content">
-      <!-- 时间 -->
-      <view class="date-time">
-        <!-- TODO 这个时间可以封装组件 -->
-        <view class="date-time-title flex-a-center">
-          <!-- <view class="label" style="width: 100rpx;">选择:</view> -->
-          <picker
-            mode="date"
-            :value="date"
-            fields="year"
-            :start="startDate"
-            :end="endDate"
-            @change="bindDateChange"
-          >
-            <view class="flex-a-center">
-              <view>{{ date }}</view>
-              <u-icon name="arrow-right"></u-icon>
-            </view>
-          </picker>
-        </view>
-
-        <!-- <view class="date-time-right">
-          <u-search
-            placeholder="请输入关键字"
-            :showAction="false"
-            v-model="keyword"
-          ></u-search>
-        </view> -->
-      </view>
-
       <!-- 渲染列表表格 -->
       <view class="table">
         <view class="table-header">
@@ -102,7 +94,7 @@
               <u-col textAlign="center" span="3">
                 <view class="demo-item balance">
                   <view class="number">{{
-                    (date.allIn + date.allOut).toFixed(2)
+                    (date.allIn - date.allOut).toFixed(2)
                   }}</view>
                   <u-icon name="arrow-right" color="#2979ff" size="16"></u-icon
                 ></view>
@@ -124,7 +116,8 @@ export default {
   data() {
     return {
       keyword: "",
-      date: new Date().getFullYear(),
+      date: uni.$u.timeFormat(new Date(), "yyyy-mm-dd"),
+      currentYear: new Date().getFullYear(),
       income: "",
       expenditure: "",
       // 接收请求参数
@@ -132,13 +125,6 @@ export default {
     };
   },
   computed: {
-    startDate() {
-      return this.getDate("start");
-    },
-    endDate() {
-      return this.getDate("end");
-    },
-
     myAllOutOrIn() {
       let ourArr = this.billList.filter((item) => {
         return item.is_income === "支出";
@@ -191,8 +177,8 @@ export default {
       });
 
       return dataList.sort((a, b) => {
-        let dataA = a.mouth;
-        let dataB = b.mouth;
+        let dataA = Number(a.month);
+        let dataB = Number(b.month);
         return dataB - dataA;
       });
     },
@@ -200,38 +186,21 @@ export default {
   methods: {
     // 日期选择器确定按钮
     bindDateChange(e) {
-      this.date = e.detail.value;
-      let { start, end } = this.filterDate(this.date);
-      start = Date.parse(start);
-      end = Date.parse(end);
-      // 获取概念数据
-      this.getFinanceBill([start, end]);
+      this.filterDate(e.detail.value);
     },
-    getDate(type) {
-      const date = new Date();
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
 
-      if (type === "start") {
-        year = year - 60;
-      } else if (type === "end") {
-        year = year + 2;
-      }
-      month = month > 9 ? month : "0" + month;
-      day = day > 9 ? day : "0" + day;
-      return `${year}-${month}-${day}`;
-    },
-    filterDate(year) {
-      return {
-        start: `${year}-01-01 00:00:00`,
-        end: `${year}-12-31 23:59:59`,
-      };
+    // 设置年范围
+    async filterDate(year) {
+      let start = Date.parse(`${year}-01-01 00:00:00`);
+      let end = Date.parse(`${year}-12-31 23:59:59`);
+
+      // 获取概念数据
+      await this.getFinanceBill([start, end]);
     },
     // 发送请求获取年数据
     async getFinanceBill(range) {
       let reqData = getRequestFilter(
-        { creatorTime: range, creatorUserId: this.userInfo.id }
+        { creatorTime: range }
         // "range"
       );
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
@@ -245,7 +214,7 @@ export default {
         if (item.is_income == "收入") {
           income += Number(item.money);
         } else {
-          expenditure += Math.abs(Number(item.money));
+          expenditure += Number(item.money);
         }
       });
       this.income = income;
@@ -258,12 +227,8 @@ export default {
       });
     },
   },
-  onLoad() {
-    let { start, end } = this.filterDate(this.date);
-    start = Date.parse(start);
-    end = Date.parse(end);
-    // 获取概念数据
-    this.getFinanceBill([start, end]);
+  async onLoad() {
+    await this.filterDate(this.currentYear);
   },
 };
 </script>

@@ -23,9 +23,10 @@
           @change="bindDateChange"
         >
           <view class="flex-a-center">
-            <view style="font-size: 34rpx; color: #fb8753">{{
-              date.split("-")[0]
-            }}</view>
+            <view
+              style="font-size: 34rpx; color: #fb8753 margin-right: 20rpx"
+              >{{ date.split("-")[0] }}</view
+            >
             <u-icon name="arrow-down" color="#fb8753"></u-icon>
           </view>
         </picker>
@@ -38,11 +39,15 @@
       <view class="table">
         <view class="table-header">
           <u-row>
-            <u-col textAlign="center" span="6">
-              <view class="demo-layout">月份</view>
+            <u-col textAlign="center" span="4">
+              <view class="demo-layout">日期</view>
             </u-col>
 
-            <u-col textAlign="center" span="6">
+            <u-col textAlign="center" span="4">
+              <view class="demo-layout">来源</view>
+            </u-col>
+
+            <u-col textAlign="center" span="4">
               <view class="demo-layout">收入</view>
             </u-col>
           </u-row>
@@ -57,10 +62,15 @@
             :key="index"
           >
             <u-row>
-              <u-col textAlign="center" span="6">
-                <view class="demo-item">{{ data.month + 1 }}月</view>
+              <u-col textAlign="center" span="4">
+                <view class="demo-item">{{
+                  $u.timeFormat(data.creatorTime, "mm月dd日")
+                }}</view>
               </u-col>
-              <u-col textAlign="center" span="6">
+              <u-col textAlign="center" span="4">
+                <view class="demo-item">{{ data.consumption_type }}</view>
+              </u-col>
+              <u-col textAlign="center" span="4">
                 <view class="demo-item">
                   <view class="number">+{{ data.money.toFixed(2) }}</view>
                   <view class="demo-icon-right">
@@ -108,7 +118,7 @@ export default {
     async getFinanceBill(range) {
       let reqData = getRequestFilter({
         creatorTime: range,
-        creatorUserId: this.userInfo.id,
+        // creatorUserId: this.userInfo.id,
         is_income: "收入",
       });
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);

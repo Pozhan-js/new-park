@@ -23,9 +23,10 @@
           @change="bindDateChange"
         >
           <view class="flex-a-center">
-            <view style="font-size: 34rpx; color: #fb8753">{{
-              date.split("-")[0]
-            }}</view>
+            <view
+              style="font-size: 34rpx; color: #fb8753 margin-right: 20rpx"
+              >{{ date.split("-")[0] }}</view
+            >
             <u-icon name="arrow-down" color="#fb8753"></u-icon>
           </view>
         </picker>
@@ -38,11 +39,15 @@
       <view class="table">
         <view class="table-header">
           <u-row>
-            <u-col textAlign="center" span="6">
-              <view class="demo-layout">月份</view>
+            <u-col textAlign="center" span="4">
+              <view class="demo-layout">日期</view>
             </u-col>
 
-            <u-col textAlign="center" span="6">
+            <u-col textAlign="center" span="4">
+              <view class="demo-layout">用途</view>
+            </u-col>
+
+            <u-col textAlign="center" span="4">
               <view class="demo-layout">支出</view>
             </u-col>
           </u-row>
@@ -53,15 +58,21 @@
           <view
             class="table-item"
             v-for="(data, index) in viewDataList"
-            @click="handleToBillDetail(data.month)"
+            @click="handleToBillDetail(data._id)"
             :key="index"
           >
             <u-row>
-              <u-col textAlign="center" span="6">
-                <view class="demo-item">{{ data.month + 1 }}月</view>
+              <u-col textAlign="center" span="4">
+                <view class="demo-item">{{
+                  $u.timeFormat(data.creatorTime, "mm月dd日")
+                }}</view>
               </u-col>
 
-              <u-col textAlign="center" span="6">
+              <u-col textAlign="center" span="4">
+                <view class="demo-item">{{ data.consumption_type }}</view>
+              </u-col>
+
+              <u-col textAlign="center" span="4">
                 <view class="demo-item">
                   <view class="number">-{{ data.money.toFixed(2) }}</view>
                   <view class="demo-icon-right">
@@ -117,16 +128,16 @@ export default {
     async getFinanceBill(range) {
       let reqData = getRequestFilter({
         creatorTime: range,
-        creatorUserId: this.userInfo.id,
+        // creatorUserId: this.userInfo.id,
         is_income: "支出",
       });
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
       this.billList = data?.list;
     },
 
-    handleToBillDetail(month) {
+    handleToBillDetail(id) {
       uni.navigateTo({
-        url: `/subPages/owner-autonomy/finance/detail/my-bill?year=${this.currentYear}&month=${month}`,
+        url: `/subPages/owner-autonomy/finance/detail/detail?id=${id}`,
       });
     },
   },
