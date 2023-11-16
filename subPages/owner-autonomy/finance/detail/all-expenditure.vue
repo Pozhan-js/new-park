@@ -24,7 +24,7 @@
         >
           <view class="flex-a-center">
             <view
-              style="font-size: 34rpx; color: #fb8753 margin-right: 20rpx"
+              style="font-size: 34rpx; color: #fb8753; margin-right: 20rpx"
               >{{ date.split("-")[0] }}</view
             >
             <u-icon name="arrow-down" color="#fb8753"></u-icon>

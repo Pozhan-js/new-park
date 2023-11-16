@@ -223,7 +223,7 @@ export default {
     // 跳转到详情
     handleToBillDetail(month) {
       uni.navigateTo({
-        url: `/subPages/owner-autonomy/finance/detail/my-bill?year=${this.date}&month=${month}`,
+        url: `/subPages/owner-autonomy/finance/detail/mouth-bill?year=${this.date}&month=${month}`,
       });
     },
   },

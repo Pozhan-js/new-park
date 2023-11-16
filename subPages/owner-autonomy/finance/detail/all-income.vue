@@ -24,7 +24,7 @@
         >
           <view class="flex-a-center">
             <view
-              style="font-size: 34rpx; color: #fb8753 margin-right: 20rpx"
+              style="font-size: 34rpx; color: #fb8753; margin-right: 20rpx"
               >{{ date.split("-")[0] }}</view
             >
             <u-icon name="arrow-down" color="#fb8753"></u-icon>
@@ -58,7 +58,7 @@
           <view
             class="table-item"
             v-for="(data, index) in viewDataList"
-            @click="handleToBillDetail(data.month)"
+            @click="handleToBillDetail(data._id)"
             :key="index"
           >
             <u-row>
@@ -124,9 +124,9 @@ export default {
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
       this.billList = data?.list;
     },
-    handleToBillDetail(month) {
+    handleToBillDetail(id) {
       uni.navigateTo({
-        url: `/subPages/owner-autonomy/finance/detail/my-bill?year=${this.date}&month=${month}`,
+        url: `/subPages/owner-autonomy/finance/detail/detail?id=${id}`,
       });
     },
   },

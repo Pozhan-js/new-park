@@ -243,6 +243,16 @@
 					}
 				},
 				{
+					"path": "finance/detail/mouth-bill",
+					"style": {
+						"navigationBarTitleText": "月度账单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				
+				{
 					"path": "finance/detail/detail",
 					"style": {
 						"navigationBarTitleText": "账单详情"

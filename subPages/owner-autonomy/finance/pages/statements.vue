@@ -80,13 +80,12 @@
         <!-- 支出分类图表 -->
         <view class="type-chart">
           <view class="type-chart-header">分类统计</view>
-          <!-- canvasId="canvasIdType"   :canvas2d="true" -->
+          <!-- canvasId="canvasIdType"   :canvas2d="true" canvasId="canvasIdType"
+              :canvas2d="true" -->
           <view class="pieCharts-box my-index">
             <qiun-data-charts
               style="index: 1"
               type="ring"
-              canvasId="canvasIdType"
-              :canvas2d="true"
               :opts="pieOpts"
               :chartData="pieChartData"
             />
@@ -426,10 +425,22 @@ export default {
               data: Object.keys(filterData).map((item, index) => {
                 return {
                   name: item,
-                  value: filterData[item],
-                  labelText: `${item} ${Proportion[index] || 0}%`,
+                  value: filterData[item] || 0,
+                  labelText:
+                    item +
+                    `${
+                      Proportion[index] === "NaN" ||
+                      Number(Proportion[index]) == 0.01
+                        ? 0
+                        : Proportion[index]
+                    }%`,
                   // TODO 当百分比为"0%", "0.01%"时不显示该选项引导线
-                  labelShow: Proportion[index] == 0 ? false : true,
+                  labelShow:
+                    Proportion[index] === "NaN" ||
+                    Number(Proportion[index]) == 0 ||
+                    Number(Proportion[index]) == 0.01
+                      ? false
+                      : true,
                 };
               }),
             },
@@ -454,7 +465,7 @@ export default {
               data: Object.keys(filterData).map((item, index) => {
                 return {
                   name: item,
-                  value: filterData[item],
+                  value: filterData[item] || 0,
                   labelText: `${item} ${Proportion[index] || 0}%`,
                   labelShow: Proportion[index] == 0 ? false : true,
                 };
@@ -516,7 +527,6 @@ export default {
     reqRange = this.$helper.getCurrentMonth(nowDate).map((item) => {
       return Date.parse(item);
     });
-    // console.log(reqRange);
     // 获取当月所有账单信息
     this.getFinanceBill(reqRange);
   },
