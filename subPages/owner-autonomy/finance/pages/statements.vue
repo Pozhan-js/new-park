@@ -80,13 +80,15 @@
         <!-- 支出分类图表 -->
         <view class="type-chart">
           <view class="type-chart-header">分类统计</view>
-          <!-- canvasId="canvasIdType"   :canvas2d="true" canvasId="canvasIdType"
+          <!--  canvasId="canvasIdType"
               :canvas2d="true" -->
           <view class="pieCharts-box my-index">
             <qiun-data-charts
               style="index: 1"
               type="ring"
               :opts="pieOpts"
+              canvasId="canvasIdType"
+              :canvas2d="true"
               :chartData="pieChartData"
             />
           </view>
@@ -328,7 +330,7 @@ export default {
     async getFinanceBill(range) {
       let reqData = getRequestFilter({ creatorTime: range }, "range");
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
-      this.billList = data?.list;
+      this.billList = data?.list.filter((item) => item.status === 1);
       // 计算总值
       this.getComputedMoney();
     },

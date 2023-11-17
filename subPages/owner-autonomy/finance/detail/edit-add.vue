@@ -202,6 +202,7 @@ export default {
         pay_type: "",
         consumption_description: "",
         bill: [],
+        handler: "",
       },
 
       rules: {
@@ -223,6 +224,14 @@ export default {
           },
         ],
         consumption_info: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入消费对象",
+            trigger: ["blur", "change"],
+          },
+        ],
+        handler: [
           {
             type: "string",
             required: true,
@@ -381,6 +390,7 @@ export default {
               pay_type: "",
               consumption_description: "",
               bill: [],
+              handler: "",
             };
 
             this.$refs.editBillForm.resetFields();

@@ -29,26 +29,27 @@
           </view>
           <view class="item-content">
             <view
-              class="item-content-data"
               v-for="data in item.details"
               @click="handleToBillDetail(data._id)"
               :key="data._id"
             >
-              <view class="item-content-data-left">
-                <image :src="icon[data.consumption_type]" mode="" />
-                <view class="left-message">
-                  <view>
-                    <text class="title">{{ data.consumption_type }}</text>
-                  </view>
-                  <view>
-                    <text>{{ data.consumption_info }}</text>
+              <view class="item-content-data" v-if="data.status">
+                <view class="item-content-data-left">
+                  <image :src="icon[data.consumption_type]" mode="" />
+                  <view class="left-message">
+                    <view>
+                      <text class="title">{{ data.consumption_type }}</text>
+                    </view>
+                    <view>
+                      <text>{{ data.consumption_info }}</text>
+                    </view>
                   </view>
                 </view>
+                <view class="item-content-data-right">{{
+                  (data.is_income === "收入" ? "+" : "-") +
+                  Number(data.money).toFixed(2)
+                }}</view>
               </view>
-              <view class="item-content-data-right">{{
-                (data.is_income === "收入" ? "+" : "-") +
-                Number(data.money).toFixed(2)
-              }}</view>
             </view>
           </view>
         </view>
@@ -168,7 +169,9 @@ export default {
     // 请求所有自己创建的清单
     let filterData = {};
     if (!option.month) {
-      filterData = getRequestFilter({ creatorUserId: this.userInfo.id });
+      filterData = getRequestFilter({
+        creatorUserId: this.userInfo.id,
+      });
     } else {
       let date = new Date(option.year, option.month);
       date.setDate(1); // 设置为1号
@@ -188,7 +191,7 @@ export default {
         "64ec4d02d85a4b7b32ec6019",
         filterData
       );
-      this.detailList = data?.list;
+      this.detailList = data?.list.filter((item) => item.status === 1);
     } catch (error) {
       console.log(error);
     }

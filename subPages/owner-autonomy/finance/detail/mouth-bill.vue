@@ -2,20 +2,27 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-11-16 16:10:40
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-16 17:40:38
+ * @LastEditTime: 2023-11-17 14:36:27
  * @FilePath: /smart-park/subPages/owner-autonomy/finance/detail/mouth-bill.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <view class="mouth-bill container">
-    <view class="mouth-bill-item" v-for="data in billList" :key="data._id">
+    <view
+      class="mouth-bill-item"
+      v-for="data in billList"
+      :key="data._id"
+      @click="handleToBillDetail(data._id)"
+    >
       <view class="item-title flex-a-center-j-space-between">
         <view class="item-title-left">
           <text style="font-size: 40rpx; font-weight: bold"
             >¥{{ data.money.toFixed(2) }}</text
           >
         </view>
-        <view class="item-title-right">2022/12/20 17:50</view>
+        <view class="item-title-right">{{
+          $u.timeFormat(data.creatorTime, "yyyy/mm/dd hh:MM")
+        }}</view>
       </view>
       <view class="item-cell flex-a-center-j-space-between">
         <view class="item-cell-left"> 消费类型 </view>
@@ -25,7 +32,7 @@
           >
             购物
           </text>
-          <image :src="icon['娱乐']" mode="" />
+          <image :src="icon[data.consumption_type]" mode="" />
         </view>
       </view>
       <view class="item-cell flex-a-center-j-space-between">
@@ -39,7 +46,17 @@
       <view class="item-cell flex-a-center-j-space-between">
         <view class="item-cell-left"> 收支方式 </view>
         <view class="item-cell-right">
-          <text style="font-size: 36rpx; font-weight: bold">微信</text>
+          <text style="font-size: 36rpx; font-weight: bold">{{
+            data.pay_type
+          }}</text>
+        </view>
+      </view>
+      <view class="item-cell flex-a-center-j-space-between">
+        <view class="item-cell-left"> 经手人 </view>
+        <view class="item-cell-right">
+          <text style="font-size: 36rpx; font-weight: bold">{{
+            data.handler
+          }}</text>
         </view>
       </view>
     </view>
@@ -60,10 +77,17 @@ export default {
     async getFinanceBill(range) {
       let reqData = getRequestFilter({ creatorTime: range }, "range");
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
-      this.billList = data?.list.sort((a, b) => {
-        let itemA = a.creatorTime;
-        let itemB = b.creatorTime;
-        return itemA - itemB;
+      this.billList = data?.list
+        .filter((item) => item.status === 1)
+        .sort((a, b) => {
+          let itemA = a.creatorTime;
+          let itemB = b.creatorTime;
+          return itemA - itemB;
+        });
+    },
+    handleToBillDetail(id) {
+      uni.navigateTo({
+        url: `/subPages/owner-autonomy/finance/detail/detail?id=${id}`,
       });
     },
   },

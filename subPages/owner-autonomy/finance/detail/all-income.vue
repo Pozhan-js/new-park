@@ -120,6 +120,7 @@ export default {
         creatorTime: range,
         // creatorUserId: this.userInfo.id,
         is_income: "收入",
+        status: 1,
       });
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
       this.billList = data?.list;

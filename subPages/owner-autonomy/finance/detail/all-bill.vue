@@ -204,7 +204,7 @@ export default {
         // "range"
       );
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
-      this.billList = data?.list;
+      this.billList = data?.list.filter((item) => item.status === 1);
       this.getComputedMoney();
     },
     getComputedMoney() {

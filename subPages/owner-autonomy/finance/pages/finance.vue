@@ -87,26 +87,28 @@
                 @click="handleToBillDetail(data._id)"
                 :key="data._id"
               >
-                <view class="body-content-left">
-                  <view class="content-left-icon">
-                    <image :src="icon[data.consumption_type]" />
-                  </view>
-                  <view class="content-left-message">
-                    <view class="content-left-message-header">
-                      {{ data.consumption_type }}
-                      <!-- <text>{{ data.consumptionTime }}</text> -->
+                <template v-if="data.status">
+                  <view class="body-content-left">
+                    <view class="content-left-icon">
+                      <image :src="icon[data.consumption_type]" />
                     </view>
-                    <view class="content-left-message-bottom"
-                      ><text> {{ data.consumption_info }}</text></view
-                    >
+                    <view class="content-left-message">
+                      <view class="content-left-message-header">
+                        {{ data.consumption_type }}
+                        <!-- <text>{{ data.consumptionTime }}</text> -->
+                      </view>
+                      <view class="content-left-message-bottom"
+                        ><text> {{ data.consumption_info }}</text></view
+                      >
+                    </view>
                   </view>
-                </view>
-                <view class="body-content-right flex-a-center">
-                  <view class="body-content-right-number">{{
-                    Number(data.money).toFixed(2)
-                  }}</view>
-                  <u-icon name="arrow-right" color="#5991fa"></u-icon>
-                </view>
+                  <view class="body-content-right flex-a-center">
+                    <view class="body-content-right-number">{{
+                      Number(data.money).toFixed(2)
+                    }}</view>
+                    <u-icon name="arrow-right" color="#5991fa"></u-icon>
+                  </view>
+                </template>
               </view>
             </view>
           </view>
@@ -296,7 +298,7 @@ export default {
     async getFinanceBill(range) {
       let reqData = getRequestFilter({ creatorTime: range }, "range");
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
-      this.billList = data?.list;
+      this.billList = data?.list.filter((item) => item.status === 1);
       this.getComputedMoney();
     },
   },
@@ -430,7 +432,7 @@ export default {
 
     &-left {
       &-header {
-        margin-bottom: 16rpx;
+        margin: 16rpx 0;
         .title {
           height: 38rpx;
           font-size: 29rpx;
@@ -471,14 +473,16 @@ export default {
     }
 
     &-right {
+      text-align: center;
       /* 请根据实际需求修改父元素尺寸，组件自动识别宽高 */
       .charts-box {
-        width: 120rpx;
-        height: 120rpx;
+        width: 130rpx;
+        height: 130rpx;
+        margin-bottom: 10rpx;
       }
 
       .all-btn {
-        width: 129rpx;
+        width: 130rpx;
         height: 46rpx;
         background: #ffffff;
         font-size: 25rpx;
@@ -486,9 +490,13 @@ export default {
         line-height: 46rpx;
         text-align: center;
         border-radius: 23rpx;
+        transition: all 0.3s;
 
         &:active {
-          background-color: #ccc;
+          filter: contrast(0.9);
+        }
+        &:hover {
+          filter: contrast(1.1);
         }
       }
     }

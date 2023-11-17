@@ -180,7 +180,10 @@ export default {
     // 请求所有自己创建的清单
     try {
       // 获取过滤参数
-      let filterData = getRequestFilter({ creatorUserId: this.userInfo.id });
+      let filterData = getRequestFilter({
+        creatorUserId: this.userInfo.id,
+        status: 1,
+      });
       const { data } = await getModelList(
         "64ec4d02d85a4b7b32ec6019",
         filterData

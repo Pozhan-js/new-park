@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-30 17:21:41
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-09-05 15:43:22
+ * @LastEditTime: 2023-11-17 11:55:07
  * @FilePath: /smart-park/subPages/owner-autonomy/finance/detail/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -12,7 +12,7 @@
       <view class="detail-content-header">
         <image :src="icon[detailData.consumption_type]" mode="" />
         <view class="type">{{ detailData.consumption_type }}</view>
-        <view class="money">{{ detailData.money }}</view>
+        <view class="money">¥{{ detailData.money }}</view>
         <u-line dashed></u-line>
       </view>
 
@@ -30,18 +30,24 @@
 
         <view class="detail-content-body-item flex-a-center-j-space-between">
           <view>报销人</view>
-          <view>{{ detailData.lastModifyUser.realName }}</view>
+          <view>{{ detailData.handler }}</view>
         </view>
         <view class="detail-content-body-item flex-a-center-j-space-between">
           <view>备注信息</view>
-          <view>{{ detailData.consumption_descripte }}</view>
+          <view>{{ detailData.consumption_description }}</view>
         </view>
       </view>
 
-      <image class="image" :src="imageUrl" mode="" />
+      <image
+        class="image"
+        :src="imgData"
+        mode=""
+        v-for="(imgData, _) in imageUrl"
+        :key="_"
+      />
     </view>
 
-    <view class="detail-footer flex-a-center-j-space-between">
+    <!-- <view class="detail-footer flex-a-center-j-space-between">
       <view class="button">
         <u-button
           type="warning"
@@ -57,7 +63,7 @@
           @click="handleEditBill(detailData._id)"
         ></u-button>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 
@@ -101,7 +107,10 @@ export default {
   },
   computed: {
     imageUrl() {
-      return this.$helper.filterCover(this.detailData.bill?.[0]?.url) || "";
+      // return this.$helper.filterCover(this.detailData.bill?.[0]?.url) || "";
+      return this.detailData.bill?.map((item) =>
+        this.$helper.filterCover(item.url || "")
+      );
     },
   },
 
