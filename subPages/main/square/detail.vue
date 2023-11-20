@@ -2,36 +2,38 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-28 14:55:05
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-08 14:53:28
+ * @LastEditTime: 2023-11-20 17:33:23
  * @FilePath: /community-square/subPages/home/clear-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <view class="clear-detail">
+  <view class="clear-detail container">
     <view class="swiper">
-      <image
-        src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230728_1de2f564eb2a4a78b95b0130cc63520e.png"
-        mode=""
-      />
+      <image :src="imageUrl(detailData.detail_log)" mode="" />
     </view>
 
     <view class="clear-detail-text box">
       <view class="text-header flex-a-center-j-space-between">
         <view class="text-header-left">
-          ¥<text class="timePrice">50</text>/小时起
+          ¥<text class="timePrice">{{ detailData.product_price }}</text
+          >/小时起
         </view>
-        <view class="text-header-right">随叫随到 最快1小时上门</view>
+        <view class="text-header-right">{{ detailData.serve_arrive }}</view>
       </view>
-      <view class="text-body">日常保洁</view>
+      <view class="text-body">{{ detailData.product_title }}</view>
       <view class="text-footer">
-        <view class="text-footer-item">满意为止</view>
-        <view class="text-footer-item">损坏包赔</view>
+        <view
+          class="text-footer-item"
+          v-for="assure in detailData.serve_assure"
+          :key="assure"
+          >{{ assure }}</view
+        >
       </view>
     </view>
 
     <u-gap height="20" bgColor="#F9F9F9"></u-gap>
 
-    <view class="clear-detail-evaluate padding-30">
+    <!-- <view class="clear-detail-evaluate padding-30">
       <view class="evaluate-header flex-center">
         <view class="evaluate-title">评价</view>
         <view class="flex-a-center icon">
@@ -88,9 +90,9 @@
           </view>
         </view>
       </view>
-    </view>
+    </view> -->
 
-    <u-gap height="20" bgColor="#F9F9F9"></u-gap>
+    <!-- <u-gap height="20" bgColor="#F9F9F9"></u-gap> -->
 
     <!-- 服务详情展示 -->
     <view class="clear-detail-table padding-30">
@@ -128,12 +130,7 @@
           </u-col>
           <u-col span="9">
             <view class="demo-layout bg-purple flex-a-center-j-space-between">
-              <view>客厅、</view>
-              <view>餐厅、</view>
-              <view>卧室、</view>
-              <view>阳台、</view>
-              <view>厨房、</view>
-              <view>卫生间</view>
+              <text>客厅、餐厅、卧室、阳台、厨房、卫生间</text>
             </view>
           </u-col>
         </u-row>
@@ -148,19 +145,41 @@
             </view>
           </u-col>
         </u-row>
+        <!-- 表格 -->
+        <view class="assure-table">
+          <u-row>
+            <u-col span="4">
+              <view class="table-1">服务规格</view>
+            </u-col>
+            <u-col span="4">
+              <view class="table-1">服务人数</view>
+            </u-col>
+            <u-col span="4">
+              <view class="table-1">所需时长</view>
+            </u-col>
+          </u-row>
+          <u-row
+            v-for="(table, index) in detailData.tableField111"
+            :key="index"
+          >
+            <u-col span="4">
+              <view class="table-2">{{ table.grade }}</view>
+            </u-col>
+            <u-col span="4">
+              <view class="table-2">{{ table.num }}</view>
+            </u-col>
+            <u-col span="4">
+              <view class="table-2">{{ table.time }}/小时</view>
+            </u-col>
+          </u-row>
+        </view>
 
-        <u-row customStyle="margin-bottom: 10px">
-          <u-col span="3">
-            <view class="demo-layout bg-purple-light">注意事项</view>
-          </u-col>
-          <u-col span="9">
-            <view class="demo-layout bg-purple">
-              1.该服务不适用以下场景:学校/办公室/商铺/租房新入住/出租房回收/3个月以上未入住/新居开荒;<br />
-              2.该服务不包含:洗衣做饭洗碗，整理衣柜，接送孩子，家用电器内部清洗及拆洗，天花板及灯具清洗，窗帘、地毯、地板打蜡，家具保养等家居洗护和绿植养护:<br />
-              3.房屋面积仅供参考，以实际服务时长为准，超出的时长须与保洁师协商后进行线上补款；
-            </view>
-          </u-col>
-        </u-row>
+        <view class="table-footer flex-a-center">
+          <view class="dot"></view>
+          <text class="table-footer-text" style="margin-left: 30rpx">{{
+            detailData.serve_content_notice
+          }}</text>
+        </view>
       </view>
     </view>
 
@@ -275,29 +294,43 @@
 </template>
 
 <script>
+import { getModelInfo } from "@/api";
 export default {
   data() {
-    return {};
+    return {
+      detailData: {},
+      // tableHeader:[]
+    };
   },
+
   methods: {
     toHomeReserve() {
       uni.navigateTo({
         url: "/subPages/home/home-reserve",
       });
     },
-    toMorePage() {
-      uni.navigateTo({
-        url: "/subPages/home/comment-list",
-      });
+    imageUrl(data) {
+      console.log(this.$helper.filterCover(data?.[0].url));
+      return this.$helper.filterCover(data?.[0].url);
     },
+    toMorePage() {
+      console.log("预约成功");
+    },
+    async getDetailData(id) {
+      const { data } = await getModelInfo("655ad0b63245131f7b1e0e44", id);
+      this.detailData = data;
+      console.log("数据", data);
+    },
+  },
+
+  async onLoad(options) {
+    await this.getDetailData(options.id);
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .clear-detail {
-  padding-bottom: 100rpx;
-
   .swiper {
     width: 100vw;
     height: 360rpx;
@@ -455,6 +488,26 @@ export default {
 
     .table-body {
     }
+
+    .table-footer {
+      margin-top: 30rpx;
+      height: 73rpx;
+      font-size: 24rpx;
+      color: #666666;
+      line-height: 40rpx;
+      position: relative;
+
+      .dot {
+        width: 14rpx;
+        height: 14rpx;
+        border-radius: 7px;
+        background: #4ea4fb;
+        opacity: 0.5;
+        position: absolute;
+        top: 10rpx;
+        left: 0;
+      }
+    }
   }
 
   &-compared {
@@ -543,6 +596,7 @@ export default {
         .dot {
           width: 14rpx;
           height: 14rpx;
+          border-radius: 7px;
           background: #4ea4fb;
           opacity: 0.5;
           position: absolute;
@@ -573,18 +627,13 @@ export default {
 }
 
 .demo-layout {
-  //   height: 50rpx;
-  //   line-height: 50rpx;
-  //   padding: 10rpx 20rpx;
   margin: 10rpx 0;
-
-  border-radius: 4px;
+  // border-radius: 4px;
 }
 
 .bg-purple {
   font-size: 26rpx;
   color: #333333;
-  //   background: #ced7e1;
 }
 
 .bg-purple-light {
@@ -593,5 +642,17 @@ export default {
   font-weight: bold;
   color: #333333;
   //   background: #e5e9f2;
+}
+
+.table-1 {
+  background: #e9f3fe;
+  padding: 10rpx 0;
+  text-align: center;
+}
+.table-2 {
+  background: #f9fcff;
+  padding: 10rpx 0;
+  text-align: center;
+  font-size: 24rpx;
 }
 </style>
