@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-20 15:29:30
+ * @LastEditTime: 2023-11-21 10:00:58
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -22,15 +22,7 @@
         <view class="time-date">{{ nowDate }}</view>
       </view>
     </view>
-    <!-- <u-sticky>
-      <u-navbar bgColor="transparent" placeholder="true">
-        <view slot="left" class="flex-a-center">
-          <view class="nav-left flex-a-center"
-            >长江友邻社区.{{ $u.timeFormat(timestamp, "yyyy年mm月dd日") }}</view
-          >
-        </view>
-      </u-navbar>
-    </u-sticky> -->
+
     <!-- 轮播图 -->
     <view class="pages-swiper padding-20">
       <u-swiper
@@ -234,7 +226,6 @@ import userMixin from "@/common/mixins/user";
 import infoMixin from "@/common/mixins/info";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { getRequestFilter } from "@/common/function";
-// import { getRole } from "@/common/function/filter";
 export default {
   mixins: [userMixin, infoMixin],
   data() {

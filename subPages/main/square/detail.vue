@@ -2,7 +2,7 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-28 14:55:05
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-20 17:33:23
+ * @LastEditTime: 2023-11-21 10:54:36
  * @FilePath: /community-square/subPages/home/clear-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -98,7 +98,7 @@
     <view class="clear-detail-table padding-30">
       <view class="table-header">服务内容</view>
       <view class="table-body">
-        <u-row customStyle="margin-bottom: 10px">
+        <!-- <u-row customStyle="margin-bottom: 10px">
           <u-col span="3">
             <view class="demo-layout bg-purple-light">房屋面积</view>
           </u-col>
@@ -122,7 +122,7 @@
               <view>4小时</view>
             </view>
           </u-col>
-        </u-row>
+        </u-row> -->
 
         <u-row customStyle="margin-bottom: 10px">
           <u-col span="3">
@@ -236,47 +236,14 @@
     <view class="clear-detail-notice">
       <view class="notice-title"> 服务须知 </view>
       <view class="notice-container">
-        <view class="notice-container-item">
+        <view
+          class="notice-container-item"
+          v-for="(instructions, _) in detailData.service_instructions"
+          :key="_"
+        >
           <view class="dot"></view>
           <view class="text">
-            请您确保保洁师上门服务期间家里水电正常可使用
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            部分城市实行垃圾分类，非垃圾投放时段无法帮忙处理垃圾，敬请谅解
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            部分城市实行垃圾分类，非垃圾投放时段无法帮忙处理垃圾，敬请谅解
-            玻璃及纱窗、百叶窗、防护窗等清洗不在服务范围内
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            与宠物相关的不做任何清理，鱼缸无论大小，只做表面软布擦拭除尘，不做任何专业处理(换水、换鱼、喂鱼)
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            服务时长说明:服务时长最低2小时起，服务时长不足2小时按照2小时计服务时长超出2小时目不超15分钟按照2小时计费服务时长超出2小时且超出15-60分钟按照3小时计费
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            为保证您的合法权益，避免不必要的损失，请您选择线上交易，避免与服务人员线下交易，我们对私下交易无法提供安全和售后保障，感谢配合
-          </view>
-        </view>
-        <view class="notice-container-item">
-          <view class="dot"></view>
-          <view class="text">
-            柜子内部(含内部陈设物品)、窗帘、工艺品、玉器、古董字画、宗教陈设、花草绿植、天花板及附属品(灯具、吊灯等)、厨房重水垢和重油污均不在清洁范围内
+            {{ instructions }}
           </view>
         </view>
       </view>
@@ -284,47 +251,109 @@
     <!-- footer -->
     <view class="clear-detail-footer">
       <u-button
-        type="primary"
-        text="立即预约"
-        @click="toHomeReserve"
+        :type="orderData.length ? 'warning' : 'primary'"
+        :text="orderData.length ? '取消预约' : '立即预约'"
+        @click="createOrder"
         size="large"
       ></u-button>
     </view>
+
+    <u-modal
+      :show="show"
+      :content="content"
+      @confirm="confirm"
+      :showCancelButton="true"
+      @cancel="clickCancel"
+    ></u-modal>
   </view>
 </template>
 
 <script>
-import { getModelInfo } from "@/api";
+import { getModelInfo, createModel, getModelList, deleteModel } from "@/api";
+import { getRequestFilter } from "@/common/function";
+import userMixin from "@/common/mixins/user";
+import infoMixin from "@/common/mixins/info";
 export default {
+  mixins: [userMixin, infoMixin],
   data() {
     return {
       detailData: {},
-      // tableHeader:[]
+      projectId: "",
+      orderData: [],
+      show: false,
+      content: "该服务已经预约是否取消该服务订单?",
     };
   },
 
   methods: {
-    toHomeReserve() {
-      uni.navigateTo({
-        url: "/subPages/home/home-reserve",
-      });
-    },
     imageUrl(data) {
-      console.log(this.$helper.filterCover(data?.[0].url));
+      // console.log(this.$helper.filterCover(data?.[0].url));
       return this.$helper.filterCover(data?.[0].url);
     },
     toMorePage() {
       console.log("预约成功");
     },
     async getDetailData(id) {
-      const { data } = await getModelInfo("655ad0b63245131f7b1e0e44", id);
-      this.detailData = data;
-      console.log("数据", data);
+      try {
+        const { data } = await getModelInfo("655ad0b63245131f7b1e0e44", id);
+        this.detailData = data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 创建订单
+    async createOrder() {
+      if (!this.orderData.length) {
+        try {
+          await createModel("655c0eca3245131f7b1e0e6e", {
+            serve_id: this.projectId,
+          });
+          uni.showToast({
+            title: "预约成功",
+            duration: 400,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        this.show = true;
+      }
+    },
+    // 查询订单
+    async selectOrder() {
+      const filterData = getRequestFilter({
+        serve_id: this.projectId,
+        creatorUserId: this.userInfo.id,
+      });
+
+      try {
+        const { data } = await getModelList(
+          "655c0eca3245131f7b1e0e6e",
+          filterData
+        );
+        this.orderData = data?.list;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 模态窗
+    async confirm() {
+      try {
+        await deleteModel("655c0eca3245131f7b1e0e6e", this.orderData[0]._id);
+        this.show = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    clickCancel() {
+      this.show = false;
     },
   },
 
   async onLoad(options) {
+    this.projectId = options.id;
     await this.getDetailData(options.id);
+    this.selectOrder();
   },
 };
 </script>

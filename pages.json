@@ -685,7 +685,7 @@
 				{
 					"path": "square/square",
 					"style": {
-						"navigationBarTitleText": "友邻广场"
+						"navigationBarTitleText": "便民广场"
 					},
 					"meta": {
 						"verifyLogin": true
