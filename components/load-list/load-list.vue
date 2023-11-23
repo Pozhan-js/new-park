@@ -299,4 +299,29 @@ export default {
   height: 100%;
   min-height: 240rpx;
 }
+
+.demo-layout {
+  font-size: 30rpx;
+  color: #333333;
+  height: 50rpx;
+  line-height: 50rpx;
+  border-radius: 8rpx;
+}
+
+.demo-item {
+  width: 100%;
+  height: 42rpx;
+  font-size: 30rpx;
+  color: #555555;
+  line-height: 42rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .demo-icon-right {
+    position: absolute;
+    right: 10rpx;
+  }
+}
 </style>

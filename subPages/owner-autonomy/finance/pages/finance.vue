@@ -75,7 +75,6 @@
             :key="_"
           >
             <view class="finance-details-item-header">
-              <!-- <text class="date-nickName">{{ item.time.title }}</text> -->
               <text class="date">{{ item.time }}</text>
               <text class="expenditure">支出 {{ item.allIn }}</text>
               <text class="income">收入 {{ item.allOut }}</text>
@@ -95,7 +94,6 @@
                     <view class="content-left-message">
                       <view class="content-left-message-header">
                         {{ data.consumption_type }}
-                        <!-- <text>{{ data.consumptionTime }}</text> -->
                       </view>
                       <view class="content-left-message-bottom"
                         ><text> {{ data.consumption_info }}</text></view

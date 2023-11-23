@@ -150,7 +150,7 @@ export default {
     },
     handleInputInfo(event, topic) {
       let self = this;
-      console.log(event, topic);
+      // console.log(event, topic);
       if (
         this.everyAnswerList.filter(
           (data) => data.questionTitle === topic.questionTitle

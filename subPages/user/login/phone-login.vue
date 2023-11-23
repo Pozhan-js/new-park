@@ -99,6 +99,24 @@ export default {
     },
   },
   methods: {
+    async getList() {
+      // 获取权限和菜单列表
+      let filterTypeData = getRequestFilter({
+        key: "首页菜单",
+      });
+
+      const { data } = await getModelList(
+        "65250f6f388a8c7a0eb9b934",
+        filterTypeData
+      );
+
+      uni.setStorageSync(
+        "menuData",
+        JSON.stringify(data?.list[0].tableField103)
+      );
+      // 获取权限列表
+      this.$store.dispatch("role/getMenuRoleList");
+    },
     async login() {
       // if (this.isAnonymous) this.$jump("./phone-login");
       if (this.lock) return;
@@ -107,6 +125,8 @@ export default {
 
         try {
           await this.codeLogin.apply(this, Object.values(this.form));
+
+          this.getList();
 
           // 获取过滤参数
           let filterData = getRequestFilter({

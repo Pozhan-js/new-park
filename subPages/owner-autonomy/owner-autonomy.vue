@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-25 11:16:14
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-03 10:19:42
+ * @LastEditTime: 2023-11-21 15:12:37
  * @FilePath: /smart-park/subPages/owner-autonomy/owner-autonomy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -152,7 +152,7 @@
             <view
               class="vote-footer-item box"
               style="font-size: 30rpx"
-              @click.stop="handleToChat(newDecision._id)"
+              @click.stop="handleToChat(newDecision)"
             >
               查看统计
             </view>
@@ -417,11 +417,14 @@ export default {
       this.decisionDataList = filterArr;
     },
     // 点击进入统计页面
-    handleToChat(id) {
+    handleToChat(data) {
       uni.navigateTo({
-        url: `./vote/vote-chat?id=${id}`,
+        url: `/subPages/owner-autonomy/vote/vote-chat?id=${
+          data._id
+        }&type=${JSON.stringify(data.selectValue)}`,
       });
     },
+
     handleClickItem(id, time) {
       if (Date.now() > time) {
         uni.showToast({
@@ -431,7 +434,7 @@ export default {
         return;
       } else {
         uni.navigateTo({
-          url: `./vote/detail?id=${id}`,
+          url: `/subPages/owner-autonomy/vote/detail?id=${id}`,
         });
       }
     },

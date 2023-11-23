@@ -78,6 +78,23 @@ export default {
           let userResult = await getUserInfo();
           this.userInfoData = userResult.data || {};
 
+          // 获取权限和菜单列表
+          let filterTypeData = getRequestFilter({
+            key: "首页菜单",
+          });
+
+          const { data } = await getModelList(
+            "65250f6f388a8c7a0eb9b934",
+            filterTypeData
+          );
+
+          uni.setStorageSync(
+            "menuData",
+            JSON.stringify(data?.list[0].tableField103)
+          );
+          // 获取权限列表
+          this.$store.dispatch("role/getMenuRoleList");
+
           // console.log("用户信息", this.userInfoData);
           // 登陆成功后将角色改为(过滤参数)
           let updateData = {

@@ -2,13 +2,34 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-04 16:30:31
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-10-19 13:26:56
+ * @LastEditTime: 2023-11-23 11:51:50
  * @FilePath: /used-idle/pages/release/detail/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <view class="release-detail container box">
-    <view class="release-detail-content box">
+    <view class="form release-detail-content">
+      <u--form
+        labelPosition="left"
+        :model="releaseForm"
+        :rules="rules"
+        ref="releaseForm"
+      >
+        <u-form-item prop="releaseForm.textContent" borderBottom>
+          <u--textarea
+            v-model="releaseForm.textContent"
+            :height="400"
+            :count="true"
+            placeholder="分享心情。。。"
+            :cursorSpacing="20"
+            autoHeight
+            :showConfirmBar="false"
+            border="none"
+          ></u--textarea>
+        </u-form-item>
+      </u--form>
+    </view>
+    <!-- <view class="release-detail-content box">
       <u--textarea
         v-model="value3"
         :height="200"
@@ -18,7 +39,6 @@
         :showConfirmBar="false"
       ></u--textarea>
 
-      <!-- 上传 -->
       <view class="release-detail-content-upload">
         <u-upload
           :fileList="fileList3"
@@ -58,34 +78,22 @@
 
           <u-icon name="arrow-right" :color="colorWho"></u-icon>
         </view>
-        <!-- <view
-          class="item-context color"
-          :style="{ '--color': color }"
-          @click="clickAddrs"
-        >
-          <view class="item-context-left flex-a-center">
-            <u-icon name="map" :color="color" size="20"></u-icon>
-            <view class="text">获取位置</view>
-            <view>{{ city }} {{ district }}</view>
-          </view>
-
-          <u-icon name="arrow-right" :color="color"></u-icon>
-        </view> -->
       </view>
 
-      <view>
-        <u-button type="primary">发表</u-button>
+      <view style="margin: 100rpx 0">
+        <u-button shape="circle" type="primary">发表</u-button>
       </view>
-    </view>
+    </view> -->
+    <tabbarPro :tabIndex="tabIndex"></tabbarPro>
   </view>
 </template>
 
 <script>
-// import QQMapWX from "@/utils/qqmap-wx-jssdk.min.js";
+import tabbarPro from "../components/tabbar";
 export default {
+  components: { tabbarPro },
   data() {
     // 实例化API核心类
-
     return {
       value3: "",
       fileList3: [
@@ -93,13 +101,25 @@ export default {
           url: "https://cdn.uviewui.com/uview/swiper/1.jpg",
         },
       ],
-      Areaaddress: "", //当前位置
-      //   省
-      city: "",
-      //   区
-      district: "",
       color: "#666",
       colorWho: "#666",
+      tabIndex: 1,
+      // 表单提交数据
+      releaseForm: {
+        textContent: "",
+      },
+      rules: {
+        textContent: [
+          // 必填规则
+          {
+            required: true,
+            message: "此为必填字段",
+            required: true,
+            // blur和change事件触发检验
+            trigger: ["blur", "change"],
+          },
+        ],
+      },
     };
   },
   methods: {
@@ -151,110 +171,10 @@ export default {
         });
       });
     },
-    // 获取地址信息
-    getAuthorizeInfo(a = "scope.userLocation") {
-      //1. uniapp弹窗弹出获取授权（地理，个人微信信息等授权信息）弹窗
-      var _this = this;
-      uni.authorize({
-        scope: a,
-        success() {
-          //1.1 允许授权
-          _this.getLocationInfo();
-        },
-        fail() {
-          //1.2 拒绝授权
-          console.log("你拒绝了授权，无法获得周边信息");
-        },
-      });
-    },
-    // getLocationInfo() {
-    //   //2. 获取地理位置
-    //   var _this = this;
-    //   uni.getLocation({
-    //     type: "wgs84",
-    //     success(res) {
-    //       console.log("你当前经纬度是：");
-    //       console.log(res);
-    //       let latitude, longitude;
-    //       latitude = res.latitude.toString();
-    //       longitude = res.longitude.toString();
-    //       uni.request({
-    //         header: {
-    //           "Content-Type": "application/text",
-    //         },
-    //         url:
-    //           "http://apis.map.qq.com/ws/geocoder/v1/?location=" +
-    //           latitude +
-    //           "," +
-    //           longitude +
-    //           "&key=PJXBZ-NAO3Z-RDCXS-TF3QP-W7FJJ-D2B6U",
-    //         success(re) {
-    //           console.log("中文位置");
-    //           console.log(re);
-    //           _this.Areaaddress = re.data.result.address;
-    //           if (re.statusCode === 200) {
-    //             console.log("获取中文街道地理位置成功");
-    //           } else {
-    //             console.log("获取信息失败，请重试！");
-    //           }
-    //         },
-    //       });
-    //     },
-    //   });
-    // },
-    // 点击获取地址
-    // clickAddrs() {
-    //   const qqmapsdk = new QQMapWX({
-    //     key: "PJXBZ-NAO3Z-RDCXS-TF3QP-W7FJJ-D2B6U", // 必填
-    //   });
-    //   //   this.getAuthorizeInfo();
-    //   //   this.getLocationInfo();
-    //   //   console.log("点击获取地址");
-    //   let that = this;
-    //   uni.getLocation({
-    //     type: "gcj02",
-    //     geocode: true,
-    //     success: function (res) {
-    //       //逆地址解析  坐标转地址信息
-    //       qqmapsdk.reverseGeocoder({
-    //         //Object格式
-    //         location: {
-    //           latitude: res.latitude,
-    //           longitude: res.longitude,
-    //         },
-    //         success: function (res) {
-    //           //成功后的回调
-    //           const mapdata = res.result.ad_info;
-    //           that.city = mapdata.city;
-    //           that.district = mapdata.district;
-    //           if (that.city) {
-    //             that.color = "green";
-    //           }
-
-    //           console.log("address", mapdata);
-    //         },
-    //         fail: function (error) {
-    //           console.error(error);
-    //         },
-    //         complete: function (res) {
-    //           //console.log(res);
-    //         },
-    //       });
-    //     },
-    //   });
-
-    //   console.log("点击获取地址");
-    // },
-    //提醒谁看
-    whoLook() {
-      //   uni.navigateTo({
-      //     url: "/pages/whoLook/whoLook",
-      //   });
-    },
   },
-  mounted: function () {
-    // this.getAuthorizeInfo();
-    // this.getLocationInfo();
+  onReady() {
+    //如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
+    this.$refs.releaseForm.setRules(this.rules);
   },
 };
 </script>

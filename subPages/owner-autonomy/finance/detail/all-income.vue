@@ -4,7 +4,7 @@
       <view>
         <view class="income-title">收入明细</view>
         <view class="income-user">账户收入</view>
-        <view class="income-number">¥{{ allIn }}</view>
+        <view class="income-number">¥ {{ allIn }}</view>
       </view>
       <image
         src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230905_b1e8aa1495ed4b8dafb80bbe81d80436.png"
@@ -53,8 +53,51 @@
           </u-row>
         </view>
 
+        <LoadList
+          modelId="64ec4d02d85a4b7b32ec6019"
+          :paginationData="{ currentPage: 1, pageSize: 10 }"
+          :params="reqParams"
+        >
+          <template v-slot="{ list }">
+            <view
+              class="table-item"
+              v-for="(data, i) in list"
+              :style="{
+                'border-bottom': i === list.length - 1 ? 'none' : '',
+              }"
+              :key="i"
+              @click="handleToBillDetail(data)"
+            >
+              <u-row>
+                <u-col textAlign="center" span="4">
+                  <view class="demo-item flex-center">{{
+                    $u.timeFormat(data.creatorTime, "mm月dd日")
+                  }}</view>
+                </u-col>
+
+                <u-col textAlign="center" span="4">
+                  <view class="demo-item flex-center">{{
+                    data.consumption_type
+                  }}</view>
+                </u-col>
+
+                <u-col textAlign="center" span="4">
+                  <view class="demo-item flex-center">
+                    <view class="number">+{{ data.money.toFixed(2) }}</view>
+                    <view class="demo-icon-right">
+                      <u-icon name="arrow-right" color="#2979ff" size="16">
+                      </u-icon>
+                    </view>
+                  </view>
+                </u-col>
+              </u-row>
+            </view>
+            <u-gap height="50"></u-gap>
+          </template>
+        </LoadList>
+
         <!-- 列表 -->
-        <view class="table-list">
+        <!-- <view class="table-list">
           <view
             class="table-item"
             v-for="(data, index) in viewDataList"
@@ -81,7 +124,7 @@
               </u-col>
             </u-row>
           </view>
-        </view>
+        </view> -->
       </view>
     </view>
   </view>
@@ -90,9 +133,13 @@
 <script>
 import { getModelList } from "@/api";
 import { getRequestFilter } from "@/common/function";
+import LoadList from "@/components/load-list/load-list.vue";
 import infoMixin from "@/common/mixins/info";
 export default {
   mixins: [infoMixin],
+  components: {
+    LoadList, // 注册 LoadList 组件
+  },
   data() {
     return {
       date: uni.$u.timeFormat(new Date(), "yyyy-mm-dd"),
@@ -102,8 +149,10 @@ export default {
     };
   },
   methods: {
+    // 时间选择器
     bindDateChange(e) {
-      this.this.filterDate(e.detail.value);
+      this.filterDate(e.detail.value);
+      this.currentYear = e.detail.value;
     },
     // 设置年范围
     async filterDate(year) {
@@ -125,13 +174,25 @@ export default {
       const { data } = await getModelList("64ec4d02d85a4b7b32ec6019", reqData);
       this.billList = data?.list;
     },
-    handleToBillDetail(id) {
+    handleToBillDetail({ _id }) {
       uni.navigateTo({
-        url: `/subPages/owner-autonomy/finance/detail/detail?id=${id}`,
+        url: `/subPages/owner-autonomy/finance/detail/detail?id=${_id}`,
       });
     },
   },
   computed: {
+    rangeYear() {
+      let start = Date.parse(`${this.currentYear}-01-01 00:00:00`);
+      let end = Date.parse(`${this.currentYear}-12-31 23:59:59`);
+      return [start, end];
+    },
+    reqParams() {
+      return getRequestFilter({
+        creatorTime: this.rangeYear,
+        is_income: "收入",
+        status: 1,
+      });
+    },
     allIn() {
       return this.billList?.reduce((prev, curr) => (prev += curr.money), 0);
     },
@@ -224,48 +285,39 @@ export default {
 
   &-list {
     margin: 32rpx;
-    min-height: calc(100vh - 220px);
+    height: calc(100vh - 230px);
     box-sizing: border-box;
+    overflow: hidden;
     background-color: #fff;
     border-radius: 16rpx;
 
     .table {
+      height: 100%;
       &-header {
         padding: 20rpx 0;
         border-bottom: 1px solid #eee;
       }
-      &-list {
-        .table-item {
-          padding: 20rpx 0;
-          border-bottom: 1px solid #eee;
+
+      &-item {
+        border-bottom: 1px solid #eee;
+
+        .demo-item {
+          width: 100%;
+          height: 42rpx;
+          font-size: 30rpx;
+          color: #555555;
+          line-height: 42rpx;
+          padding: 30rpx 0;
+
+          position: relative;
+
+          .demo-icon-right {
+            position: absolute;
+            right: 10rpx;
+          }
         }
       }
     }
-  }
-}
-
-.demo-layout {
-  font-size: 30rpx;
-  color: #333333;
-  height: 50rpx;
-  line-height: 50rpx;
-  border-radius: 8rpx;
-}
-
-.demo-item {
-  width: 100%;
-  height: 42rpx;
-  font-size: 30rpx;
-  color: #555555;
-  line-height: 42rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  .demo-icon-right {
-    position: absolute;
-    right: 10rpx;
   }
 }
 
@@ -274,8 +326,4 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
-
-// ::v-deep .u-cion {
-//   margin-left: 16rpx;
-// }
 </style>

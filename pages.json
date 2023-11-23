@@ -718,8 +718,7 @@
 				{
 					"path": "pages/release",
 					"style": {
-						"navigationBarTitleText": "发布",
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "发布"
 					},
 					"meta": {
 						"verifyLogin": true

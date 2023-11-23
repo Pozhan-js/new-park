@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-21 10:00:58
+ * @LastEditTime: 2023-11-23 10:08:54
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -90,6 +90,7 @@
           </view>
         </view>
       </view>
+      <!-- TODO 动态控制菜单权限 -->
       <!-- 应用   v-if="getRole(item.menueItem, userInfo.id)"-->
       <view
         class="pages-content-feature"
@@ -230,7 +231,7 @@ export default {
   mixins: [userMixin, infoMixin],
   data() {
     return {
-      baseList: [],
+      // baseList: [],
       dataList: [], //公告列表数据
       nowDate: "",
     };
@@ -288,6 +289,12 @@ export default {
         return false; // 如果 roleList 或 userInfo 未定义，返回默认值或适当的值
       };
     },
+    // TODO menu菜单
+    baseList() {
+      return JSON.parse(uni.getStorageSync("menuData") || "[]").filter((item) =>
+        this.getRole(item.menueItem)
+      );
+    },
 
     currentPageActivityList() {
       return this.newActivityList?.filter((item) => {
@@ -300,7 +307,6 @@ export default {
     ...mapActions("neighborhood", ["getActivityList"]),
     // ...mapActions("websocket", ["startWebSocket"]),
     ...mapActions("main", ["getBanner"]),
-    ...mapActions("role", ["getMenuRoleList"]),
     // 跳转随手拍
     toSayPage() {
       if (storage.get("parse") === "未通过") {
@@ -427,13 +433,7 @@ export default {
         url: "/subPages/owner-autonomy/owner-autonomy",
       });
     },
-    // 跳转到又令市场
-    // toMarket() {
-    //   uni.showToast({
-    //     title: "暂未开放",
-    //     icon: "none",
-    //   });
-    // },
+
     //获取列表数据集
     async getNoticeList() {
       //显示加载框
@@ -462,22 +462,7 @@ export default {
       //隐藏加载框
       uni.hideLoading();
     },
-    // 获取首页菜单
-    async getMeuList() {
-      let filterTypeData = getRequestFilter({
-        key: "首页菜单",
-      });
 
-      const result = await getModelList(
-        "65250f6f388a8c7a0eb9b934",
-        filterTypeData
-      );
-
-      this.baseList =
-        result.data?.list[0].tableField103.filter((item) => {
-          return this.getRole(item.menueItem);
-        }) || [];
-    },
     // 权限判断函数
     getRole(name = "") {
       let data = this.roleList?.find((item) => item.name == name);
@@ -501,6 +486,7 @@ export default {
     //   const result = JSON.parse(res?.data || "{}");
     //   console.log("onMessage", result);
     // },
+    // 检测账号是否审批通过
     async getApprove() {
       let filterTypeData = getRequestFilter({
         formUser: this.userInfo.id,
@@ -526,8 +512,6 @@ export default {
     this.getBanner({ pageSize: -1 });
   },
   async onShow() {
-    this.getMenuRoleList();
-    this.getMeuList();
     this.getNowDate();
     // 当组件创建时执行
 

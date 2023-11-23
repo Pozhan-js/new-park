@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:10:10
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-07 17:55:07
+ * @LastEditTime: 2023-11-23 09:59:02
  * @FilePath: /smart-park/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -20,21 +20,22 @@ export default {
       其他: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230901_44dd4d96c6fb4b209929a1d9b15fbb89.png",
     },
     // 判断是匿名登录还是正常登录
-    // isAnonymous: false,
   },
   onLaunch: async function () {
     uni.$set = this.$set;
 
-    // let filterTypeData = getRequestFilter({
-    //   key: "首页菜单",
-    // });
+    let filterTypeData = getRequestFilter({
+      key: "首页菜单",
+    });
 
-    // const { data } = await getModelList(
-    //   "65250f6f388a8c7a0eb9b934",
-    //   filterTypeData
-    // );
+    const { data } = await getModelList(
+      "65250f6f388a8c7a0eb9b934",
+      filterTypeData
+    );
 
-    // uni.setStorageSync("menuData", data?.list[0].tableField103);
+    uni.setStorageSync("menuData", JSON.stringify(data?.list[0].tableField103));
+    // 获取权限列表
+    this.$store.dispatch("role/getMenuRoleList");
   },
   onShow: async function () {
     // #ifdef APP-PLUS

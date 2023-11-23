@@ -2,7 +2,7 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-28 14:55:05
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-21 10:54:36
+ * @LastEditTime: 2023-11-23 10:29:11
  * @FilePath: /community-square/subPages/home/clear-detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -314,6 +314,16 @@ export default {
           });
         } catch (error) {
           console.log(error);
+        } finally {
+          new Promise((res, rej) => {
+            setTimeout(() => {
+              res();
+            }, 600);
+          }).then(() => {
+            uni.navigateBack({
+              delta: 1,
+            });
+          });
         }
       } else {
         this.show = true;
@@ -341,8 +351,22 @@ export default {
       try {
         await deleteModel("655c0eca3245131f7b1e0e6e", this.orderData[0]._id);
         this.show = false;
+        uni.showToast({
+          title: "取消成功",
+          duration: 400,
+        });
       } catch (error) {
         console.log(error);
+      } finally {
+        new Promise((res, rej) => {
+          setTimeout(() => {
+            res(1);
+          }, 600);
+        }).then((result) => {
+          uni.navigateBack({
+            delta: result,
+          });
+        });
       }
     },
     clickCancel() {
