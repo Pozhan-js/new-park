@@ -727,7 +727,7 @@
 				{
 					"path": "release/detail",
 					"style": {
-						"navigationBarTitleText": "发布详情"
+						"navigationBarTitleText": "商品详情"
 					},
 					"meta": {
 						"verifyLogin": true
@@ -747,6 +747,15 @@
 					"path": "my-release/detail",
 					"style": {
 						"navigationBarTitleText": "发布详情"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-release/shop-car",
+					"style": {
+						"navigationBarTitleText": "购物车"
 					},
 					"meta": {
 						"verifyLogin": true

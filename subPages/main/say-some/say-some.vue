@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-08-14 10:13:59
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-07 10:31:31
+ * @LastEditTime: 2023-11-27 10:14:27
  * @FilePath: /smart-park/subPages/main/say-some/say-some copy.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -159,7 +159,7 @@ import { createModel, getModelList } from "@/api";
 import infoMixin from "@/common/mixins/info";
 import { UpdateFilePath } from "@/api/file";
 import { getRequestFilter, sleep } from "@/common/function";
-import QQMapWX from "../../../common/qqmap-wx-jssdk1.2/qqmap-wx-jssdk.js";
+// import QQMapWX from "../../../common/qqmap-wx-jssdk1.2/qqmap-wx-jssdk.js";
 import Storage from "@/common/function/storage";
 export default {
   mixins: [infoMixin],

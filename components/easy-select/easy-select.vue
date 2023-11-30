@@ -25,7 +25,7 @@
       <view class="easy-select-options-loading" v-if="loading_">
         <u-loading-icon text="加载中" textSize="18"></u-loading-icon>
       </view>
-      <LoadList v-else-if="!isEmpty" :localData="listData">
+      <load-list v-else-if="!isEmpty" :localData="listData">
         <template v-slot:default="{ list }">
           <view
             class="easy-select-options-item"
@@ -39,7 +39,7 @@
             <rich-text :nodes="highlight(item[keyName])"></rich-text>
           </view>
         </template>
-      </LoadList>
+      </load-list>
     </view>
   </view>
 </template>

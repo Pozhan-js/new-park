@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-07-03 15:10:10
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-23 09:59:02
+ * @LastEditTime: 2023-11-30 17:47:52
  * @FilePath: /smart-park/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -54,11 +54,28 @@ export default {
 </script>
 
 <style lang="scss">
+/* 微信样式 */
+/* #ifdef APP-PLUS ||MP-WEIXIN */
+checkbox .wx-checkbox-input {
+  border-radius: 50% !important;
+  color: #ffffff !important;
+}
+
+checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+  color: #fff;
+  background: #9fd8f5;
+}
+
+checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+  border: none !important;
+}
+/* #endif */
 @font-face {
   font-family: "uicon-iconfont";
   src: url("https://at.alicdn.com/t/font_2225171_8kdcwk4po24.ttf")
     format("truetype");
 }
+
 /*每个页面公共css */
 @import "uview-ui/index.scss";
 @import "@/common/css/project.scss";

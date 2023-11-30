@@ -1,22 +1,22 @@
 <template>
   <view class="container home box">
-    <!-- <u-status-bar></u-status-bar>
-    <StatusBar /> -->
     <!-- 导航栏 -->
     <u-navbar bgColor="transparent" @leftClick="tabLeft" placeholder="true">
-      <!-- <view slot="left">
-        <view class="nav-left flex-a-center"></view>
-      </view> -->
     </u-navbar>
     <!-- 首页头部 -->
     <view class="home-header">
-      <u-icon name="map" size="18"></u-icon>
-      <view class="addr">长沙</view>
-      <u-search
+      <view class="flex-a-center">
+        <u-icon name="map" size="18"></u-icon>
+        <view class="addr">长沙</view>
+      </view>
+      <easy-select
         placeholder="请输入关键字"
-        v-model="keyword"
-        :showAction="false"
-      ></u-search>
+        :options="selectList"
+        @change="selectChangeHandle"
+        @close="selectCloseHandle"
+        keyName="goods_name"
+      />
+
       <u-icon name="shopping-cart" size="30"></u-icon>
     </view>
 
@@ -30,24 +30,6 @@
         @click="click"
       ></u-swiper>
     </view>
-
-    <!-- <view class="home-type-list">
-      <u-grid :border="false" col="4">
-        <u-grid-item
-          v-for="(baseListItem, baseListIndex) in baseList"
-          @click="clickItemIcon(baseListItem)"
-          :key="baseListIndex"
-        >
-          <image
-            :style="{ width: '84rpx', height: '84rpx', marginTop: '20rpx' }"
-            :src="baseListItem.image"
-            mode=""
-          />
-          <text class="grid-text">{{ baseListItem.title }}</text>
-        </u-grid-item>
-      </u-grid>
-      <u-toast ref="uToast" />
-    </view> -->
 
     <view class="home-choose">
       <view
@@ -63,16 +45,6 @@
           mode=""
         />
       </view>
-      <!-- <view class="home-choose-item box" style="margin-left: 20rpx">
-        <view>
-          <view class="item-title">在线估价</view>
-          <view>平台估价可靠</view>
-        </view>
-        <image
-          src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_0a514b9fcdb7426f863f1668cee859ef.png"
-          mode=""
-        />
-      </view> -->
     </view>
 
     <view class="home-content">
@@ -88,47 +60,56 @@
     </view>
 
     <view class="home-shop">
-      <view class="home-shop-item flex-a-center" @click="clickProduct">
-        <image
-          src="https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230704_339809fe4e1c437884bf0dcadb58fa8d.png"
-          class="img"
-          mode=""
-        >
+      <view
+        v-for="(item, index) in listData"
+        :key="index"
+        class="home-shop-item flex-a-center"
+        :style="{ border: index === listData.length - 1 ? 'none' : '' }"
+        @click="clickProduct(item._id)"
+      >
+        <image :src="getImageUrl(item.goods_log[0].url)" class="img" mode="">
         </image>
         <view class="item-right">
           <view class="item-right-content item-title">
-            <text class="title">好孩子婴儿推车</text>
-            <text class="price">¥200</text>
+            <text class="title">{{ item.goods_name }}</text>
+            <text class="price">¥{{ item.goods_price_new }}</text>
           </view>
 
           <view class="item-right-content flex-a-center">
-            <view class="item-type">按钮</view>
-            <view class="item-type">9成新</view>
-            <view class="item-type">包邮</view>
-            <view class="item-btn-type"></view>
+            <view
+              class="item-type"
+              v-for="data in item.goods_assure"
+              :key="data"
+              >{{ data }}
+            </view>
           </view>
 
           <view class="item-right-content flex-a-center">
             <u-icon name="map" size="14"></u-icon>
-            <text class="addr">长沙开福区</text>
+            <text class="addr">{{ item.blur_address }}</text>
           </view>
 
           <view class="item-right-content item-title">
-            <text class="text-content">据我12.5km</text>
-            <text class="text-content"> 30分钟前</text>
+            <text class="text-content">{{ item.detail_address }}</text>
+            <text class="text-content">
+              {{ $u.timeFrom(item.creatorTime, "yyyy-mm-dd") }}</text
+            >
           </view>
         </view>
       </view>
     </view>
 
-    <tabbarPro :tabIndex="tabIndex"></tabbarPro>
+    <TabbarPro :tabIndex="tabIndex"></TabbarPro>
   </view>
 </template>
 
 <script>
-import tabbarPro from "../components/tabbar";
+import { getModelList } from "@/api";
+import { getRequestFilter, sleep } from "@/common/function";
+import TabbarPro from "../components/tabbar";
+import helper from "@/common/helper";
 export default {
-  components: { tabbarPro },
+  components: { TabbarPro },
   data() {
     return {
       keyword: "",
@@ -137,8 +118,13 @@ export default {
         "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230703_8c0f35d609794696ac794f74afdcdb5e.png",
       ],
       tabIndex: 0,
+      listData: [],
+      // 选择器数据
+      selectList: [],
     };
   },
+
+  computed: {},
   methods: {
     change() {
       // console.log("change");
@@ -172,14 +158,49 @@ export default {
       });
       // this.$refs.uToast.success(`点击了发布闲置`);
     },
-    clickProduct() {
+    clickProduct(id = "") {
       uni.navigateTo({
-        url: "/subPages/market/my-release/detail",
+        url: `/subPages/market/my-release/detail?id=${id}`,
       });
     },
+    // 选择器
+    selectChangeHandle(data) {
+      this.listData = this.selectList.filter(
+        (item) => item.goods_name === data.goods_name
+      );
+    },
+    selectCloseHandle(value) {
+      if (!value) this.listData = this.selectList;
+    },
+
+    // 补全图片路径
+    getImageUrl(url) {
+      return url
+        ? this.$helper.filterCover(url)
+        : `/static/image/default-avatar.png`;
+    },
+    // 获取列表数据
+    async getOrderList(rangeWeek) {
+      let reqData = getRequestFilter({ creatorTime: rangeWeek }, "range");
+      const { data } = await getModelList("65605e75f3ad0c30c038ff96", reqData);
+      let reqList = data?.list.sort((a, b) => {
+        let timeA = a.creatorTime;
+        let timeB = b.creatorTime;
+        return timeB - timeA;
+      });
+      this.listData = reqList;
+      this.selectList = [].concat(reqList);
+    },
   },
-  components: {
-    tabbarPro,
+  onLoad() {
+    let nowDate = new Date();
+    let reqRange = [];
+
+    reqRange = this.$helper.getCurrentWeek(nowDate).map((item) => {
+      return Date.parse(item);
+      // return new Date(item);
+    });
+    this.getOrderList(reqRange);
   },
 };
 </script>
@@ -270,10 +291,12 @@ export default {
   &-shop {
     background: #ffffff;
     border-radius: 8rpx;
-    padding: 32rpx;
-    box-sizing: border-box;
 
     &-item {
+      padding: 32rpx;
+      box-sizing: border-box;
+      border-bottom: 1px solid #ccc;
+
       > .img {
         width: 167rpx;
         height: 167rpx;
@@ -315,7 +338,8 @@ export default {
           }
 
           .item-type {
-            width: 84rpx;
+            // width: 84rpx;
+            padding: 0 20rpx;
             height: 42rpx;
             flex-shrink: 0;
             border-radius: 21rpx;

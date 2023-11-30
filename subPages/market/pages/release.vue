@@ -2,44 +2,135 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-04 16:30:31
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-24 11:53:47
+ * @LastEditTime: 2023-11-29 15:30:52
  * @FilePath: /used-idle/pages/release/detail/detail.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @goods_description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <view class="release-detail container box">
     <view class="form release-detail-content">
       <u--form
         labelPosition="left"
-        labelWidth="100"
+        labelWidth="110"
         :model="releaseForm"
         :rules="rules"
         ref="releaseForm"
       >
-        <u-form-item label="商品名" prop="product" borderBottom required>
-          <u--input v-model="releaseForm.product" border="none"></u--input>
+        <u-form-item label="商品名" prop="goods_name" borderBottom required>
+          <u--input v-model="releaseForm.goods_name" border="none"></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
         </u-form-item>
 
-        <u-form-item label="商品原价" prop="oldPrice" borderBottom required>
-          <u--input v-model="releaseForm.oldPrice" border="none"></u--input>
+        <u-form-item label="商品Log" labelPosition="top" borderBottom>
+          <u-upload
+            :fileList="fileList2"
+            @afterRead="afterRead"
+            @delete="deletePic"
+            name="2"
+            multiple
+            :maxCount="4"
+          ></u-upload>
+        </u-form-item>
+
+        <u-form-item
+          label="商品原价"
+          prop="goods_price_old"
+          borderBottom
+          required
+        >
+          <u--input
+            v-model="releaseForm.goods_price_old"
+            border="none"
+          ></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
         </u-form-item>
 
-        <u-form-item label="商品现价" prop="newPrice" borderBottom required>
-          <u--input v-model="releaseForm.newPrice" border="none"></u--input>
+        <u-form-item
+          label="商品现价"
+          prop="goods_price_new"
+          borderBottom
+          required
+        >
+          <u--input
+            v-model="releaseForm.goods_price_new"
+            border="none"
+          ></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
+        </u-form-item>
+
+        <u-form-item
+          label="商家联系电话"
+          prop="phone_number"
+          borderBottom
+          required
+        >
+          <u--input v-model="releaseForm.phone_number" border="none"></u--input>
+          <u-icon slot="right" name="arrow-right"></u-icon>
+        </u-form-item>
+
+        <u-form-item label="商品属性" labelPosition="top" borderBottom>
+          <view class="u-page">
+            <!-- 头部 -->
+            <u-row customStyle="margin-bottom: 10px">
+              <u-col span="6">
+                <view class="demo-layout bg-purple-light">
+                  <view>属性</view>
+                </view>
+              </u-col>
+              <u-col span="6">
+                <view class="demo-layout bg-purple">
+                  <view>属性值</view>
+                </view>
+              </u-col>
+            </u-row>
+            <!-- content -->
+            <u-row
+              customStyle="margin-bottom: 10px"
+              v-for="(item, index) in releaseForm.tableField112"
+              :key="index"
+            >
+              <u-col span="6">
+                <view class="demo-layout bg-purple-light">
+                  <u--input
+                    inputAlign="center"
+                    v-model="item.good_parameters"
+                    border="none"
+                  ></u--input>
+                </view>
+              </u-col>
+              <u-col span="6">
+                <view class="demo-layout bg-purple">
+                  <u--input
+                    inputAlign="center"
+                    v-model="item.parameters_value"
+                    border="none"
+                  ></u--input>
+                </view>
+              </u-col>
+            </u-row>
+            <!-- footer -->
+            <u-row customStyle="margin-top: 10px" @click="clickRowPlus">
+              <u-col span="12">
+                <view
+                  class="demo-layout demo-footer bg-purple-light flex-center"
+                >
+                  <u-icon name="plus" size="12"></u-icon>
+                  <text> 添加属性</text>
+                </view>
+              </u-col>
+            </u-row>
+          </view>
         </u-form-item>
 
         <u-form-item
           label="商品保障"
           labelPosition="top"
-          prop="checkboxValue"
+          prop="goods_assure"
           borderBottom
           required
         >
           <u-checkbox-group
-            v-model="releaseForm.checkboxValue"
+            v-model="releaseForm.goods_assure"
             shape="circle"
             iconSize="10"
             placement="column"
@@ -59,8 +150,14 @@
           </u-checkbox-group>
         </u-form-item>
 
-        <u-form-item label="获取地址" prop="blurAddress" borderBottom required>
-          <u--input v-model="releaseForm.blurAddress" border="none"></u--input>
+        <u-form-item
+          label="获取地址"
+          labelPosition="top"
+          prop="blur_address"
+          borderBottom
+          required
+        >
+          <u--input v-model="releaseForm.blur_address" border="none"></u--input>
           <!-- <u-icon slot="right" name="arrow-right"></u-icon> -->
           <u-button
             slot="right"
@@ -74,9 +171,22 @@
         </u-form-item>
 
         <u-form-item
-          label="商品图片"
+          label="详细地址"
+          prop="detail_address"
+          borderBottom
+          required
+        >
+          <u--input
+            v-model="releaseForm.detail_address"
+            border="none"
+          ></u--input>
+          <u-icon slot="right" name="arrow-right"></u-icon>
+        </u-form-item>
+
+        <u-form-item
+          label="商品展示图片"
           labelPosition="top"
-          prop="newPrice"
+          prop="goods_image"
           borderBottom
           required
         >
@@ -86,7 +196,7 @@
             @delete="deletePic"
             name="1"
             multiple
-            :maxCount="4"
+            :maxCount="3"
           ></u-upload>
         </u-form-item>
 
@@ -106,9 +216,9 @@
           ></u-button>
         </u-form-item> -->
 
-        <u-form-item prop="description" borderBottom>
+        <u-form-item prop="goods_description" borderBottom>
           <u--textarea
-            v-model="releaseForm.description"
+            v-model="releaseForm.goods_description"
             :height="150"
             :count="true"
             placeholder="商品详情描述。。。"
@@ -144,14 +254,18 @@
 import tabbarPro from "../components/tabbar";
 import config from "@/common/config";
 import Storage from "@/common/function/storage";
+import { createModel, getModelList } from "@/api";
+import { getRequestFilter, sleep } from "@/common/function";
+import infoMixin from "@/common/mixins/info";
 import { UpdateFilePath } from "@/api/file";
 export default {
+  mixins: [infoMixin],
   components: { tabbarPro },
   data() {
     // 实例化API核心类
     return {
       fileList1: [],
-
+      fileList2: [],
       color: "#666",
       colorWho: "#666",
       tabIndex: 1,
@@ -159,35 +273,47 @@ export default {
       tips: "",
       addressBtn: "获取地址",
       // 表单提交数据
-      releaseForm: {
-        product: "",
-        description: "",
-        oldPrice: "",
-        newPrice: "",
-        blurAddress: "",
-        code: "",
-        checkboxValue: "",
-      },
+      releaseForm: this.createFormData(),
+      // 表格
+
       rules: {
-        product: [
+        goods_name: [
           {
             message: "此为必填字段",
             required: true,
             trigger: ["blur", "change"],
           },
         ],
-        oldPrice: [
+        goods_price_old: [
           {
             message: "此为必填字段",
             required: true,
             trigger: ["blur", "change"],
           },
         ],
-        newPrice: [
+        goods_price_new: [
           {
             message: "此为必填字段",
             required: true,
             trigger: ["blur", "change"],
+          },
+        ],
+        phone_number: [
+          {
+            required: true,
+            message: "请输入手机号",
+            trigger: ["change", "blur"],
+          },
+          {
+            // 自定义验证函数，见上说明
+            validator: (rule, value, callback) => {
+              // 上面有说，返回true表示校验通过，返回false表示不通过
+              // uni.$u.test.mobile()就是返回true或者false的
+              return uni.$u.test.mobile(value);
+            },
+            message: "手机号码不正确",
+            // 触发器可以同时用blur和change
+            trigger: ["change", "blur"],
           },
         ],
         code: {
@@ -197,12 +323,26 @@ export default {
           message: "请填写4位验证码",
           trigger: ["blur"],
         },
-        blurAddress: {
+        blur_address: {
           message: "请填写地址信息",
           required: true,
           trigger: ["blur", "change"],
         },
-        checkboxValue: [
+        detail_address: {
+          message: "请填写详细地址信息",
+          required: true,
+          trigger: ["blur", "change"],
+        },
+        goods_assure: [
+          {
+            type: "array",
+            min: 2,
+            required: true,
+            message: "至少选两项",
+            trigger: ["change"],
+          },
+        ],
+        goods_assure: [
           {
             type: "array",
             min: 2,
@@ -213,6 +353,28 @@ export default {
         ],
       },
     };
+  },
+  watch: {
+    fileList1: {
+      handler(val) {
+        this.releaseForm.goods_image = val.map((item) => ({
+          url: item.url.replace(config.baseURL, ""),
+          name: item.name,
+          fileId: Date.now(),
+        }));
+      },
+      deep: true,
+    },
+    fileList2: {
+      handler(val) {
+        this.releaseForm.goods_log = val.map((item) => ({
+          url: item.url.replace(config.baseURL, ""),
+          name: item.name,
+          fileId: Date.now(),
+        }));
+      },
+      deep: true,
+    },
   },
   methods: {
     // 删除图片
@@ -262,7 +424,7 @@ export default {
           },
           success: (res) => {
             setTimeout(() => {
-              console.log("上传成功", res, that.fileList1);
+              // console.log("上传成功", res, that.fileList1);
               let { data } = JSON.parse(res.data);
               resolve(data);
             }, 1000);
@@ -292,10 +454,37 @@ export default {
       }
     },
 
-    // 获取地址
+    createFormData() {
+      return {
+        goods_name: "",
+        goods_description: "",
+        goods_price_old: "",
+        goods_price_new: "",
+        goods_image: [],
+        goods_log: [],
+        blur_address: "",
+        detail_address: "",
+        // code: "",
+        goods_assure: [],
+        phone_number: "",
+        visitors_num: 0,
+        tableField112: [],
+        username: "",
+        header_icon: "",
+      };
+    },
+
+    //点击整行添加table行
+    clickRowPlus() {
+      this.releaseForm.tableField112.push({
+        good_parameters: "",
+        parameters_value: "",
+      });
+    },
+
     // 获取地址按钮点击
     async getAddressBtn() {
-      if (this.releaseForm.blurAddress) {
+      if (this.releaseForm.blur_address) {
         uni.showModal({
           title: "提示",
           content: "是否重新选择地址，重新选择地址将会覆盖之前的地址",
@@ -304,7 +493,7 @@ export default {
               uni.chooseLocation({
                 success: (e) => {
                   console.log("e", e);
-                  this.releaseForm.blurAddress = e.address + e.name;
+                  this.releaseForm.blur_address = e.address + e.name;
                 },
               });
             }
@@ -314,23 +503,43 @@ export default {
         uni.chooseLocation({
           success: (e) => {
             console.log("e", e);
-            this.releaseForm.blurAddress = e.address + e.name;
+            this.releaseForm.blur_address = e.address + e.name;
           },
         });
       }
     },
 
     submit() {
+      this.releaseForm.username = this.userInfo.realName;
+      this.releaseForm.header_icon = this.userInfo.headIcon;
       this.$refs.releaseForm
         .validate()
-        .then((res) => {
-          uni.$u.toast("校验通过");
+        .then(async (res) => {
+          // uni.$u.toast("校验通过");
+          const reqFormData = await createModel(
+            "65605e75f3ad0c30c038ff96",
+            this.releaseForm
+          );
+
+          if (reqFormData.code !== 200) {
+            uni.$u.toast(`${reqFormData.msg}`);
+          } else {
+            uni.showToast({
+              title: "创建成功",
+              duration: 600,
+            });
+
+            this.releaseForm = this.createFormData();
+            this.fileList1 = [];
+            this.fileList2 = [];
+          }
         })
         .catch((errors) => {
-          uni.$u.toast("校验失败");
+          uni.$u.toast("失败");
         });
     },
   },
+
   onReady() {
     //如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
     this.$refs.releaseForm.setRules(this.rules);
@@ -391,11 +600,34 @@ export default {
   }
 
   // input {
-  //   text-align: right !important;
+  // text-align: right !important;
   // }
 
   .u-icon--right {
     margin-left: 8rpx;
   }
+}
+
+.wrap {
+  padding: 12px;
+}
+
+.demo-layout {
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  // border-radius: 4px;
+}
+
+.bg-purple {
+  background: #ced7e1;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
 }
 </style>
