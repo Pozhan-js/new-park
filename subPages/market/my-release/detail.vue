@@ -2,7 +2,7 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-05 16:56:57
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-30 17:29:09
+ * @LastEditTime: 2023-12-03 11:16:56
  * @FilePath: /used-idle/subPages/my-release/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -92,6 +92,24 @@
         }}
       </view>
     </view>
+
+    <u-gap height="10" bgColor="#f0f0f0"></u-gap>
+    <!-- 留言 -->
+    <view class="message">
+      <view class="message-title">留言</view>
+      <!-- <view class="message-number">3</view> -->
+      <view class="message-container">
+        <hb-comment
+          ref="hbComment"
+          @add="add"
+          @del="del"
+          :deleteTip="'确认删除？'"
+          :cmData="commentData"
+          v-if="commentData"
+        ></hb-comment>
+      </view>
+    </view>
+
     <!-- flex-a-center-j-space-between box -->
     <view class="release-detail-footer">
       <uni-goods-nav
@@ -101,29 +119,6 @@
         @click="onClick"
         @buttonClick="buttonClick"
       />
-      <!-- <view class="footer-left flex-a-center-j-space-between">
-        <u-icon
-          :name="collectStatus ? 'star-fill' : 'star'"
-          label="收藏"
-          size="24"
-          :color="collectStatus ? '#fef8ac' : ''"
-          labelPos="bottom"
-          labelSize="10"
-          style="margin-right: '60rpx'"
-          @click="clickCollectBtn(detailData._id)"
-        ></u-icon>
-        <u-icon
-          name="chat"
-          labelSize="10"
-          label="留言"
-          size="24"
-          labelPos="bottom"
-        ></u-icon>
-      </view>
-      <view class="footer-right flex-a-center">
-        <view class="footer-btn box">加入购物车</view>
-        <view class="footer-btn active-btn box" @click="toPay">去付款</view>
-      </view> -->
     </view>
   </view>
 </template>
@@ -150,16 +145,10 @@ export default {
       collectOrderId: "",
       options: [
         {
-          icon: "cart",
-          text: "购物车",
-          info: 2,
-        },
-        {
           icon: "chat",
           text: "留言",
-          info: 2,
-          infoBackgroundColor: "#007aff",
           infoColor: "#f5f5f5",
+          info: 0,
         },
         {
           icon: "star",
@@ -168,22 +157,19 @@ export default {
       ],
       customButtonGroup: [
         {
-          text: "加入购物车",
-          backgroundColor: "linear-gradient(90deg, #1E83FF, #0053B8)",
-          color: "#fff",
-        },
-        {
-          text: "立即购买",
-          backgroundColor: "linear-gradient(90deg, #60F3FF, #088FEB)",
+          text: "我想要",
+          backgroundColor: "linear-gradient(90deg, #FE6035, #EF1224)",
           color: "#fff",
         },
       ],
+      reqFlag: false, // 请求标志，防止重复操作，true表示请求中
       carNumber: 0,
+      reqMessageList: [], //接受请求恢复数据
     };
   },
-  onLoad(options) {
+  async onLoad(options) {
     this.orderId = options.id;
-    this.getDetailOrderData(options.id);
+    await this.getDetailOrderData(options.id);
     this.checkCollectData(options.id);
     //获取购物车数据
     this.getAllShopCarNumber(
@@ -191,9 +177,16 @@ export default {
         creatorUserId: this.userInfo.id,
       })
     );
+    this.getCurrentMessage();
   },
   computed: {
     ...mapState("shopCar", ["shopCarData"]),
+    commentData() {
+      return {
+        commentSize: this.reqMessageList.length,
+        comment: this.getTree(this.reqMessageList),
+      };
+    },
     log_image() {
       return this.$helper.filterCover(this.detailData?.goods_log?.[0]?.url);
     },
@@ -206,12 +199,9 @@ export default {
     image_3() {
       return this.$helper.filterCover(this.detailData?.goods_image?.[2]?.url);
     },
-    // carNumber() {
-    //   return this.shopCarData.length;
-    // },
   },
   watch: {
-    shopCarData: {
+    reqMessageList: {
       handler(val) {
         this.$nextTick(() => {
           this.options[0].info = val.length;
@@ -330,50 +320,13 @@ export default {
       this.detailData.visitors_num++;
       let addUpdate = this.detailData;
       await updateModel("65605e75f3ad0c30c038ff96", addUpdate, id);
-      // console.log("data", data);
     },
-
-    // 购物数据添加
-    async addShopCar() {
-      const { _id, goods_name, goods_price_new, tableField112, goods_log } =
-        this.detailData;
-      let reqData = {
-        product_ID: _id,
-        order_status: "待支付",
-        goods_log,
-        goods_name,
-        price: goods_price_new,
-        tableField106: tableField112,
-      };
-      // 创建购物车数据
-      await this.createShopCarItem(reqData);
-      // 刷新购物车数据
-      await this.getAllShopCarNumber(
-        getRequestFilter({
-          creatorUserId: this.userInfo.id,
-        })
-      );
-    },
-
     // 购物车查询
-
     onClick(e) {
       switch (e.content.text) {
         case "收藏":
           console.log(e.content.text);
           this.clickCollectBtn();
-          break;
-        case "留言":
-          console.log(e.content.text);
-          uni.navigateTo({
-            url: "./",
-          });
-          break;
-        case "购物车":
-          console.log(e.content.text);
-          uni.navigateTo({
-            url: "./shop-car",
-          });
           break;
       }
     },
@@ -384,12 +337,101 @@ export default {
           (item) => item.product_ID === this.orderId
         );
         if (currentCar) return;
-        this.addShopCar();
+        // this.addShopCar();
       } else {
+        console.log(e);
         uni.navigateTo({
-          url: `../product/product-order`,
+          url: `/subPages/market/product/product-order`,
         });
       }
+    },
+    // 获取评论信息
+    async getCurrentMessage() {
+      const { data } = await getModelList(
+        "656955d4f3ad0c30c03fccc1",
+        getRequestFilter({
+          goods_detail_id: this.detailData._id,
+        })
+      );
+      this.reqMessageList = data?.list;
+    },
+    // 新增评论
+    add(req) {
+      console.log("req", req);
+      if (this.reqFlag) {
+        uni.showToast({
+          title: "操作频繁",
+          duration: 1000,
+        });
+        return;
+      }
+      this.reqFlag = true;
+      // TODO 接入真实接口
+      let params = {
+        goods_detail_id: this.detailData._id,
+        parentId: req.pId,
+        content: req.content,
+        nickName: this.userInfo.realName,
+        avatarUrl: this.$helper.filterCover(this.userInfo.headIcon),
+        likeNum: 0,
+        owner: this.userInfo.id === this.detailData.creatorUserId ? 1 : 0,
+        hasLike: 0,
+      };
+      createModel("656955d4f3ad0c30c03fccc1", params)
+        .then((res) => {
+          uni.showToast({
+            title: "操作成功！",
+            duration: 3000,
+          });
+          this.$refs.hbComment.addComplete();
+          this.getCurrentMessage();
+          this.reqFlag = false;
+        })
+        .catch((res) => {
+          this.reqFlag = false;
+        });
+      // 下边假装请求成功
+      // this.reqFlag = false;
+
+      // // this.$refs.hbComment.addComplete();
+      // this.getCurrentMessage();
+    },
+    // 删除评论
+    del(commentId) {
+      if (this.reqFlag) {
+        uni.showToast({
+          title: "操作频繁",
+          duration: 1000,
+        });
+        return;
+      }
+      this.reqFlag = true;
+      // TODO 接入真实接口
+      deleteModel("656955d4f3ad0c30c03fccc1", commentId)
+        .then((res) => {
+          this.reqFlag = false;
+          this.$refs.hbComment.deleteComplete(commentId);
+        })
+        .catch((res) => {
+          this.reqFlag = false;
+        });
+    },
+    // 列表按照父子转换成树
+    getTree(data) {
+      let result = [];
+      let map = {};
+      data.forEach((item) => {
+        map[item._id] = item;
+      });
+      data.forEach((item) => {
+        let parent = map[item.parentId];
+        if (parent) {
+          (parent.children || (parent.children = [])).push(item);
+        } else {
+          result.push(item);
+        }
+      });
+      return result;
     },
   },
 };
@@ -404,6 +446,7 @@ export default {
 
 .release-detail {
   position: relative;
+  padding-bottom: 300rpx;
 
   &-header {
     padding-bottom: 30rpx;
@@ -419,7 +462,7 @@ export default {
   }
 
   &-body {
-    padding-bottom: 300rpx;
+    padding-bottom: 20rpx;
 
     .user-info {
       margin-bottom: 38rpx;
@@ -601,8 +644,8 @@ export default {
       font-size: 25rpx;
       color: #999999;
       line-height: 35rpx;
-      margin-top: 12rpx;
-      float: right;
+      // float: right;
+      text-align: right;
       margin-top: 18rpx;
     }
 
@@ -611,9 +654,17 @@ export default {
       font-size: 28rpx;
       color: #999;
       line-height: 42rpx;
-      clear: both;
-      float: right;
+      text-align: right;
       margin-top: 18rpx;
+    }
+  }
+
+  .message {
+    margin-top: 20rpx;
+
+    &-title {
+      margin-bottom: 10rpx;
+      font-size: 36rpx;
     }
   }
 

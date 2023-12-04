@@ -796,7 +796,27 @@
 					"meta": {
 						"verifyLogin": true
 					}
+				},
+				{
+					"path": "product/shop-address",
+					"style": {
+						"navigationBarTitleText": "商品地址管理"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/add-address",
+					"style": {
+						"navigationBarTitleText": "地址添加",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
 				}
+
 			]
 
 		}
