@@ -725,15 +725,6 @@
 					}
 				},
 				{
-					"path": "release/detail",
-					"style": {
-						"navigationBarTitleText": "商品详情"
-					},
-					"meta": {
-						"verifyLogin": true
-					}
-				},
-				{
 					"path": "pages/user",
 					"style": {
 						"navigationBarTitleText": "我的",
@@ -792,6 +783,15 @@
 					"path": "product/product-order",
 					"style": {
 						"navigationBarTitleText": "商品订单"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/order",
+					"style": {
+						"navigationBarTitleText": "订单生成"
 					},
 					"meta": {
 						"verifyLogin": true

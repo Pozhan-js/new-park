@@ -1,8 +1,8 @@
 <!--
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 11:53:11
- * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-04 11:05:51
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-12-04 16:03:01
  * @FilePath: /smart-park/subPages/market/product/shop-address.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -11,16 +11,16 @@
     <!-- color：主题色 addressList:地址管理数据 @chooseClick：选择事件 @editClick：编辑事件  -->
     <cc-addressSet
       :colors="colors"
-      :addressList="addressList"
+      :addressList="addressFilterList"
       @chooseClick="chooseClick"
       @editClick="editClick"
       @chooseDelete="chooseDelete"
     ></cc-addressSet>
 
     <view class="save">
-      <view class="btn" :style="'background:' + colors" @click="addAddress"
-        >添加收货地址</view
-      >
+      <view class="btn" :style="'background:' + colors" @click="addAddress">
+        添加收货地址
+      </view>
     </view>
   </view>
 </template>
@@ -36,6 +36,18 @@ export default {
   },
 
   props: {},
+  computed: {
+    addressFilterList() {
+      let filterDefault = this.addressList.filter((item) => {
+        return item.isdefult;
+      });
+      let notDefault = this.addressList.filter((item) => {
+        return !item.isdefult;
+      });
+
+      return [...filterDefault, ...notDefault];
+    },
+  },
 
   /**
    * 生命周期函数--监听页面加载
@@ -105,7 +117,7 @@ export default {
 
 .save .btn {
   box-shadow: 0upx 5upx 10upx rgba(0, 0, 0, 0.4);
-  width: 70%;
+  width: 80%;
   height: 80upx;
   border-radius: 80upx;
   background-color: #f23a3a;

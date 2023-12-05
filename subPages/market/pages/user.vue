@@ -13,11 +13,11 @@
       class="user-pages-header relative padding-y-24 flex"
       :class="{ 'items-center': !isLogin }"
     >
-      <u-avatar size="140rpx" src="/static/image/icon/user/headimg.png" />
+      <u-avatar size="140rpx" :src="avatar" />
       <!-- <u-avatar size="140rpx" :src="avatar" /> -->
       <view v-if="isLogin" class="user-info flex-col flex-grow justify-evenly">
         <text class="user-name text_ellipsis">{{ realName }}</text>
-        <text class="study-days">学习{{ studyDays }}天</text>
+        <!-- <text class="study-days">学习{{ studyDays }}天</text> -->
       </view>
       <view
         v-else
@@ -89,7 +89,7 @@ export default {
 
     return {
       cellList: [
-        { title: "设置", path: getPath("settings"), icon: getIcon("headimg") },
+        { title: "设置", path: getPath("settings"), icon: getIcon("settings") },
       ],
       list: [
         {

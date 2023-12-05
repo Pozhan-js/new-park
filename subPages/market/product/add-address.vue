@@ -1,8 +1,8 @@
 <!--
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 17:27:04
- * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-04 10:57:53
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-12-04 17:34:59
  * @FilePath: /smart-park/subPages/market/product/add-aderess.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 
@@ -14,7 +14,7 @@
       <u--form
         labelPosition="left"
         required
-        labelWidth="80"
+        labelWidth="120"
         :model="addressInfo"
         :rules="rules"
         ref="shopAddressForm"
@@ -35,6 +35,9 @@
           <u--input v-model="addressInfo.moreAddres" border="none"></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
         </u-form-item>
+        <u-form-item label="设置为默认地址" borderBottom>
+          <u-switch v-model="value" @change="change"></u-switch>
+        </u-form-item>
       </u--form>
     </view>
 
@@ -54,7 +57,7 @@ export default {
   data() {
     return {
       title: "添加地址",
-      showSex: false,
+      value: false,
       // 判断是否为首次添加地址
       isFirst: false,
       addressInfo: {
@@ -170,8 +173,19 @@ export default {
     async getCurrentAddress(id) {
       const { data } = await getModelInfo("656c2230262fbe2d9d06756d", id);
       Object.keys(this.addressInfo).forEach((item) => {
+        if (item === "isdefult") {
+          Number(data[item]) ? (this.value = true) : (this.value = false);
+        }
         this.addressInfo[item] = data[item];
       });
+    },
+
+    change(e) {
+      if (e) {
+        this.addressInfo.isdefult = 1;
+      } else {
+        this.addressInfo.isdefult = 0;
+      }
     },
   },
   onLoad(options) {
@@ -187,8 +201,10 @@ export default {
     // 当没有设计过地址时首次设置的地址为默认
     if (Number(length) !== 0) {
       this.addressInfo.isdefult = 0;
+      this.value = false;
     } else {
       this.addressInfo.isdefult = 1;
+      this.value = true;
     }
   },
   onReady() {
@@ -199,11 +215,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add-address {
-}
-
 ::v-deep .u-form-item__body__left {
-  margin-left: 20rpx;
+  margin-left: 30rpx;
 }
 
 .qu-btn {

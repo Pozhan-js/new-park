@@ -26,8 +26,6 @@
         indicator
         indicatorMode="line"
         circular
-        @change="change"
-        @click="click"
       ></u-swiper>
     </view>
 
@@ -60,43 +58,51 @@
     </view>
 
     <view class="home-shop">
-      <view
-        v-for="(item, index) in listData"
-        :key="index"
-        class="home-shop-item flex-a-center"
-        :style="{ border: index === listData.length - 1 ? 'none' : '' }"
-        @click="clickProduct(item._id)"
-      >
-        <image :src="getImageUrl(item.goods_log[0].url)" class="img" mode="">
-        </image>
-        <view class="item-right">
-          <view class="item-right-content item-title">
-            <text class="title">{{ item.goods_name }}</text>
-            <text class="price">¥{{ item.goods_price_new }}</text>
-          </view>
+      <template v-if="listData.length">
+        <view
+          v-for="(item, index) in listData"
+          :key="index"
+          class="home-shop-item flex-a-center"
+          :style="{ border: index === listData.length - 1 ? 'none' : '' }"
+          @click="clickProduct(item._id)"
+        >
+          <image :src="getImageUrl(item.goods_log[0].url)" class="img" mode="">
+          </image>
+          <view class="item-right">
+            <view class="item-right-content item-title">
+              <text class="title">{{ item.goods_name }}</text>
+              <text class="price">¥{{ item.goods_price_new }}</text>
+            </view>
 
-          <view class="item-right-content flex-a-center">
-            <view
-              class="item-type"
-              v-for="data in item.goods_assure"
-              :key="data"
-              >{{ data }}
+            <view class="item-right-content flex-a-center">
+              <view
+                class="item-type"
+                v-for="data in item.goods_assure"
+                :key="data"
+                >{{ data }}
+              </view>
+            </view>
+
+            <view class="item-right-content flex-a-center">
+              <u-icon name="map" size="14"></u-icon>
+              <text class="addr">{{ item.blur_address }}</text>
+            </view>
+
+            <view class="item-right-content item-title">
+              <text class="text-content">{{ item.detail_address }}</text>
+              <text class="text-content">
+                {{ $u.timeFrom(item.creatorTime, "yyyy-mm-dd") }}</text
+              >
             </view>
           </view>
-
-          <view class="item-right-content flex-a-center">
-            <u-icon name="map" size="14"></u-icon>
-            <text class="addr">{{ item.blur_address }}</text>
-          </view>
-
-          <view class="item-right-content item-title">
-            <text class="text-content">{{ item.detail_address }}</text>
-            <text class="text-content">
-              {{ $u.timeFrom(item.creatorTime, "yyyy-mm-dd") }}</text
-            >
-          </view>
-        </view>
-      </view>
+        </view></template
+      >
+      <u-empty
+        v-else
+        mode="data"
+        icon="http://cdn.uviewui.com/uview/empty/list.png"
+      >
+      </u-empty>
     </view>
 
     <TabbarPro :tabIndex="tabIndex"></TabbarPro>
@@ -126,25 +132,6 @@ export default {
 
   computed: {},
   methods: {
-    change() {
-      // console.log("change");
-    },
-    click() {
-      console.log("click");
-    },
-    clickItemIcon(item) {
-      // this.$refs.uToast.success(`点击了第${name}个`);
-      if (item.title !== "更多分类") {
-        uni.navigateTo({
-          url: item.pageUrl,
-        });
-      } else {
-        uni.showToast({
-          title: "功能暂未开发",
-          duration: 600,
-        });
-      }
-    },
     // 直接回到首页
     tabLeft() {
       uni.reLaunch({
@@ -154,7 +141,7 @@ export default {
     // 点击发布闲置
     clickRelease() {
       uni.redirectTo({
-        url: "../release/detail",
+        url: "/subPages/market/pages/release",
       });
       // this.$refs.uToast.success(`点击了发布闲置`);
     },
@@ -196,7 +183,7 @@ export default {
     let nowDate = new Date();
     let reqRange = [];
 
-    reqRange = this.$helper.getCurrentWeek(nowDate).map((item) => {
+    reqRange = this.$helper.getCurrentMonth(nowDate).map((item) => {
       return Date.parse(item);
       // return new Date(item);
     });

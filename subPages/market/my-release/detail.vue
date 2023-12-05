@@ -1,8 +1,8 @@
 <!--
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-05 16:56:57
- * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-03 11:16:56
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-12-04 17:14:41
  * @FilePath: /used-idle/subPages/my-release/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -331,7 +331,6 @@ export default {
       }
     },
     buttonClick(e) {
-      console.log(e);
       if (e.content.text === "加入购物车") {
         let currentCar = this.shopCarData.find(
           (item) => item.product_ID === this.orderId
@@ -339,9 +338,8 @@ export default {
         if (currentCar) return;
         // this.addShopCar();
       } else {
-        console.log(e);
         uni.navigateTo({
-          url: `/subPages/market/product/product-order`,
+          url: `/subPages/market/product/order?id=${this.detailData._id}`,
         });
       }
     },
