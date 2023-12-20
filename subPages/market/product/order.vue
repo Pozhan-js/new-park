@@ -1,8 +1,8 @@
 <!--
  * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
  * @Date: 2023-12-04 14:30:43
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-12-04 17:24:54
+ * @LastEditors: hashMi 854059946@qq.com
+ * @LastEditTime: 2023-12-19 16:39:09
  * @FilePath: /smart-park/subPages/market/product/order.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -57,27 +57,30 @@
         <text>商品金额</text>
         <text>¥{{ detailData.goods_price_new }}</text>
       </view>
-      <u-button
-        class="pay-btn"
-        color="#6377f5"
-        type="primary"
-        block
-        @click="clickToPay"
-      >
-        生成订单
-      </u-button>
+      <view style="padding: 0 20rpx; box-sizing: border-box">
+        <u-button
+          class="pay-btn"
+          color="#6377f5"
+          type="primary"
+          block
+          @click="clickToPay"
+        >
+          生成订单
+        </u-button>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
 import { getModelList, getModelInfo } from "@/api";
-import { getRequestFilter, sleep } from "@/common/function";
+import { getRequestFilter } from "@/common/function";
 export default {
   data() {
     return {
       defaultAddress: [],
       detailData: {},
+      reqOrderData:{}
     };
   },
   methods: {
@@ -112,7 +115,10 @@ export default {
       this.detailData = data;
     },
     // 去支付
-    clickToPay() {},
+    clickToPay() {
+      // 先创建一个订单
+      //
+    },
   },
   onLoad(options) {
     let { id } = options;

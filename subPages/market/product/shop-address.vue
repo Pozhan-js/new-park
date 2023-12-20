@@ -1,8 +1,8 @@
 <!--
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 11:53:11
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-12-04 16:03:01
+ * @LastEditors: hashMi 854059946@qq.com
+ * @LastEditTime: 2023-12-20 11:33:04
  * @FilePath: /smart-park/subPages/market/product/shop-address.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { getModelList, deleteModel } from "@/api";
+import { getModelList, deleteModel, updateModel } from "@/api";
 export default {
   data() {
     return {
@@ -65,11 +65,17 @@ export default {
       });
     },
 
-    chooseClick(item) {
-      uni.showModal({
-        title: "点击选择条目",
-        content: "点击选择条目" + JSON.stringify(item),
-      });
+    async chooseClick(item) {
+      //修改当前数据项
+      let time = Date.now();
+      console.log("时间", item.new_time);
+      const result = await updateModel(
+        "656c2230262fbe2d9d06756d",
+        { ...item, new_time: time },
+        item._id
+      );
+      console.log("data", result);
+      this.getAddress();
     },
 
     // 增加地址

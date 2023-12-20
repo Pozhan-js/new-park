@@ -1,8 +1,8 @@
 <!--
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-05 16:56:57
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-12-04 17:14:41
+ * @LastEditors: hashMi 854059946@qq.com
+ * @LastEditTime: 2023-12-20 10:45:59
  * @FilePath: /used-idle/subPages/my-release/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -144,6 +144,10 @@ export default {
       orderId: "",
       collectOrderId: "",
       options: [
+        // {
+        //   icon: "person",
+        //   text: "客服",
+        // },
         {
           icon: "chat",
           text: "留言",
@@ -229,29 +233,12 @@ export default {
       let city = str?.substring(provinceStartIndex + 1, cityStartIndex + 1); // 从"省"字之后到"市"字之间的内容
       return province + city;
     },
+    // 点击商品图标事件
     async clickCollectBtn() {
+      let collectData = {};
       if (!this.collectStatus || !this.collectOrderId) {
         try {
-          const collectData = await createModel("6565ab81f3ad0c30c03c4b0e", {
-            order_id: this.orderId,
-          });
-
-          if (collectData.code === 200) {
-            this.collectOrderId = collectData.data;
-            this.collectStatus = true;
-            this.options = this.options.map((item) => {
-              if (item.text === "收藏") {
-                item.color = "#EF1224";
-                item.icon = "star-filled";
-              }
-              return item;
-            });
-            uni.showToast({
-              title: "收藏成功",
-              duration: 600,
-            });
-          }
-          this.checkCollectData(this.collectOrderId);
+          collectData = await this.collectSuccess(this.orderId);
         } catch (error) {
           uni.showToast({
             title: error,
@@ -259,28 +246,8 @@ export default {
           });
         }
       } else {
-        console.log("函数删除执行");
         try {
-          const collectData = await deleteModel(
-            "6565ab81f3ad0c30c03c4b0e",
-            this.collectOrderId
-          );
-          this.collectStatus = false;
-          this.collectOrderId = "";
-          this.options = this.options.map((item) => {
-            if (item.text === "收藏") {
-              item.color = "#646566";
-              item.icon = "star";
-            }
-            return item;
-          });
-          if (collectData.code === 200) {
-            uni.showToast({
-              title: "取消收藏成功",
-              duration: 600,
-            });
-          }
-          this.checkCollectData(this.collectOrderId);
+          collectData = await this.cancelSuccess(this.collectOrderId);
         } catch (error) {
           uni.showToast({
             title: error,
@@ -288,7 +255,53 @@ export default {
           });
         }
       }
+      let { status, data, color, icon, msg } = collectData;
+
+      this.collectStatus = status;
+      this.collectOrderId = data;
+      this.options = this.options.map((item) => {
+        if (item.text === "收藏") {
+          item.color = color;
+          item.icon = icon;
+        }
+        return item;
+      });
+      uni.showToast({
+        title: msg,
+        duration: 600,
+      });
+      // 刷新数据
+      this.checkCollectData(this.collectOrderId);
     },
+    // 点击收藏成功
+    async collectSuccess(id) {
+      const collectData = await createModel("6565ab81f3ad0c30c03c4b0e", {
+        order_id: id,
+      });
+      if (collectData.code === 200) {
+        return {
+          color: "#EF1224",
+          icon: "star-filled",
+          data: collectData?.data,
+          status: true,
+          msg: "收藏成功",
+        };
+      }
+    },
+    // 取消收藏成功
+    async cancelSuccess(id) {
+      const collectData = await deleteModel("6565ab81f3ad0c30c03c4b0e", id);
+      if (collectData.code === 200) {
+        return {
+          color: "#646566",
+          icon: "star",
+          data: "",
+          status: false,
+          msg: "取消成功",
+        };
+      }
+    },
+
     // 补全图片路径
     getImageUrl(url) {
       return this.$helper.filterCover(url);
@@ -300,7 +313,6 @@ export default {
         getRequestFilter({ order_id: id })
       );
       let oid = data?.list[0]?._id;
-      // console.log("收藏表数据", data?.list[0]);
       if (oid) {
         this.collectOrderId = oid;
         this.collectStatus = true;
@@ -325,10 +337,26 @@ export default {
     onClick(e) {
       switch (e.content.text) {
         case "收藏":
-          console.log(e.content.text);
           this.clickCollectBtn();
           break;
+        case "留言":
+          this.getElementScollTop(".message");
+          break;
       }
+    },
+    //获取元素离页面顶部的距离
+    getElementScollTop(name = "") {
+      const query = uni.createSelectorQuery();
+      query
+        .select(name)
+        .boundingClientRect((data) => {
+          let pageScrollTop = Math.round(data.top);
+          uni.pageScrollTo({
+            scrollTop: pageScrollTop, //滚动的距离
+            duration: 400, //过渡时间
+          });
+        })
+        .exec();
     },
     buttonClick(e) {
       if (e.content.text === "加入购物车") {
@@ -336,7 +364,6 @@ export default {
           (item) => item.product_ID === this.orderId
         );
         if (currentCar) return;
-        // this.addShopCar();
       } else {
         uni.navigateTo({
           url: `/subPages/market/product/order?id=${this.detailData._id}`,
@@ -355,7 +382,6 @@ export default {
     },
     // 新增评论
     add(req) {
-      console.log("req", req);
       if (this.reqFlag) {
         uni.showToast({
           title: "操作频繁",
@@ -388,11 +414,6 @@ export default {
         .catch((res) => {
           this.reqFlag = false;
         });
-      // 下边假装请求成功
-      // this.reqFlag = false;
-
-      // // this.$refs.hbComment.addComplete();
-      // this.getCurrentMessage();
     },
     // 删除评论
     del(commentId) {

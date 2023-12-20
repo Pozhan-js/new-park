@@ -1,8 +1,8 @@
 <!--
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 17:27:04
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-12-04 17:34:59
+ * @LastEditors: hashMi 854059946@qq.com
+ * @LastEditTime: 2023-12-20 14:15:20
  * @FilePath: /smart-park/subPages/market/product/add-aderess.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 
@@ -35,9 +35,9 @@
           <u--input v-model="addressInfo.moreAddres" border="none"></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
         </u-form-item>
-        <u-form-item label="设置为默认地址" borderBottom>
+        <!-- <u-form-item label="设置为默认地址" borderBottom>
           <u-switch v-model="value" @change="change"></u-switch>
-        </u-form-item>
+        </u-form-item> -->
       </u--form>
     </view>
 
@@ -52,12 +52,11 @@
 </template>
 
 <script>
-import { updateModel, createModel, getModelInfo, getModelList } from "@/api";
+import { updateModel, createModel, getModelInfo } from "@/api";
 export default {
   data() {
     return {
       title: "添加地址",
-      value: false,
       // 判断是否为首次添加地址
       isFirst: false,
       addressInfo: {
@@ -65,8 +64,10 @@ export default {
         phone: "",
         moreAddres: "",
         address: "",
-        isdefult: 0,
+        new_time: 0,
       },
+      // 需要修改的数据id
+      updateId: "",
       loading: false,
       rules: {
         name: [
@@ -116,7 +117,6 @@ export default {
           },
         ],
       },
-      updateId: "",
     };
   },
   methods: {
@@ -126,34 +126,13 @@ export default {
       this.$refs.shopAddressForm
         .validate()
         .then(async (res) => {
-          this.loading = false;
+          this.loading = true;
           try {
             if (!this.updateId) {
-              // 添加地址
-              const { code } = await createModel(
-                "656c2230262fbe2d9d06756d",
-                this.addressInfo
-              );
-              if (code === 200) {
-                uni.showToast({
-                  title: "添加成功",
-                  duration: 600,
-                });
-              }
+              this.creatOrUpdate(createModel, this.addressInfo);
             } else {
               // 修改地址
-              const { code } = await updateModel(
-                "656c2230262fbe2d9d06756d",
-                this.addressInfo,
-                this.updateId
-              );
-
-              if (code === 200) {
-                uni.showToast({
-                  title: "修改成功",
-                  duration: 600,
-                });
-              }
+              this.creatOrUpdate(updateModel, this.addressInfo, this.updateId);
             }
           } catch (error) {
           } finally {
@@ -162,7 +141,7 @@ export default {
               uni.navigateBack({
                 delta: 1,
               });
-            }, 600);
+            }, 1000);
           }
         })
         .catch((errors) => {
@@ -170,22 +149,32 @@ export default {
         });
     },
 
+    // 创建或者修改地址
+    async creatOrUpdate(reqFn, data, id) {
+      if (!id) {
+        let { code } = await reqFn("656c2230262fbe2d9d06756d", data);
+        if (code === 200) {
+          uni.showToast({
+            title: "添加成功",
+            duration: 600,
+          });
+        }
+      } else {
+        let { code } = await reqFn("656c2230262fbe2d9d06756d", data, id);
+        if (code === 200) {
+          uni.showToast({
+            title: "修改成功",
+            duration: 600,
+          });
+        }
+      }
+    },
+
     async getCurrentAddress(id) {
       const { data } = await getModelInfo("656c2230262fbe2d9d06756d", id);
       Object.keys(this.addressInfo).forEach((item) => {
-        if (item === "isdefult") {
-          Number(data[item]) ? (this.value = true) : (this.value = false);
-        }
         this.addressInfo[item] = data[item];
       });
-    },
-
-    change(e) {
-      if (e) {
-        this.addressInfo.isdefult = 1;
-      } else {
-        this.addressInfo.isdefult = 0;
-      }
     },
   },
   onLoad(options) {
@@ -196,15 +185,6 @@ export default {
       this.updateId = id;
     } else {
       this.title = "添加地址";
-    }
-
-    // 当没有设计过地址时首次设置的地址为默认
-    if (Number(length) !== 0) {
-      this.addressInfo.isdefult = 0;
-      this.value = false;
-    } else {
-      this.addressInfo.isdefult = 1;
-      this.value = true;
     }
   },
   onReady() {
