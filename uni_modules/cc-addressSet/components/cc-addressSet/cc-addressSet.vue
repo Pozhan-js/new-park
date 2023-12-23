@@ -11,7 +11,7 @@
         </view>
         <view @click="onsetAddress(item)">
           <view class="center">
-            <view class="moren" v-if="item.isdefult == 1">
+            <view class="moren" v-if="currentId === item._id">
               <text
                 class="iconfont icon-moren"
                 :style="'color:' + colors"
@@ -52,6 +52,9 @@ export default {
     },
     addressList: {
       type: Array,
+    },
+    currentId: {
+      type: String,
     },
   },
   methods: {

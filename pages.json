@@ -789,9 +789,18 @@
 					}
 				},
 				{
-					"path": "product/order",
+					"path": "product/create-order",
 					"style": {
 						"navigationBarTitleText": "订单生成"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "product/order",
+					"style": {
+						"navigationBarTitleText": "订单"
 					},
 					"meta": {
 						"verifyLogin": true

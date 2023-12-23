@@ -2,7 +2,7 @@
  * @Author: Why so serious my dear 854059946@qq.com
  * @Date: 2023-07-05 16:56:57
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-20 10:45:59
+ * @LastEditTime: 2023-12-21 14:03:59
  * @FilePath: /used-idle/subPages/my-release/detail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -133,7 +133,7 @@ import {
 } from "@/api";
 import infoMixin from "@/common/mixins/info";
 import { mapActions, mapState } from "vuex";
-import { getRequestFilter, sleep } from "@/common/function";
+import { getRequestFilter } from "@/common/function";
 export default {
   mixins: [infoMixin],
   data() {
@@ -301,7 +301,6 @@ export default {
         };
       }
     },
-
     // 补全图片路径
     getImageUrl(url) {
       return this.$helper.filterCover(url);
@@ -358,6 +357,7 @@ export default {
         })
         .exec();
     },
+    // 点击商品按钮
     buttonClick(e) {
       if (e.content.text === "加入购物车") {
         let currentCar = this.shopCarData.find(
@@ -366,7 +366,7 @@ export default {
         if (currentCar) return;
       } else {
         uni.navigateTo({
-          url: `/subPages/market/product/order?id=${this.detailData._id}`,
+          url: `/subPages/market/product/create-order?id=${this.detailData._id}`,
         });
       }
     },

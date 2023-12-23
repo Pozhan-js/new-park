@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 11:53:11
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-20 11:33:04
+ * @LastEditTime: 2023-12-21 16:06:14
  * @FilePath: /smart-park/subPages/market/product/shop-address.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -11,7 +11,8 @@
     <!-- color：主题色 addressList:地址管理数据 @chooseClick：选择事件 @editClick：编辑事件  -->
     <cc-addressSet
       :colors="colors"
-      :addressList="addressFilterList"
+      :addressList="addressList"
+      :currentId="addressList[0]._id"
       @chooseClick="chooseClick"
       @editClick="editClick"
       @chooseDelete="chooseDelete"
@@ -36,68 +37,62 @@ export default {
   },
 
   props: {},
-  computed: {
-    addressFilterList() {
-      let filterDefault = this.addressList.filter((item) => {
-        return item.isdefult;
-      });
-      let notDefault = this.addressList.filter((item) => {
-        return !item.isdefult;
-      });
-
-      return [...filterDefault, ...notDefault];
-    },
-  },
+  computed: {},
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onShow: function (options) {
+  onShow() {
     this.getAddress();
   },
 
   methods: {
-    // 编辑地址
+    // 获取地址
+    async getAddress() {
+      let sortData = {
+        currentPage: 1,
+        pageSize: -1,
+        sort: {
+          new_time: "desc",
+        },
+      };
+      const { data } = await getModelList("656c2230262fbe2d9d06756d", sortData);
+      this.addressList = data?.list;
+    },
+    //   跳转到编辑页面
     editClick(item) {
-      //   跳转到编辑页面
       uni.navigateTo({
         url: `/subPages/market/product/add-address?id=${item._id}`,
       });
     },
-
+    // 点击修改默认地址
     async chooseClick(item) {
       //修改当前数据项
       let time = Date.now();
-      console.log("时间", item.new_time);
-      const result = await updateModel(
+      let { code } = await updateModel(
         "656c2230262fbe2d9d06756d",
         { ...item, new_time: time },
         item._id
       );
-      console.log("data", result);
-      this.getAddress();
+      if (code === 200) {
+        this.getAddress();
+      }
     },
 
     // 增加地址
     addAddress() {
       uni.navigateTo({
-        url: `/subPages/market/product/add-address?length=${this.addressList.length}`,
+        url: `/subPages/market/product/add-address`,
       });
     },
 
-    // 获取地址
-    async getAddress() {
-      const { data } = await getModelList("656c2230262fbe2d9d06756d");
-      this.addressList = data?.list;
-    },
-
-    // 删除
+    // 删除地址
     async chooseDelete(data) {
       const { code } = await deleteModel("656c2230262fbe2d9d06756d", data._id);
       if (code === 200) {
         uni.showToast({
           title: "删除成功",
-          duration: 2000,
+          duration: 600,
         });
         // 重新获取地址
         this.getAddress();

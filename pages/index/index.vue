@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-05-29 16:07:39
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-11-23 10:08:54
+ * @LastEditTime: 2023-12-21 19:44:35
  * @FilePath: /smart-park/pages/index/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -436,10 +436,6 @@ export default {
 
     //获取列表数据集
     async getNoticeList() {
-      //显示加载框
-      uni.showLoading({
-        title: "加载中",
-      });
       const { data } = await getModelList("64d2f5525d3fa95536f04c02");
 
       this.dataList = data?.list?.map((item) => {
@@ -458,9 +454,6 @@ export default {
           createTime: item.creatorTime,
         };
       });
-
-      //隐藏加载框
-      uni.hideLoading();
     },
 
     // 权限判断函数
@@ -481,11 +474,6 @@ export default {
         )}  ${this.$u.timeFormat(new Date(), "hh:MM分")}`;
       }, 6000);
     },
-    // 监听流程
-    // onMessage(res) {
-    //   const result = JSON.parse(res?.data || "{}");
-    //   console.log("onMessage", result);
-    // },
     // 检测账号是否审批通过
     async getApprove() {
       let filterTypeData = getRequestFilter({

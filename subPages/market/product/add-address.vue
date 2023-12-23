@@ -2,7 +2,7 @@
  * @Author: hashMi 854059946@qq.com
  * @Date: 2023-12-03 17:27:04
  * @LastEditors: hashMi 854059946@qq.com
- * @LastEditTime: 2023-12-20 14:15:20
+ * @LastEditTime: 2023-12-21 16:01:50
  * @FilePath: /smart-park/subPages/market/product/add-aderess.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 
@@ -35,9 +35,9 @@
           <u--input v-model="addressInfo.moreAddres" border="none"></u--input>
           <u-icon slot="right" name="arrow-right"></u-icon>
         </u-form-item>
-        <!-- <u-form-item label="设置为默认地址" borderBottom>
-          <u-switch v-model="value" @change="change"></u-switch>
-        </u-form-item> -->
+        <u-form-item label="设置为默认地址" borderBottom>
+          <u-switch v-model="value"></u-switch>
+        </u-form-item>
       </u--form>
     </view>
 
@@ -57,8 +57,12 @@ export default {
   data() {
     return {
       title: "添加地址",
+      value: false,
       // 判断是否为首次添加地址
       isFirst: false,
+      // 需要修改的数据id
+      updateId: "",
+      loading: false,
       addressInfo: {
         name: "",
         phone: "",
@@ -66,9 +70,6 @@ export default {
         address: "",
         new_time: 0,
       },
-      // 需要修改的数据id
-      updateId: "",
-      loading: false,
       rules: {
         name: [
           // 必填规则
@@ -120,13 +121,13 @@ export default {
     };
   },
   methods: {
-    // 获取该用户
     // 创建或者修改地址
     createOrUpdateAddress() {
       this.$refs.shopAddressForm
         .validate()
         .then(async (res) => {
           this.loading = true;
+          this.addressInfo.new_time = this.value ? Date.now() : 0;
           try {
             if (!this.updateId) {
               this.creatOrUpdate(createModel, this.addressInfo);
@@ -170,6 +171,7 @@ export default {
       }
     },
 
+    // 获取当前需要修改地址数据
     async getCurrentAddress(id) {
       const { data } = await getModelInfo("656c2230262fbe2d9d06756d", id);
       Object.keys(this.addressInfo).forEach((item) => {
@@ -178,7 +180,7 @@ export default {
     },
   },
   onLoad(options) {
-    let { id, length } = options;
+    let { id } = options;
     if (id) {
       this.title = "修改地址";
       this.getCurrentAddress(id);
