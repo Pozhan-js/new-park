@@ -1,5 +1,5 @@
 <template>
-  <view class="my-release">
+  <view class="my-sale">
     <u-tabs
       :list="list1"
       lineWidth="40"
@@ -7,34 +7,29 @@
       @click="click"
     ></u-tabs>
 
-    <view class="my-release-content box">
+    <view class="my-sale-content box">
       <view
-        class="my-release-content-item"
+        class="my-sale-content-item"
         v-for="item in contentList"
-        :key="item._id"
+        :key="item.id"
       >
         <view class="item-body flex-a-center-j-space-between">
-          <view class="item-body-left" v-if="item.goods_log">
-            <image :src="getImageUrl(item.goods_log[0].url)" mode="" />
+          <view class="item-body-left">
+            <image :src="item.url" mode="" />
           </view>
           <view class="item-body-right">
             <view class="text-hidden">
-              {{ item.goods_description }}
+              {{ item.title }}
             </view>
-            <view>¥{{ item.goods_price_new }}</view>
+            <view>¥{{ item.price }}</view>
             <view>
-              <text>浏览量 {{ item.visitors_num }}</text>
+              <text>浏览量 {{ item.inlineNum }}</text>
             </view>
           </view>
         </view>
 
         <view class="item-footer flex-a-center-j-space-between">
-          <view class="item-footer-left flex-a-center">
-            <view class="dot"></view>
-            <view class="text">{{
-              item.is_approval ? "已审核" : "未审核"
-            }}</view>
-          </view>
+          <view class="item-footer-left flex-a-center"> </view>
           <view class="item-footer-right flex-a-center">
             <view class="right-btn">删除</view>
           </view>
@@ -45,59 +40,39 @@
 </template>
 
 <script>
-import { getModelList } from "@/api";
-import { getRequestFilter } from "@/common/function";
 export default {
   data() {
     return {
-      list1: [
+      contentList: [
         {
-          name: "全部",
+          id: 1,
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230704_339809fe4e1c437884bf0dcadb58fa8d.png",
+          title: "好孩子婴儿推车，九成新，自体把v好办法飓风v",
+          price: 200,
+          inlineNum: 12345,
         },
         {
-          name: "已发布",
+          id: 1,
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230704_339809fe4e1c437884bf0dcadb58fa8d.png",
+          title: "好孩子婴儿推车，九成新，自体把v好办法飓风v",
+          price: 200,
+          inlineNum: 12345,
         },
         {
-          name: "审核中",
+          id: 1,
+          url: "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230704_339809fe4e1c437884bf0dcadb58fa8d.png",
+          title: "好孩子婴儿推车，九成新，自体把v好办法飓风v",
+          price: 200,
+          inlineNum: 12345,
         },
       ],
-      contentList: [],
     };
-  },
-  created() {},
-  async onLoad() {
-    await this.getShopListData();
-  },
-  methods: {
-    async click(item) {
-      await this.getShopListData(item.name);
-    },
-    getImageUrl(url) {
-      return this.$helper.filterCover(url);
-    },
-    async getShopListData(filter = "") {
-      let reqData;
-      switch (filter) {
-        case "已发布":
-          reqData = getRequestFilter({ is_approval: 1 });
-          break;
-        case "审核中":
-          reqData = getRequestFilter({ is_approval: 0 });
-          break;
-        default:
-          reqData = {};
-          break;
-      }
-
-      const result = await getModelList("65605e75f3ad0c30c038ff96", reqData);
-      this.contentList = result?.data?.list;
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.my-release {
+.my-sale {
   background-color: #f1f2f0;
 
   &-content {

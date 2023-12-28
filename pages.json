@@ -762,6 +762,24 @@
 					}
 				},
 				{
+					"path": "my-release/my-pay",
+					"style": {
+						"navigationBarTitleText": "我购买的"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
+					"path": "my-release/my-sale",
+					"style": {
+						"navigationBarTitleText": "我卖出的"
+					},
+					"meta": {
+						"verifyLogin": true
+					}
+				},
+				{
 					"path": "product/product",
 					"style": {
 						"navigationBarTitleText": "商品展示"

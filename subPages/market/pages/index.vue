@@ -113,7 +113,6 @@
 import { getModelList } from "@/api";
 import { getRequestFilter, sleep } from "@/common/function";
 import TabbarPro from "../components/tabbar";
-import helper from "@/common/helper";
 export default {
   components: { TabbarPro },
   data() {
@@ -170,11 +169,13 @@ export default {
     async getOrderList(rangeWeek) {
       let reqData = getRequestFilter({ creatorTime: rangeWeek }, "range");
       const { data } = await getModelList("65605e75f3ad0c30c038ff96", reqData);
-      let reqList = data?.list.sort((a, b) => {
-        let timeA = a.creatorTime;
-        let timeB = b.creatorTime;
-        return timeB - timeA;
-      });
+      let reqList = data?.list
+        .filter((item) => item.is_approval)
+        .sort((a, b) => {
+          let timeA = a.creatorTime;
+          let timeB = b.creatorTime;
+          return timeB - timeA;
+        });
       this.listData = reqList;
       this.selectList = [].concat(reqList);
     },

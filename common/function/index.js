@@ -74,7 +74,7 @@ export function goToPath(
     return Promise.reject("method传入错误,没有该方法!");
   return new Promise((res, rej) => {
     setTimeout(() => {
-      console.log(join(path.trim(), query),);
+      // console.log(join(path.trim(), query),);
       uni[method]({
         url: join(path.trim(), query),
         events,

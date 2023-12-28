@@ -57,29 +57,25 @@
         {{ detailData.goods_description }}
       </view>
 
-      <image :src="log_image" mode="" style="width: 100%; height: 490rpx" />
+      <image
+        :src="log_image"
+        mode=""
+        style="width: 100%; height: 490rpx; border-radius: 20rpx"
+        v-if="log_image"
+      />
 
-      <view class="img-gird flex-a-center">
+      <view class="img-gird" v-if="detailData.goods_image">
         <view
-          class="img-gird-left"
-          :style="{
-            backgroundImage: `url(${image_1})`,
-          }"
+          :class="'img-gird-item-' + index"
+          style="border-radius: 20rpx"
+          v-for="(logUrl, index) in detailData.goods_image"
+          :key="index"
         >
-        </view>
-        <view class="img-gird-right">
-          <view
-            class="top"
-            :style="{
-              backgroundImage: `url(${image_2})`,
-            }"
-          ></view>
-          <view
-            class="bottom"
-            :style="{
-              backgroundImage: `url(${image_3})`,
-            }"
-          ></view>
+          <image
+            :src="$helper.filterCover(logUrl.url)"
+            mode=""
+            style="width: 100%; height: 100%"
+          />
         </view>
       </view>
 
@@ -638,28 +634,26 @@ export default {
 
     .img-gird {
       margin-top: 16rpx;
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 将父元素分为两列 */
+      grid-template-rows: 1fr 1fr; /* 分为两行 */
+      height: 300px; /* 设置父元素的高度 */
+      width: 100%;
+      gap: 10px; /* 设置子元素之间的间隔 */
 
-      &-left {
-        width: 450rpx;
-        height: 450rpx;
-        // background: url("https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230706_eb136b6cc9374eeab451637b4fd9bef7.png");
-        background-size: cover;
-        margin-right: 18rpx;
+      .img-gird-item-0 {
+        grid-column: 1 / 2; /* 第一个子元素占据第一列 */
+        grid-row: 1 / 3; /* 第一个子元素占据整个高度（两行） */
       }
-      &-right {
-        .top {
-          width: 214rpx;
-          height: 214rpx;
-          // background: url("https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230706_eb136b6cc9374eeab451637b4fd9bef7.png");
-          background-size: cover;
-          margin-bottom: 16rpx;
-        }
-        .bottom {
-          width: 214rpx;
-          height: 214rpx;
-          // background: url("https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230706_eb136b6cc9374eeab451637b4fd9bef7.png");
-          background-size: cover;
-        }
+
+      .img-gird-item-1 {
+        grid-column: 2 / 3; /* 另外两个子元素占据第二列 */
+        grid-row: 1 / 2; /* 第二个子元素占据第一行 */
+      }
+
+      .img-gird-item-2 {
+        grid-column: 2 / 3; /* 另外两个子元素占据第二列 */
+        grid-row: 2 / 3; /* 第三个子元素占据第二行 */
       }
     }
 

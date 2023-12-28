@@ -14,8 +14,10 @@
       <view class="pay-sts succ">支付成功</view>
       <view class="tips">感谢您的购买</view>
       <view class="btns">
-        <text class="button checkorder">查看订单</text>
-        <text class="button shopcontinue" @click="shopContinue">继续购物</text>
+        <!-- <text class="button checkorder"></text> -->
+        <text class="button shopcontinue" @click="shopContinue"
+          >返回列表页</text
+        >
       </view>
     </view>
   </view>
@@ -40,8 +42,8 @@ export default {
       });
     },
     shopContinue() {
-      uni.switchTab({
-        url: "/pages/index/index",
+      uni.reLaunch({
+        url: "/subPages/market/pages/index",
       });
     },
   },

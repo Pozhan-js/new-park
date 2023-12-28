@@ -28,7 +28,7 @@
             @delete="deletePic"
             name="2"
             multiple
-            :maxCount="4"
+            :maxCount="1"
           ></u-upload>
         </u-form-item>
 
@@ -198,23 +198,9 @@
             multiple
             :maxCount="3"
           ></u-upload>
-        </u-form-item>
 
-        <!-- <u-form-item label="验证码" prop="code" labelWidth="80" borderBottom>
-          <u--input
-            v-model="releaseForm.code"
-            border="none"
-            placeholder="请填写验证码"
-          ></u--input>
-          <u-button
-            slot="right"
-            @tap="getCode"
-            :text="tips"
-            type="success"
-            size="mini"
-            :disabled="disabled1"
-          ></u-button>
-        </u-form-item> -->
+          <view style="font-size: 24rpx; color: red">至少3张图片</view>
+        </u-form-item>
 
         <u-form-item prop="goods_description" borderBottom>
           <u--textarea
@@ -342,12 +328,12 @@ export default {
             trigger: ["change"],
           },
         ],
-        goods_assure: [
+        goods_image: [
           {
             type: "array",
-            min: 2,
+            min: 3,
             required: true,
-            message: "至少选两项",
+            message: "至少上传3张图片",
             trigger: ["change"],
           },
         ],
@@ -471,6 +457,7 @@ export default {
         tableField112: [],
         username: "",
         header_icon: "",
+        is_approval: 0, //默认未审批
       };
     },
 
@@ -598,10 +585,6 @@ export default {
       margin-bottom: 6rpx;
     }
   }
-
-  // input {
-  // text-align: right !important;
-  // }
 
   .u-icon--right {
     margin-left: 8rpx;

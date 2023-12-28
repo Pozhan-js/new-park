@@ -136,14 +136,14 @@ export default {
           image:
             "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230705_5abf75207bd74ea78559ba846f70812a.png",
           title: "我卖出的",
-          url: "/subPages/market/my-release/my-release",
+          url: "/subPages/market/my-release/my-sale",
         },
         {
           id: 3,
           image:
             "https://kindoucloud.com:8077/api/mongoFile/Image/systemicon/SmartPark/20230705_45b9a77bc0394a8092b363473eccd39b.png",
           title: "我买到的",
-          url: "/subPages/market/my-release/my-release",
+          url: "/subPages/market/my-release/my-pay",
         },
       ],
     };
