@@ -1,7 +1,6 @@
 <template>
   <view class="home-serve-form">
-    <view class="home-serve-form-container">
-      <!-- 注意，如果需要兼容微信小程序，最好通过setRules方法设置rules规则 -->
+    <!-- <view class="home-serve-form-container">
       <u--form
         labelPosition="left"
         labelWidth="100"
@@ -87,7 +86,7 @@
           ></u--textarea>
         </u-form-item>
       </u--form>
-    </view>
+    </view> -->
 
     <view class="home-serve-form-pay-type">
       <view class="home-serve-form-pay-type-item">
@@ -120,33 +119,33 @@ export default {
           sex: "",
         },
       },
-      rules: {
-        "userInfo.name": {
-          type: "string",
-          required: true,
-          message: "请填写姓名",
-          trigger: ["blur", "change"],
-        },
-        "userInfo.name": {
-          type: "string",
-          required: true,
-          message: "请填写姓名",
-          trigger: ["blur", "change"],
-        },
-        "userInfo.name": {
-          type: "string",
-          required: true,
-          message: "请填写姓名",
-          trigger: ["blur", "change"],
-        },
-        "userInfo.sex": {
-          type: "string",
-          max: 1,
-          required: true,
-          message: "请选择男或女",
-          trigger: ["blur", "change"],
-        },
-      },
+      // rules: {
+      //   "userInfo.name": {
+      //     type: "string",
+      //     required: true,
+      //     message: "请填写姓名",
+      //     trigger: ["blur", "change"],
+      //   },
+      //   "userInfo.name": {
+      //     type: "string",
+      //     required: true,
+      //     message: "请填写姓名",
+      //     trigger: ["blur", "change"],
+      //   },
+      //   "userInfo.name": {
+      //     type: "string",
+      //     required: true,
+      //     message: "请填写姓名",
+      //     trigger: ["blur", "change"],
+      //   },
+      //   "userInfo.sex": {
+      //     type: "string",
+      //     max: 1,
+      //     required: true,
+      //     message: "请选择男或女",
+      //     trigger: ["blur", "change"],
+      //   },
+      // },
     };
   },
   methods: {
@@ -161,7 +160,7 @@ export default {
   },
   onReady() {
     //如果需要兼容微信小程序，并且校验规则中含有方法等，只能通过setRules方法设置规则。
-    this.$refs.uForm.setRules(this.rules);
+    // this.$refs.uForm.setRules(this.rules);
   },
 };
 </script>

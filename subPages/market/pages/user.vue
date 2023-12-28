@@ -89,7 +89,7 @@ export default {
 
     return {
       cellList: [
-        { title: "设置", path: getPath("settings"), icon: getIcon("settings") },
+        // { title: "设置", path: getPath("settings"), icon: getIcon("settings") },
         {
           title: "地址管理",
           path: "/subPages/market/product/shop-address",

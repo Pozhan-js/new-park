@@ -14,7 +14,7 @@
           <image :src="getImageUrl(detailData.header_icon)" mode="" />
           <view class="user-info-left-text">
             <view class="user-info-left-text-name">
-              <text class="name">{{ detailData.username }}</text>
+              <text class="name">{{ detailData.username || "匿名用户" }}</text>
               <text class="icon"> 信誉极好 </text>
             </view>
             <view class="user-info-left-text-time text-hidden">
@@ -303,7 +303,11 @@ export default {
     },
     // 补全图片路径
     getImageUrl(url) {
-      return this.$helper.filterCover(url);
+      if (url) {
+        return this.$helper.filterCover(url);
+      } else {
+        return `/static/image/default-avatar.png`;
+      }
     },
     // 查询收藏列表
     async checkCollectData(id = "") {
@@ -481,7 +485,7 @@ export default {
   }
 
   &-body {
-    padding-bottom: 20rpx;
+    padding: 20rpx 0;
 
     .user-info {
       margin-bottom: 38rpx;
@@ -490,6 +494,7 @@ export default {
         > image {
           width: 100rpx;
           height: 100rpx;
+          border-radius: 50%;
           margin-right: 26rpx;
         }
 
